@@ -36,6 +36,7 @@
       // State
       isVisible: false,
       showLabels: true,
+      showClassNames: false,
       showMeasurements: true,
       showGapPadding: false,
       showBreakoutPadding: false,
@@ -161,7 +162,8 @@
                        textAlign: 'center'
                      }">
                   <div x-text="area.label"></div>
-                  <div :style="{
+                  <div x-show="showClassNames"
+                       :style="{
                     fontSize: '0.625rem',
                     fontWeight: '500',
                     textTransform: 'none',
@@ -264,23 +266,32 @@
             </div>
 
             <!-- Toggles -->
-            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
-                <input type="checkbox" x-model="showLabels" style="margin-right: 0.375rem; cursor: pointer;">
-                Show Labels
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
-                <input type="checkbox" x-model="showMeasurements" style="margin-right: 0.375rem; cursor: pointer;">
-                Show Values
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #10b981;">
-                <input type="checkbox" x-model="showGapPadding" style="margin-right: 0.375rem; cursor: pointer;">
-                Show p-gap
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #3b82f6;">
-                <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.375rem; cursor: pointer;">
-                Show p-breakout
-              </label>
+            <div style="margin-bottom: 0.75rem;">
+              <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                Show
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
+                  <input type="checkbox" x-model="showLabels" style="margin-right: 0.375rem; cursor: pointer;">
+                  Labels
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
+                  <input type="checkbox" x-model="showClassNames" style="margin-right: 0.375rem; cursor: pointer;">
+                  Class Names
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
+                  <input type="checkbox" x-model="showMeasurements" style="margin-right: 0.375rem; cursor: pointer;">
+                  Values
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #10b981;">
+                  <input type="checkbox" x-model="showGapPadding" style="margin-right: 0.375rem; cursor: pointer;">
+                  p-gap
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #3b82f6;">
+                  <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.375rem; cursor: pointer;">
+                  p-breakout
+                </label>
+              </div>
             </div>
 
             <!-- Keyboard Shortcut -->
