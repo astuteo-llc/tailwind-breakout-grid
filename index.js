@@ -228,7 +228,7 @@ const createRootCSS = (pluginConfig) => {
       '--breakout-padding': pluginConfig.breakoutPadding.base,
     }
   } catch (error) {
-    console.warn(`Tailwind Breakout Grid Plugin - Error creating CSS custom properties: ${error.message}. Using fallback values.`)
+    console.warn(`Tailwind Breakout Grid Plugin - Error creating CSS custom properties: ${error.message}. This may be due to invalid or malformed configuration values (e.g., invalid CSS units or property names). Please check your plugin configuration for errors. Using fallback values.`)
     
     // Return minimal fallback CSS properties
     return {
