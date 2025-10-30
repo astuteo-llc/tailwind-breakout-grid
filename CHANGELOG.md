@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2025-10-30
+
+### Added
+
+- **Margin Breakout Utilities:**
+  - `m-breakout`, `mx-breakout`, `my-breakout`, `mt-breakout`, `mr-breakout`, `mb-breakout`, `ml-breakout`
+  - Responsive margin utilities matching `p-breakout` pattern for consistent spacing
+  - Equivalent to traditional patterns like `mx-6 md:mx-16 lg:mx-20`
+
+- **Negative Margin Utilities:**
+  - All margin utilities now have negative versions: `-m-breakout`, `-mx-breakout`, etc.
+  - Negative versions for gap-based margins: `-m-gap`, `-mx-gap`, `-m-full-gap`, etc.
+  - Negative versions for popout margins: `-m-popout`, `-mx-popout`, etc.
+  - Useful for breaking out of padded containers
+
+- **Configuration Validation:**
+  - Built-in validation for configuration values with helpful warnings
+  - Validates CSS units and provides clear error messages without breaking builds
+  - Improved error handling with graceful fallbacks
+
+### Improved
+
+- **Grid Visualizer Enhancements:**
+  - Added padding visualization overlays for `p-gap` and `p-breakout` utilities
+  - Toggle controls to show/hide padding areas with dotted/dashed borders
+  - Added "Show Class Names" toggle (unchecked by default) to display CSS class names
+  - Reorganized control panel with "SHOW" heading for better organization
+  - All toggles now grouped under clear section heading
+
+- **Module System:**
+  - Confirmed CommonJS pattern using `module.exports` for maximum compatibility
+  - Follows Tailwind Labs official plugin conventions
+  - Works seamlessly with both CommonJS and ESM config files
+
+- **Debug Logging:**
+  - Improved debug output to show validated template parameters
+  - Better error messages throughout the plugin
+
 ## [1.1.2] - 2025-10-30
 
 ### Improved
@@ -58,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic default column assignment for child elements
 - Debug mode for template generation logging
 
+[1.1.4]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.4
 [1.1.2]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.2
 [1.1.1]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.1
 [1.1.0]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.0
