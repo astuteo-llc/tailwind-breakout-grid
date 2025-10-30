@@ -153,6 +153,7 @@ const createRootCSS = (pluginConfig) => ({
   '--content': `minmax(0, ${pluginConfig.content})`,
   '--narrow': 'min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), 100% - var(--gap) * 2)',
   '--narrow-half': 'calc(var(--narrow) / 2)',
+  '--breakout-padding': pluginConfig.breakoutPadding.base,
 })
 
 /**
@@ -224,6 +225,28 @@ const createSpacingUtilities = () => {
 }
 
 /**
+ * Generates responsive media queries for breakout padding.
+ * Uses CSS custom properties that update at different breakpoints.
+ *
+ * @param {Object} config - Plugin configuration
+ * @param {Object} screens - Tailwind breakpoint configuration
+ * @returns {Object} Media query rules for :root
+ * @private
+ */
+const createBreakoutPaddingMediaQueries = (config, screens) => {
+  const { breakoutPadding } = config;
+
+  return Object.entries(screens).reduce((acc, [breakpoint, minWidth]) => {
+    if (breakoutPadding[breakpoint]) {
+      acc[`@media (min-width: ${minWidth})`] = {
+        '--breakout-padding': breakoutPadding[breakpoint]
+      };
+    }
+    return acc;
+  }, {});
+};
+
+/**
  * Generates fixed responsive padding utilities for legacy project integration.
  * Creates utilities that mimic traditional Tailwind responsive padding patterns
  * but are pre-configured for breakout grid contexts.
@@ -234,20 +257,16 @@ const createSpacingUtilities = () => {
  * - .py-breakout: Responsive vertical padding
  * - .pt-breakout, .pr-breakout, .pb-breakout, .pl-breakout: Individual sides
  *
- * These utilities use fixed rem values that scale with breakpoints, unlike
- * p-gap which uses reactive CSS variables.
+ * These utilities use a CSS variable (--breakout-padding) that updates at breakpoints,
+ * unlike p-gap which uses reactive grid-based CSS variables.
  *
  * Example: p-breakout is equivalent to:
  *   p-6 md:p-16 lg:p-20
  *
- * @param {Object} config - Plugin configuration
- * @param {Object} screens - Tailwind breakpoint configuration
  * @returns {Object} Breakout padding utility classes
  * @private
  */
-const createBreakoutPaddingUtilities = (config, screens) => {
-  const { breakoutPadding } = config;
-
+const createBreakoutPaddingUtilities = () => {
   const spacingDirections = {
     p: ['padding'],
     px: ['padding-left', 'padding-right'],
@@ -260,31 +279,13 @@ const createBreakoutPaddingUtilities = (config, screens) => {
 
   const utilities = {};
 
-  // Generate base utilities and responsive variants
   Object.entries(spacingDirections).forEach(([key, properties]) => {
     const className = `.${key}-breakout`;
 
-    // Base (mobile) styles
     utilities[className] = properties.reduce((acc, prop) => {
-      acc[prop] = breakoutPadding.base;
+      acc[prop] = 'var(--breakout-padding)';
       return acc;
     }, {});
-
-    // Responsive variants
-    Object.entries(screens).forEach(([breakpoint, minWidth]) => {
-      if (breakoutPadding[breakpoint]) {
-        const mediaQuery = `@media (min-width: ${minWidth})`;
-
-        if (!utilities[mediaQuery]) {
-          utilities[mediaQuery] = {};
-        }
-
-        utilities[mediaQuery][className] = properties.reduce((acc, prop) => {
-          acc[prop] = breakoutPadding[breakpoint];
-          return acc;
-        }, {});
-      }
-    });
   });
 
   return utilities;
@@ -624,15 +625,26 @@ export default (config = {}) => {
     const templates = generateTemplates(pluginConfig)
     const rootCSS = createRootCSS(pluginConfig)
 
-    // Add responsive gap scaling
+    // Add responsive gap scaling and breakout padding media queries
     const mediaQueries = Object.entries(screens)
       .reduce((acc, [breakpoint, minWidth]) => {
-        if (pluginConfig.gapScale[breakpoint]) {
-          acc[`@media (min-width: ${minWidth})`] = {
-            '--gap': `clamp(var(--base-gap), ${pluginConfig.gapScale[breakpoint]}, var(--max-gap))`
-          }
+        const mediaQuery = `@media (min-width: ${minWidth})`;
+
+        if (!acc[mediaQuery]) {
+          acc[mediaQuery] = {};
         }
-        return acc
+
+        // Add gap scaling for this breakpoint
+        if (pluginConfig.gapScale[breakpoint]) {
+          acc[mediaQuery]['--gap'] = `clamp(var(--base-gap), ${pluginConfig.gapScale[breakpoint]}, var(--max-gap))`;
+        }
+
+        // Add breakout padding for this breakpoint
+        if (pluginConfig.breakoutPadding[breakpoint]) {
+          acc[mediaQuery]['--breakout-padding'] = pluginConfig.breakoutPadding[breakpoint];
+        }
+
+        return acc;
       }, {})
 
     // Add base styles
@@ -646,7 +658,7 @@ export default (config = {}) => {
     // Add all utility classes
     addUtilities({
       ...createSpacingUtilities(),
-      ...createBreakoutPaddingUtilities(pluginConfig, screens),
+      ...createBreakoutPaddingUtilities(),
       ...createGridUtilities(pluginConfig, templates),
       ...createColumnUtilities(templates),
       '.col-full-limit': {
