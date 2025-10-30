@@ -426,22 +426,25 @@ const createBreakoutMarginUtilities = () => {
  * Generates grid templates for different section types and alignments.
  */
 const createGridTemplate = (config, type = 'full', align = 'center') => {
+  let validatedType = type
+  let validatedAlign = align
+
   try {
     debugLog(config, `Creating grid template for type: ${type}, align: ${align}`)
 
     // Validate that type exists in our allowed types (except 'full' which is default)
     if (type !== 'full' && !BREAKOUT_TYPES.includes(type)) {
       console.warn(`Tailwind Breakout Grid Plugin - Invalid grid type: ${type}. Using default template.`)
-      type = 'full'
-      align = 'center'
+      validatedType = 'full'
+      validatedAlign = 'center'
     }
   } catch (error) {
     console.warn(`Tailwind Breakout Grid Plugin - Error validating grid template parameters: ${error.message}. Using default template.`)
-    type = 'full'
-    align = 'center'
+    validatedType = 'full'
+    validatedAlign = 'center'
   }
 
-  if (type === 'feature-popout' && align === 'left') {
+  if (validatedType === 'feature-popout' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -456,7 +459,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
     return template
   }
 
-  if (type === 'feature-popout' && align === 'right') {
+  if (validatedType === 'feature-popout' && validatedAlign === 'right') {
     const template = `[full-start feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
     [popout-start] var(--popout)
@@ -474,7 +477,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Feature Left Template
    */
-  if (type === 'feature' && align === 'left') {
+  if (validatedType === 'feature' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -491,7 +494,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Feature Right Template
    */
-  if (type === 'feature' && align === 'right') {
+  if (validatedType === 'feature' && validatedAlign === 'right') {
     const template = `[full-start feature-start] var(--feature)
     [popout-start] var(--popout)
     [content-start] var(--content)
@@ -508,7 +511,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Content Left Template
    */
-  if (type === 'content' && align === 'left') {
+  if (validatedType === 'content' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -523,7 +526,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Content Right Template
    */
-  if (type === 'content' && align === 'right') {
+  if (validatedType === 'content' && validatedAlign === 'right') {
     const template = `[full-start content-start] var(--content)
     [narrow-start] var(--narrow-inset) [narrow-end]
     var(--content) [content-end]
@@ -538,7 +541,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Popout Left Template
    */
-  if (type === 'popout' && align === 'left') {
+  if (validatedType === 'popout' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -554,7 +557,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Popout Right Template
    */
-  if (type === 'popout' && align === 'right') {
+  if (validatedType === 'popout' && validatedAlign === 'right') {
     const template = `[full-start popout-start] var(--popout)
     [content-start] var(--content)
     [narrow-start] var(--narrow-inset) [narrow-end]
@@ -570,7 +573,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Narrow Left Template
    */
-  if (type === 'narrow' && align === 'left') {
+  if (validatedType === 'narrow' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -584,7 +587,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Narrow Right Template
    */
-  if (type === 'narrow' && align === 'right') {
+  if (validatedType === 'narrow' && validatedAlign === 'right') {
     const template = `[full-start narrow-start] var(--narrow-inset) [narrow-end content-end]
     var(--popout) [popout-end]
     var(--feature) [feature-end]
