@@ -835,7 +835,7 @@ module.exports = (config = {}) => {
           }
         })
       } catch (error) {
-        console.error('Tailwind Breakout Grid Plugin - Error during CSS generation:', error.message)
+        console.error('Tailwind Breakout Grid Plugin - Error during CSS generation:', error)
         console.warn('Tailwind Breakout Grid Plugin - Falling back to minimal grid configuration to prevent build failure')
         
         // Provide minimal fallback to prevent build failures
@@ -858,7 +858,7 @@ module.exports = (config = {}) => {
       }
     }
   } catch (error) {
-    console.error('Tailwind Breakout Grid Plugin - Critical error during plugin initialization:', error.message)
+    console.error('Tailwind Breakout Grid Plugin - Critical error during plugin initialization:', error)
     console.warn('Tailwind Breakout Grid Plugin - Plugin disabled to prevent build failure')
     
     // Return a no-op plugin to prevent build failures.
