@@ -15,12 +15,18 @@ Inspired by [Viget's Fluid Breakout Layout](https://www.viget.com/articles/fluid
 
 ## Installation
 
-1. Copy `breakout-grid.js` to your project (e.g., `./tailwind-plugins/breakout-grid.js`)
+### Via npm (Recommended)
 
-2. Import and register the plugin in `tailwind.config.js`:
+Install the plugin from npm:
+
+```bash
+npm install @astuteo/tailwind-breakout-grid
+```
+
+Then register it in your `tailwind.config.js`:
 
 ```js
-import breakoutGrid from './tailwind-plugins/breakout-grid.js'
+import breakoutGrid from '@astuteo/tailwind-breakout-grid'
 
 export default {
   plugins: [
@@ -33,6 +39,18 @@ export default {
       // ... see Configuration section for all options
     })
   ]
+}
+```
+
+### Manual Installation
+
+Alternatively, copy `index.js` to your project (e.g., `./tailwind-plugins/breakout-grid.js`):
+
+```js
+import breakoutGrid from './tailwind-plugins/breakout-grid.js'
+
+export default {
+  plugins: [breakoutGrid()]
 }
 ```
 

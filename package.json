@@ -1,0 +1,50 @@
+{
+  "name": "@astuteo/tailwind-breakout-grid",
+  "version": "1.0.0",
+  "description": "A Tailwind CSS plugin for creating fluid breakout grid layouts with optimal reading widths",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "breakout-grid-visualizer.js",
+    "craft-integration.twig",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "tailwindcss",
+    "tailwind",
+    "plugin",
+    "css",
+    "grid",
+    "breakout",
+    "layout",
+    "editorial",
+    "responsive",
+    "fluid"
+  ],
+  "author": "Astuteo LLC",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astuteo/tailwind-breakout-grid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/astuteo/tailwind-breakout-grid/issues"
+  },
+  "homepage": "https://github.com/astuteo/tailwind-breakout-grid#readme",
+  "peerDependencies": {
+    "tailwindcss": ">=3.0.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run check-files",
+    "check-files": "npm pack --dry-run"
+  }
+}
