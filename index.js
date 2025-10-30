@@ -861,7 +861,9 @@ module.exports = (config = {}) => {
     console.error('Tailwind Breakout Grid Plugin - Critical error during plugin initialization:', error.message)
     console.warn('Tailwind Breakout Grid Plugin - Plugin disabled to prevent build failure')
     
-    // Return a no-op plugin to prevent build failures
+    // Return a no-op plugin to prevent build failures.
+    // This function intentionally accepts no arguments and returns nothing,
+    // as required by the Tailwind plugin API for plugin functions.
     return () => {}
   }
 };
