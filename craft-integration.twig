@@ -1,0 +1,58 @@
+{#
+/**
+ * Breakout Grid Visualizer - CraftCMS Integration
+ *
+ * This template snippet loads the grid visualizer only in dev mode.
+ * Copy this to your layout template (e.g., _layouts/base.twig)
+ *
+ * Installation:
+ * 1. Copy breakout-grid-visualizer.js to your web/assets/js/ directory
+ * 2. Add this snippet before your closing </body> tag
+ * 3. Ensure Alpine.js is loaded (either via CDN or your build process)
+ *
+ * The visualizer will only load when Craft is in devMode.
+ */
+#}
+
+{% if craft.app.config.general.devMode %}
+  {# Load Alpine.js if not already loaded #}
+  {% if not alpineLoaded is defined %}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  {% endif %}
+
+  {# Load the visualizer script #}
+  <script src="/assets/js/breakout-grid-visualizer.js"></script>
+
+  {# Add the visualizer component to the page #}
+  <div x-data="breakoutGridVisualizer" x-html="template"></div>
+
+  {# Optional: Add a visible toggle button for easier access #}
+  <div x-data="{ show: true }"
+       x-show="show"
+       style="position: fixed; bottom: 1rem; left: 1rem; z-index: 9998;"
+       x-transition>
+    <button @click="show = false; $dispatch('toggle-grid-visualizer')"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold flex items-center gap-2 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z"></path>
+      </svg>
+      Grid Visualizer (Ctrl+G)
+    </button>
+  </div>
+
+  {# Handle the custom event #}
+  <script>
+    document.addEventListener('toggle-grid-visualizer', () => {
+      // Find the visualizer component and toggle it
+      const visualizer = Alpine.$data(document.querySelector('[x-data*="breakoutGridVisualizer"]'));
+      if (visualizer) {
+        visualizer.toggle();
+      }
+    });
+  </script>
+
+  {# Dev mode indicator (optional) #}
+  <div style="position: fixed; top: 0; left: 0; background: #ef4444; color: white; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; z-index: 9999; border-bottom-right-radius: 0.375rem; font-family: system-ui, -apple-system, sans-serif;">
+    DEV MODE
+  </div>
+{% endif %}

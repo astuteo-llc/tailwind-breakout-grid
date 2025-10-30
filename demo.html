@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Breakout Grid Demo - Tailwind Plugin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
     /* Simulate the breakout-grid plugin CSS */
     :root {
@@ -145,7 +146,13 @@
     <header class="bg-white border-b border-gray-200 py-8 mb-12">
       <div class="max-w-7xl mx-auto px-4">
         <h1 class="text-4xl font-bold mb-2">Breakout Grid Demo</h1>
-        <p class="text-gray-600">Visual demonstration of the Tailwind breakout-grid plugin</p>
+        <p class="text-gray-600 mb-4">Visual demonstration of the Tailwind breakout-grid plugin</p>
+        <div class="flex items-center gap-2 text-sm bg-blue-50 text-blue-700 px-4 py-2 rounded-lg inline-flex">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span><strong>Tip:</strong> Press <kbd class="bg-white px-2 py-0.5 rounded border border-blue-200 font-mono">Ctrl/Cmd + G</kbd> to toggle the Grid Visualizer</span>
+        </div>
       </div>
     </header>
 
@@ -466,6 +473,37 @@
     }
     window.addEventListener('resize', logViewportWidth);
     logViewportWidth();
+  </script>
+
+  <!-- Breakout Grid Visualizer -->
+  <script src="./breakout-grid-visualizer.js"></script>
+  <div x-data="breakoutGridVisualizer" x-html="template"></div>
+
+  <!-- Toggle Button for Visualizer -->
+  <div x-data="{ showHint: true }"
+       x-show="showHint"
+       x-transition
+       style="position: fixed; bottom: 1rem; left: 1rem; z-index: 9998;">
+    <button @click="showHint = false; Alpine.store('visualizer') || $dispatch('toggle-visualizer')"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold flex items-center gap-2 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z"></path>
+      </svg>
+      Open Grid Visualizer (Ctrl+G)
+    </button>
+  </div>
+
+  <script>
+    // Handle the custom toggle event
+    document.addEventListener('toggle-visualizer', () => {
+      const visualizerEl = document.querySelector('[x-data*="breakoutGridVisualizer"]');
+      if (visualizerEl && Alpine) {
+        const visualizer = Alpine.$data(visualizerEl);
+        if (visualizer) {
+          visualizer.toggle();
+        }
+      }
+    });
   </script>
 </body>
 </html>

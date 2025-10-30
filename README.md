@@ -306,6 +306,97 @@ Use start/end utilities for custom spans:
 5. **Don't nest breakout grids deeply** - Use left/right aligned grids instead
 6. **Use col-full-limit for wide containers** - Prevents excessive width on ultra-wide screens
 
+## Grid Visualizer (Development Tool)
+
+An Alpine.js-powered visual debugging tool that helps designers see and understand the grid structure while building layouts.
+
+### Features
+
+- **Visual overlay** showing all grid columns with color coding
+- **Column labels** identifying each grid area
+- **Live measurements** displaying current CSS variable values
+- **Viewport width** tracker for responsive debugging
+- **Click to highlight** individual columns
+- **Keyboard shortcut** (Ctrl/Cmd + G) to toggle
+- **Persistent state** remembers visibility across page reloads
+
+### Installation
+
+1. Include Alpine.js (v3.x) in your project
+2. Add the visualizer script:
+
+```html
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="/path/to/breakout-grid-visualizer.js"></script>
+```
+
+3. Add the component to your page:
+
+```html
+<div x-data="breakoutGridVisualizer" x-html="template"></div>
+```
+
+### CraftCMS Integration (Dev Mode Only)
+
+For CraftCMS projects, conditionally load the visualizer only in development:
+
+```twig
+{% if craft.app.config.general.devMode %}
+  {# Load Alpine.js if not already loaded #}
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  {# Load the visualizer script #}
+  <script src="/assets/js/breakout-grid-visualizer.js"></script>
+
+  {# Add the component #}
+  <div x-data="breakoutGridVisualizer" x-html="template"></div>
+{% endif %}
+```
+
+See `craft-integration.twig` for a complete CraftCMS integration example with a toggle button and dev mode indicator.
+
+### Usage
+
+Once loaded, the visualizer can be controlled in three ways:
+
+1. **Keyboard shortcut**: Press `Ctrl/Cmd + G` to toggle
+2. **Toggle button**: Add a button that triggers the visualizer
+3. **Programmatically**: Access via Alpine's `$data` API
+
+```javascript
+// Get the visualizer component
+const visualizer = Alpine.$data(document.querySelector('[x-data*="breakoutGridVisualizer"]'));
+
+// Toggle visibility
+visualizer.toggle();
+
+// Show/hide labels
+visualizer.showLabels = false;
+
+// Show/hide measurements
+visualizer.showMeasurements = false;
+```
+
+### Controls
+
+When active, the visualizer displays a control panel with:
+
+- **Viewport Width**: Current browser width in pixels
+- **Current Values**: Live CSS variable measurements (--gap, --narrow, etc.)
+- **Show Labels**: Toggle column name labels
+- **Show Values**: Toggle measurement display
+- **Selected Column**: Click any column to highlight and view its class name
+
+### Demo
+
+Open `demo.html` in your browser to see the visualizer in action. Press `Ctrl/Cmd + G` to toggle it on and off.
+
+### Files
+
+- `breakout-grid-visualizer.js` - The Alpine.js component
+- `craft-integration.twig` - Complete CraftCMS integration example
+- `demo.html` - Interactive demonstration
+
 ## Debugging
 
 Enable debug mode to see generated templates in the console:
