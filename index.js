@@ -378,6 +378,51 @@ const createBreakoutPaddingUtilities = () => {
 };
 
 /**
+ * Generates fixed responsive margin utilities for legacy project integration.
+ * Creates utilities that mimic traditional Tailwind responsive margin patterns
+ * but are pre-configured for breakout grid contexts.
+ *
+ * Generated classes:
+ * - .m-breakout: Responsive margin on all sides
+ * - .mx-breakout: Responsive horizontal margin
+ * - .my-breakout: Responsive vertical margin
+ * - .mt-breakout, .mr-breakout, .mb-breakout, .ml-breakout: Individual sides
+ *
+ * These utilities use a CSS variable (--breakout-padding) that updates at breakpoints,
+ * providing consistent spacing that matches p-breakout utilities.
+ *
+ * Example: mx-breakout is equivalent to:
+ *   mx-6 md:mx-16 lg:mx-20
+ *
+ * @returns {Object} Breakout margin utility classes
+ * @private
+ */
+const createBreakoutMarginUtilities = () => {
+  const spacingDirections = {
+    m: ['margin'],
+    mx: ['margin-left', 'margin-right'],
+    my: ['margin-top', 'margin-bottom'],
+    mt: ['margin-top'],
+    mr: ['margin-right'],
+    mb: ['margin-bottom'],
+    ml: ['margin-left']
+  };
+
+  const utilities = {};
+
+  Object.entries(spacingDirections).forEach(([key, properties]) => {
+    const className = `.${key}-breakout`;
+
+    utilities[className] = properties.reduce((acc, prop) => {
+      acc[prop] = 'var(--breakout-padding)';
+      return acc;
+    }, {});
+  });
+
+  return utilities;
+};
+
+/**
  * Generates grid templates for different section types and alignments.
  */
 const createGridTemplate = (config, type = 'full', align = 'center') => {
@@ -774,6 +819,7 @@ module.exports = (config = {}) => {
         addUtilities({
           ...createSpacingUtilities(),
           ...createBreakoutPaddingUtilities(),
+          ...createBreakoutMarginUtilities(),
           ...createGridUtilities(pluginConfig, templates),
           ...createColumnUtilities(templates),
           '.col-full-limit': {

@@ -327,9 +327,11 @@ Uses the popout width value for specialized spacing:
 - **`*-popout`**: Specialized spacing that matches the popout extension distance
 - **`p-breakout`**: Fixed responsive padding for legacy project integration (see below)
 
-### Fixed Responsive Padding (p-breakout)
+### Fixed Responsive Spacing (p-breakout & m-breakout)
 
-For legacy projects that need traditional fixed padding with responsive breakpoints:
+For legacy projects that need traditional fixed spacing with responsive breakpoints:
+
+#### Padding Utilities
 
 ```html
 <!-- p-breakout: Responsive padding with built-in breakpoints -->
@@ -344,10 +346,25 @@ For legacy projects that need traditional fixed padding with responsive breakpoi
 <div class="pt-breakout pr-breakout pb-breakout pl-breakout">Individual sides</div>
 ```
 
+#### Margin Utilities
+
+```html
+<!-- m-breakout: Responsive margin with built-in breakpoints -->
+<div class="m-breakout">
+  <!-- Equivalent to: m-6 md:m-16 lg:m-20 -->
+  Fixed margin that scales with breakpoints
+</div>
+
+<!-- Directional variants -->
+<div class="mx-breakout">Horizontal margin only</div>
+<div class="my-breakout">Vertical margin only</div>
+<div class="mt-breakout mr-breakout mb-breakout ml-breakout">Individual sides</div>
+```
+
 **Default values:**
-- Base (mobile): `1.5rem` (equivalent to `p-6`)
-- Medium screens: `4rem` (equivalent to `p-16`)
-- Large screens: `5rem` (equivalent to `p-20`)
+- Base (mobile): `1.5rem` (equivalent to spacing-6)
+- Medium screens: `4rem` (equivalent to spacing-16)
+- Large screens: `5rem` (equivalent to spacing-20)
 
 **Customize in config:**
 ```js
@@ -361,10 +378,10 @@ breakoutGrid({
 })
 ```
 
-**When to use p-breakout vs p-gap:**
-- Use **p-breakout** for fixed, predictable padding that matches traditional Tailwind patterns
-- Use **p-gap** for dynamic padding that adapts to the grid's responsive gap values
-- Use **p-breakout** when migrating legacy projects with existing `p-6 md:p-16` patterns
+**When to use breakout spacing vs gap spacing:**
+- Use **p-breakout/m-breakout** for fixed, predictable spacing that matches traditional Tailwind patterns
+- Use **p-gap/m-gap** for dynamic spacing that adapts to the grid's responsive gap values
+- Use **p-breakout/m-breakout** when migrating legacy projects with existing `p-6 md:p-16` patterns
 
 ### Nested Grids (Left/Right Alignment)
 
@@ -978,8 +995,9 @@ This approach lets you:
 - `p-popout`, `px-popout`, `py-popout`, `pt-popout`, `pr-popout`, `pb-popout`, `pl-popout`
 - `m-popout`, `mx-popout`, `my-popout`, `mt-popout`, `mr-popout`, `mb-popout`, `ml-popout`
 
-**Fixed responsive padding:**
+**Fixed responsive spacing:**
 - `p-breakout`, `px-breakout`, `py-breakout`, `pt-breakout`, `pr-breakout`, `pb-breakout`, `pl-breakout`
+- `m-breakout`, `mx-breakout`, `my-breakout`, `mt-breakout`, `mr-breakout`, `mb-breakout`, `ml-breakout`
 
 ### CSS Custom Properties
 
