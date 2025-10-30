@@ -347,6 +347,14 @@ For legacy projects that need traditional fixed spacing with responsive breakpoi
 <div class="mx-breakout">Horizontal margin only</div>
 <div class="my-breakout">Vertical margin only</div>
 <div class="mt-breakout mr-breakout mb-breakout ml-breakout">Individual sides</div>
+
+<!-- Negative margins (useful for breaking out of containers) -->
+<div class="-mx-breakout">
+  <!-- Equivalent to: -mx-6 md:-mx-16 lg:-mx-20 -->
+  Negative horizontal margin
+</div>
+<div class="-my-breakout">Negative vertical margin</div>
+<div class="-mt-breakout -mr-breakout -mb-breakout -ml-breakout">Individual negative sides</div>
 ```
 
 **Default values:**
@@ -974,18 +982,22 @@ This approach lets you:
 **Gap-based spacing:**
 - `p-gap`, `px-gap`, `py-gap`, `pt-gap`, `pr-gap`, `pb-gap`, `pl-gap`
 - `m-gap`, `mx-gap`, `my-gap`, `mt-gap`, `mr-gap`, `mb-gap`, `ml-gap`
+- `-m-gap`, `-mx-gap`, `-my-gap`, `-mt-gap`, `-mr-gap`, `-mb-gap`, `-ml-gap` (negative margins)
 
 **Computed gap spacing:**
 - `p-full-gap`, `px-full-gap`, `py-full-gap`, `pt-full-gap`, `pr-full-gap`, `pb-full-gap`, `pl-full-gap`
 - `m-full-gap`, `mx-full-gap`, `my-full-gap`, `mt-full-gap`, `mr-full-gap`, `mb-full-gap`, `ml-full-gap`
+- `-m-full-gap`, `-mx-full-gap`, `-my-full-gap`, `-mt-full-gap`, `-mr-full-gap`, `-mb-full-gap`, `-ml-full-gap` (negative margins)
 
 **Popout-based spacing:**
 - `p-popout`, `px-popout`, `py-popout`, `pt-popout`, `pr-popout`, `pb-popout`, `pl-popout`
 - `m-popout`, `mx-popout`, `my-popout`, `mt-popout`, `mr-popout`, `mb-popout`, `ml-popout`
+- `-m-popout`, `-mx-popout`, `-my-popout`, `-mt-popout`, `-mr-popout`, `-mb-popout`, `-ml-popout` (negative margins)
 
 **Fixed responsive spacing:**
 - `p-breakout`, `px-breakout`, `py-breakout`, `pt-breakout`, `pr-breakout`, `pb-breakout`, `pl-breakout`
 - `m-breakout`, `mx-breakout`, `my-breakout`, `mt-breakout`, `mr-breakout`, `mb-breakout`, `ml-breakout`
+- `-m-breakout`, `-mx-breakout`, `-my-breakout`, `-mt-breakout`, `-mr-breakout`, `-mb-breakout`, `-ml-breakout` (negative margins)
 
 ### CSS Custom Properties
 

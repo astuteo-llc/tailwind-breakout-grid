@@ -259,14 +259,18 @@ const debugLog = (config, ...args) => {
 /**
  * Generates spacing utilities for gaps, computed gaps, and popout widths.
  * Creates utilities for both padding and margin with various directional options.
+ * Also generates negative versions for all margin utilities.
  *
  * Generated classes:
  * - .p-gap, .px-gap, .py-gap, .pt-gap, .pr-gap, .pb-gap, .pl-gap
  * - .m-gap, .mx-gap, .my-gap, .mt-gap, .mr-gap, .mb-gap, .ml-gap
+ * - .-m-gap, .-mx-gap, etc. (negative margins)
  * - .p-full-gap, .px-full-gap, etc. (using computed gap)
+ * - .m-full-gap, .-m-full-gap, etc. (using computed gap, with negative versions)
  * - .p-popout, .px-popout, etc. (using popout width)
+ * - .m-popout, .-m-popout, etc. (using popout width, with negative versions)
  *
- * @returns {Object} Spacing utility classes
+ * @returns {Object} Spacing utility classes (including negative margin utilities)
  * @private
  */
 const createSpacingUtilities = () => {
@@ -306,6 +310,26 @@ const createSpacingUtilities = () => {
             [prop]: 'var(--popout)'
           }), {})
       }
+
+      // Add negative versions for margin utilities only
+      if (key.startsWith('m')) {
+        utilities[`.-${key}-gap`] = [properties].flat()
+          .reduce((styles, prop) => ({
+            ...styles,
+            [prop]: 'calc(var(--gap) * -1)'
+          }), {})
+        utilities[`.-${key}-full-gap`] = [properties].flat()
+          .reduce((styles, prop) => ({
+            ...styles,
+            [prop]: 'calc(var(--computed-gap) * -1)'
+          }), {})
+        utilities[`.-${key}-popout`] = [properties].flat()
+          .reduce((styles, prop) => ({
+            ...styles,
+            [prop]: 'calc(var(--popout) * -1)'
+          }), {})
+      }
+
       return { ...acc, ...utilities }
     }, {})
 }
@@ -387,6 +411,7 @@ const createBreakoutPaddingUtilities = () => {
  * - .mx-breakout: Responsive horizontal margin
  * - .my-breakout: Responsive vertical margin
  * - .mt-breakout, .mr-breakout, .mb-breakout, .ml-breakout: Individual sides
+ * - Negative versions: -m-breakout, -mx-breakout, etc.
  *
  * These utilities use a CSS variable (--breakout-padding) that updates at breakpoints,
  * providing consistent spacing that matches p-breakout utilities.
@@ -394,7 +419,10 @@ const createBreakoutPaddingUtilities = () => {
  * Example: mx-breakout is equivalent to:
  *   mx-6 md:mx-16 lg:mx-20
  *
- * @returns {Object} Breakout margin utility classes
+ * Example: -mx-breakout is equivalent to:
+ *   -mx-6 md:-mx-16 lg:-mx-20
+ *
+ * @returns {Object} Breakout margin utility classes (positive and negative)
  * @private
  */
 const createBreakoutMarginUtilities = () => {
@@ -411,10 +439,17 @@ const createBreakoutMarginUtilities = () => {
   const utilities = {};
 
   Object.entries(spacingDirections).forEach(([key, properties]) => {
+    // Positive margin utilities
     const className = `.${key}-breakout`;
-
     utilities[className] = properties.reduce((acc, prop) => {
       acc[prop] = 'var(--breakout-padding)';
+      return acc;
+    }, {});
+
+    // Negative margin utilities
+    const negativeClassName = `.-${key}-breakout`;
+    utilities[negativeClassName] = properties.reduce((acc, prop) => {
+      acc[prop] = 'calc(var(--breakout-padding) * -1)';
       return acc;
     }, {});
   });
