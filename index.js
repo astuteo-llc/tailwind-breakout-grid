@@ -34,6 +34,76 @@ const GRID_AREAS = ['full', 'feature-popout', 'feature', 'popout', 'content', 'c
 const BREAKOUT_TYPES = GRID_AREAS.filter(area => area !== 'full')
 
 /**
+ * Validates if a string is a valid CSS unit.
+ * Checks for common CSS units like rem, em, px, vw, vh, %, etc.
+ * 
+ * @param {string} value - The CSS value to validate
+ * @returns {boolean} True if valid CSS unit, false otherwise
+ * @private
+ */
+const isValidCSSUnit = (value) => {
+  if (typeof value !== 'string') return false
+  
+  // Allow CSS functions like clamp(), calc(), min(), max()
+  if (/^(clamp|calc|min|max|var)\s*\(/.test(value.trim())) return true
+  
+  // Check for valid CSS units
+  const cssUnitRegex = /^-?(\d*\.?\d+)(rem|em|px|pt|pc|in|cm|mm|ex|ch|vw|vh|vmin|vmax|%|fr)$/
+  return cssUnitRegex.test(value.trim())
+}
+
+/**
+ * Validates the plugin configuration and logs warnings for invalid values.
+ * Does not throw errors to avoid breaking builds, only provides helpful warnings.
+ * 
+ * @param {Object} config - The plugin configuration to validate
+ * @returns {Object} Validation result with warnings array
+ * @private
+ */
+const validateConfig = (config) => {
+  const warnings = []
+  
+  // Validate CSS unit properties
+  const cssUnitProperties = [
+    'baseGap', 'maxGap', 'narrowMin', 'narrowMax', 'narrowBase',
+    'featurePopoutWidth', 'featureWidth', 'popoutWidth', 'content', 'fullLimit'
+  ]
+  
+  cssUnitProperties.forEach(prop => {
+    if (config[prop] && !isValidCSSUnit(config[prop])) {
+      warnings.push(`Invalid CSS unit for '${prop}': '${config[prop]}'. Expected a valid CSS unit like '1rem', '10px', '4vw', etc.`)
+    }
+  })
+  
+  // Validate gapScale values
+  if (config.gapScale && typeof config.gapScale === 'object') {
+    Object.entries(config.gapScale).forEach(([breakpoint, value]) => {
+      if (!isValidCSSUnit(value)) {
+        warnings.push(`Invalid CSS unit for gapScale.${breakpoint}: '${value}'. Expected a valid CSS unit like '4vw', '2rem', etc.`)
+      }
+    })
+  } else if (config.gapScale && typeof config.gapScale === 'string' && !isValidCSSUnit(config.gapScale)) {
+    warnings.push(`Invalid CSS unit for gapScale: '${config.gapScale}'. Expected a valid CSS unit like '4vw', '2rem', etc.`)
+  }
+  
+  // Validate breakoutPadding values
+  if (config.breakoutPadding && typeof config.breakoutPadding === 'object') {
+    Object.entries(config.breakoutPadding).forEach(([breakpoint, value]) => {
+      if (!isValidCSSUnit(value)) {
+        warnings.push(`Invalid CSS unit for breakoutPadding.${breakpoint}: '${value}'. Expected a valid CSS unit like '1.5rem', '4rem', etc.`)
+      }
+    })
+  }
+  
+  // Validate defaultCol is a valid grid area
+  if (config.defaultCol && !GRID_AREAS.includes(config.defaultCol)) {
+    warnings.push(`Invalid defaultCol: '${config.defaultCol}'. Must be one of: ${GRID_AREAS.join(', ')}`)
+  }
+  
+  return { warnings }
+}
+
+/**
  * Default configuration values for the grid system.
  * These can be overridden in tailwind.config.js
  *
@@ -136,25 +206,41 @@ const defaultConfig = {
  * @returns {Object} CSS custom properties object
  * @private
  */
-const createRootCSS = (pluginConfig) => ({
-  '--base-gap': pluginConfig.baseGap,
-  '--max-gap': pluginConfig.maxGap,
-  '--narrow-min': pluginConfig.narrowMin,
-  '--narrow-max': pluginConfig.narrowMax,
-  '--narrow-base': pluginConfig.narrowBase,
-  '--gap': `clamp(var(--base-gap), ${pluginConfig.gapScale.default}, var(--max-gap))`,
-  '--computed-gap': 'max(var(--gap), calc((100vw - var(--narrow)) / 10))',
-  '--full-limit': pluginConfig.fullLimit,
-  '--narrow-inset': 'min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), calc(100% - var(--gap)))',
-  '--full': 'minmax(var(--gap), 1fr)',
-  '--feature-popout': `minmax(0, ${pluginConfig.featurePopoutWidth})`,
-  '--feature': `minmax(0, ${pluginConfig.featureWidth})`,
-  '--popout': `minmax(0, ${pluginConfig.popoutWidth})`,
-  '--content': `minmax(0, ${pluginConfig.content})`,
-  '--narrow': 'min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), 100% - var(--gap) * 2)',
-  '--narrow-half': 'calc(var(--narrow) / 2)',
-  '--breakout-padding': pluginConfig.breakoutPadding.base,
-})
+const createRootCSS = (pluginConfig) => {
+  try {
+    return {
+      '--base-gap': pluginConfig.baseGap,
+      '--max-gap': pluginConfig.maxGap,
+      '--narrow-min': pluginConfig.narrowMin,
+      '--narrow-max': pluginConfig.narrowMax,
+      '--narrow-base': pluginConfig.narrowBase,
+      '--gap': `clamp(var(--base-gap), ${pluginConfig.gapScale.default}, var(--max-gap))`,
+      '--computed-gap': 'max(var(--gap), calc((100vw - var(--narrow)) / 10))',
+      '--full-limit': pluginConfig.fullLimit,
+      '--narrow-inset': 'min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), calc(100% - var(--gap)))',
+      '--full': 'minmax(var(--gap), 1fr)',
+      '--feature-popout': `minmax(0, ${pluginConfig.featurePopoutWidth})`,
+      '--feature': `minmax(0, ${pluginConfig.featureWidth})`,
+      '--popout': `minmax(0, ${pluginConfig.popoutWidth})`,
+      '--content': `minmax(0, ${pluginConfig.content})`,
+      '--narrow': 'min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), 100% - var(--gap) * 2)',
+      '--narrow-half': 'calc(var(--narrow) / 2)',
+      '--breakout-padding': pluginConfig.breakoutPadding.base,
+    }
+  } catch (error) {
+    console.warn(`Tailwind Breakout Grid Plugin - Error creating CSS custom properties: ${error.message}. This may be due to invalid or malformed configuration values (e.g., invalid CSS units or property names). Please check your plugin configuration for errors. Using fallback values.`)
+    
+    // Return minimal fallback CSS properties
+    return {
+      '--base-gap': '1rem',
+      '--max-gap': '15rem',
+      '--gap': '4vw',
+      '--narrow': '50rem',
+      '--full': 'minmax(var(--gap), 1fr)',
+      '--breakout-padding': '1.5rem'
+    }
+  }
+}
 
 /**
  * Helper function for debug logging.
@@ -292,18 +378,73 @@ const createBreakoutPaddingUtilities = () => {
 };
 
 /**
+ * Generates fixed responsive margin utilities for legacy project integration.
+ * Creates utilities that mimic traditional Tailwind responsive margin patterns
+ * but are pre-configured for breakout grid contexts.
+ *
+ * Generated classes:
+ * - .m-breakout: Responsive margin on all sides
+ * - .mx-breakout: Responsive horizontal margin
+ * - .my-breakout: Responsive vertical margin
+ * - .mt-breakout, .mr-breakout, .mb-breakout, .ml-breakout: Individual sides
+ *
+ * These utilities use a CSS variable (--breakout-padding) that updates at breakpoints,
+ * providing consistent spacing that matches p-breakout utilities.
+ *
+ * Example: mx-breakout is equivalent to:
+ *   mx-6 md:mx-16 lg:mx-20
+ *
+ * @returns {Object} Breakout margin utility classes
+ * @private
+ */
+const createBreakoutMarginUtilities = () => {
+  const spacingDirections = {
+    m: ['margin'],
+    mx: ['margin-left', 'margin-right'],
+    my: ['margin-top', 'margin-bottom'],
+    mt: ['margin-top'],
+    mr: ['margin-right'],
+    mb: ['margin-bottom'],
+    ml: ['margin-left']
+  };
+
+  const utilities = {};
+
+  Object.entries(spacingDirections).forEach(([key, properties]) => {
+    const className = `.${key}-breakout`;
+
+    utilities[className] = properties.reduce((acc, prop) => {
+      acc[prop] = 'var(--breakout-padding)';
+      return acc;
+    }, {});
+  });
+
+  return utilities;
+};
+
+/**
  * Generates grid templates for different section types and alignments.
  */
 const createGridTemplate = (config, type = 'full', align = 'center') => {
-  debugLog(config, `Creating grid template for type: ${type}, align: ${align}`)
+  let validatedType = type
+  let validatedAlign = align
 
-  // Validate that type exists in our allowed types (except 'full' which is default)
-  if (type !== 'full' && !BREAKOUT_TYPES.includes(type)) {
-    console.warn(`Invalid grid type: ${type}`)
-    return ''
+  try {
+    // Validate that type exists in our allowed types (except 'full' which is default)
+    if (type !== 'full' && !BREAKOUT_TYPES.includes(type)) {
+      console.warn(`Tailwind Breakout Grid Plugin - Invalid grid type: ${type}. Using default template.`)
+      validatedType = 'full'
+      validatedAlign = 'center'
+    }
+  } catch (error) {
+    console.warn(`Tailwind Breakout Grid Plugin - Error validating grid template parameters: ${error.message}. Using default template.`)
+    validatedType = 'full'
+    validatedAlign = 'center'
   }
 
-  if (type === 'feature-popout' && align === 'left') {
+  debugLog(config, `Creating grid template for type: ${validatedType}, align: ${validatedAlign}`)
+
+  if (validatedType === 'feature-popout' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -318,7 +459,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
     return template
   }
 
-  if (type === 'feature-popout' && align === 'right') {
+  if (validatedType === 'feature-popout' && validatedAlign === 'right') {
     const template = `[full-start feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
     [popout-start] var(--popout)
@@ -336,7 +477,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Feature Left Template
    */
-  if (type === 'feature' && align === 'left') {
+  if (validatedType === 'feature' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -353,7 +494,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Feature Right Template
    */
-  if (type === 'feature' && align === 'right') {
+  if (validatedType === 'feature' && validatedAlign === 'right') {
     const template = `[full-start feature-start] var(--feature)
     [popout-start] var(--popout)
     [content-start] var(--content)
@@ -370,7 +511,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Content Left Template
    */
-  if (type === 'content' && align === 'left') {
+  if (validatedType === 'content' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -385,7 +526,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Content Right Template
    */
-  if (type === 'content' && align === 'right') {
+  if (validatedType === 'content' && validatedAlign === 'right') {
     const template = `[full-start content-start] var(--content)
     [narrow-start] var(--narrow-inset) [narrow-end]
     var(--content) [content-end]
@@ -400,7 +541,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Popout Left Template
    */
-  if (type === 'popout' && align === 'left') {
+  if (validatedType === 'popout' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -416,7 +557,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Popout Right Template
    */
-  if (type === 'popout' && align === 'right') {
+  if (validatedType === 'popout' && validatedAlign === 'right') {
     const template = `[full-start popout-start] var(--popout)
     [content-start] var(--content)
     [narrow-start] var(--narrow-inset) [narrow-end]
@@ -432,7 +573,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Narrow Left Template
    */
-  if (type === 'narrow' && align === 'left') {
+  if (validatedType === 'narrow' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
     [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
@@ -446,7 +587,7 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   /**
    * Narrow Right Template
    */
-  if (type === 'narrow' && align === 'right') {
+  if (validatedType === 'narrow' && validatedAlign === 'right') {
     const template = `[full-start narrow-start] var(--narrow-inset) [narrow-end content-end]
     var(--popout) [popout-end]
     var(--feature) [feature-end]
@@ -491,24 +632,37 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
  * @private
  */
 const generateTemplates = (config) => {
-  debugLog(config, 'Generating all templates')
+  try {
+    debugLog(config, 'Generating all templates')
 
-  // Start with the default template
-  const templates = {
-    default: createGridTemplate(config)
+    // Start with the default template
+    const templates = {
+      default: createGridTemplate(config)
+    }
+
+    // Generate left and right templates for each breakout type
+    BREAKOUT_TYPES.forEach(type => {
+      try {
+        // Convert kebab-case to camelCase for template names
+        const templateType = type.replace(/-([a-z])/g, g => g[1].toUpperCase())
+
+        templates[`${templateType}Left`] = createGridTemplate(config, type, 'left')
+        templates[`${templateType}Right`] = createGridTemplate(config, type, 'right')
+      } catch (error) {
+        console.warn(`Tailwind Breakout Grid Plugin - Error generating template for type '${type}': ${error.message}. Skipping this template.`)
+      }
+    })
+
+    debugLog(config, 'Generated templates:', templates)
+    return templates
+  } catch (error) {
+    console.warn(`Tailwind Breakout Grid Plugin - Error generating templates: ${error.message}. Using minimal template set.`)
+    
+    // Return minimal template set as fallback
+    return {
+      default: '[full-start] 1fr [narrow-start] minmax(0, 50rem) [narrow-end] 1fr [full-end]'
+    }
   }
-
-  // Generate left and right templates for each breakout type
-  BREAKOUT_TYPES.forEach(type => {
-    // Convert kebab-case to camelCase for template names
-    const templateType = type.replace(/-([a-z])/g, g => g[1].toUpperCase())
-
-    templates[`${templateType}Left`] = createGridTemplate(config, type, 'left')
-    templates[`${templateType}Right`] = createGridTemplate(config, type, 'right')
-  })
-
-  debugLog(config, 'Generated templates:', templates)
-  return templates
 }
 
 /**
@@ -606,69 +760,110 @@ const createGridUtilities = (config, templates) => {
  *   }
  * })
  */
-export default (config = {}) => {
-  const pluginConfig = {
-    ...defaultConfig,
-    ...config,
-    gapScale: {
-      ...defaultConfig.gapScale,
-      ...(typeof config.gapScale === 'string' ? { default: config.gapScale } : config.gapScale || {})
+module.exports = (config = {}) => {
+  try {
+    // Validate configuration and log warnings
+    const validation = validateConfig(config)
+    if (validation.warnings.length > 0) {
+      console.warn('Tailwind Breakout Grid Plugin - Configuration warnings:')
+      validation.warnings.forEach(warning => console.warn(`  - ${warning}`))
     }
-  }
-
-  return ({
-    addBase,
-    theme,
-    addUtilities
-  }) => {
-    const screens = theme('screens', {})
-    const templates = generateTemplates(pluginConfig)
-    const rootCSS = createRootCSS(pluginConfig)
-
-    // Add responsive gap scaling and breakout padding media queries
-    const mediaQueries = Object.entries(screens)
-      .reduce((acc, [breakpoint, minWidth]) => {
-        const mediaQuery = `@media (min-width: ${minWidth})`;
-
-        if (!acc[mediaQuery]) {
-          acc[mediaQuery] = {};
-        }
-
-        // Add gap scaling for this breakpoint
-        if (pluginConfig.gapScale[breakpoint]) {
-          acc[mediaQuery]['--gap'] = `clamp(var(--base-gap), ${pluginConfig.gapScale[breakpoint]}, var(--max-gap))`;
-        }
-
-        // Add breakout padding for this breakpoint
-        if (pluginConfig.breakoutPadding[breakpoint]) {
-          acc[mediaQuery]['--breakout-padding'] = pluginConfig.breakoutPadding[breakpoint];
-        }
-
-        return acc;
-      }, {})
-
-    // Add base styles
-    addBase({
-      ':root': { ...rootCSS, ...mediaQueries },
-      '[class*=\'grid-cols-breakout\'] > *:not([class*=\'col-\'])': {
-        'grid-column': pluginConfig.defaultCol
+    
+    const pluginConfig = {
+      ...defaultConfig,
+      ...config,
+      gapScale: {
+        ...defaultConfig.gapScale,
+        ...(typeof config.gapScale === 'string' ? { default: config.gapScale } : config.gapScale || {})
       }
-    })
+    }
 
-    // Add all utility classes
-    addUtilities({
-      ...createSpacingUtilities(),
-      ...createBreakoutPaddingUtilities(),
-      ...createGridUtilities(pluginConfig, templates),
-      ...createColumnUtilities(templates),
-      '.col-full-limit': {
-        'grid-column': 'full',
-        'width': '100%',
-        'max-width': 'var(--full-limit)',
-        'margin-left': 'auto',
-        'margin-right': 'auto',
-        'box-sizing': 'border-box'
+    return ({
+      addBase,
+      theme,
+      addUtilities
+    }) => {
+      try {
+        const screens = theme('screens', {})
+        const templates = generateTemplates(pluginConfig)
+        const rootCSS = createRootCSS(pluginConfig)
+
+        // Add responsive gap scaling and breakout padding media queries
+        const mediaQueries = Object.entries(screens)
+          .reduce((acc, [breakpoint, minWidth]) => {
+            const mediaQuery = `@media (min-width: ${minWidth})`;
+
+            if (!acc[mediaQuery]) {
+              acc[mediaQuery] = {};
+            }
+
+            // Add gap scaling for this breakpoint
+            if (pluginConfig.gapScale[breakpoint]) {
+              acc[mediaQuery]['--gap'] = `clamp(var(--base-gap), ${pluginConfig.gapScale[breakpoint]}, var(--max-gap))`;
+            }
+
+            // Add breakout padding for this breakpoint
+            if (pluginConfig.breakoutPadding[breakpoint]) {
+              acc[mediaQuery]['--breakout-padding'] = pluginConfig.breakoutPadding[breakpoint];
+            }
+
+            return acc;
+          }, {})
+
+        // Add base styles
+        addBase({
+          ':root': { ...rootCSS, ...mediaQueries },
+          '[class*=\'grid-cols-breakout\'] > *:not([class*=\'col-\'])': {
+            'grid-column': pluginConfig.defaultCol
+          }
+        })
+
+        // Add all utility classes
+        addUtilities({
+          ...createSpacingUtilities(),
+          ...createBreakoutPaddingUtilities(),
+          ...createBreakoutMarginUtilities(),
+          ...createGridUtilities(pluginConfig, templates),
+          ...createColumnUtilities(templates),
+          '.col-full-limit': {
+            'grid-column': 'full',
+            'width': '100%',
+            'max-width': 'var(--full-limit)',
+            'margin-left': 'auto',
+            'margin-right': 'auto',
+            'box-sizing': 'border-box'
+          }
+        })
+      } catch (error) {
+        console.error('Tailwind Breakout Grid Plugin - Error during CSS generation:', error)
+        console.warn('Tailwind Breakout Grid Plugin - Falling back to minimal grid configuration to prevent build failure')
+        
+        // Provide minimal fallback to prevent build failures
+        addBase({
+          ':root': {
+            '--gap': '1rem',
+            '--narrow': '50rem',
+            '--full': 'minmax(var(--gap), 1fr)'
+          }
+        })
+        
+        addUtilities({
+          '.grid-cols-breakout': {
+            'display': 'grid',
+            'grid-template-columns': '[full-start] var(--full) [narrow-start] var(--narrow) [narrow-end] var(--full) [full-end]'
+          },
+          '.col-narrow': { 'grid-column': 'narrow' },
+          '.col-full': { 'grid-column': 'full' }
+        })
       }
-    })
+    }
+  } catch (error) {
+    console.error('Tailwind Breakout Grid Plugin - Critical error during plugin initialization:', error)
+    console.warn('Tailwind Breakout Grid Plugin - Plugin disabled to prevent build failure')
+    
+    // Return a no-op plugin to prevent build failures.
+    // This function intentionally accepts no arguments and returns nothing,
+    // as required by the Tailwind plugin API for plugin functions.
+    return () => {}
   }
 };
