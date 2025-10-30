@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.6] - 2025-10-30
+
+### Fixed
+
+- **Tailwind v4 Compatibility:**
+  - Fixed negative margin utilities to use `matchUtilities` API instead of `addUtilities`
+  - Negative margins now work properly: `-m-gap`, `-mx-breakout`, etc.
+  - Follows Tailwind's built-in pattern for negative value support
+
 ## [1.1.5] - 2025-10-30
 
 ### Added
@@ -96,6 +105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic default column assignment for child elements
 - Debug mode for template generation logging
 
+[1.1.6]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.6
 [1.1.5]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.5
 [1.1.2]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.2
 [1.1.1]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.1

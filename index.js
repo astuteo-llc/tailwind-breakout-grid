@@ -259,18 +259,16 @@ const debugLog = (config, ...args) => {
 /**
  * Generates spacing utilities for gaps, computed gaps, and popout widths.
  * Creates utilities for both padding and margin with various directional options.
- * Also generates negative versions for all margin utilities.
  *
  * Generated classes:
  * - .p-gap, .px-gap, .py-gap, .pt-gap, .pr-gap, .pb-gap, .pl-gap
  * - .m-gap, .mx-gap, .my-gap, .mt-gap, .mr-gap, .mb-gap, .ml-gap
- * - .-m-gap, .-mx-gap, etc. (negative margins)
  * - .p-full-gap, .px-full-gap, etc. (using computed gap)
- * - .m-full-gap, .-m-full-gap, etc. (using computed gap, with negative versions)
+ * - .m-full-gap, etc. (using computed gap)
  * - .p-popout, .px-popout, etc. (using popout width)
- * - .m-popout, .-m-popout, etc. (using popout width, with negative versions)
+ * - .m-popout, etc. (using popout width)
  *
- * @returns {Object} Spacing utility classes (including negative margin utilities)
+ * @returns {Object} Spacing utility classes
  * @private
  */
 const createSpacingUtilities = () => {
@@ -308,25 +306,6 @@ const createSpacingUtilities = () => {
           .reduce((styles, prop) => ({
             ...styles,
             [prop]: 'var(--popout)'
-          }), {})
-      }
-
-      // Add negative versions for margin utilities only
-      if (key.startsWith('m')) {
-        utilities[`.-${key}-gap`] = [properties].flat()
-          .reduce((styles, prop) => ({
-            ...styles,
-            [prop]: 'calc(var(--gap) * -1)'
-          }), {})
-        utilities[`.-${key}-full-gap`] = [properties].flat()
-          .reduce((styles, prop) => ({
-            ...styles,
-            [prop]: 'calc(var(--computed-gap) * -1)'
-          }), {})
-        utilities[`.-${key}-popout`] = [properties].flat()
-          .reduce((styles, prop) => ({
-            ...styles,
-            [prop]: 'calc(var(--popout) * -1)'
           }), {})
       }
 
@@ -439,17 +418,9 @@ const createBreakoutMarginUtilities = () => {
   const utilities = {};
 
   Object.entries(spacingDirections).forEach(([key, properties]) => {
-    // Positive margin utilities
     const className = `.${key}-breakout`;
     utilities[className] = properties.reduce((acc, prop) => {
       acc[prop] = 'var(--breakout-padding)';
-      return acc;
-    }, {});
-
-    // Negative margin utilities
-    const negativeClassName = `.-${key}-breakout`;
-    utilities[negativeClassName] = properties.reduce((acc, prop) => {
-      acc[prop] = 'calc(var(--breakout-padding) * -1)';
       return acc;
     }, {});
   });
@@ -816,7 +787,8 @@ module.exports = (config = {}) => {
     return ({
       addBase,
       theme,
-      addUtilities
+      addUtilities,
+      matchUtilities
     }) => {
       try {
         const screens = theme('screens', {})
@@ -868,6 +840,33 @@ module.exports = (config = {}) => {
             'margin-right': 'auto',
             'box-sizing': 'border-box'
           }
+        })
+
+        // Add negative margin utilities using matchUtilities for proper Tailwind support
+        const marginDirections = {
+          m: ['margin'],
+          mx: ['margin-left', 'margin-right'],
+          my: ['margin-top', 'margin-bottom'],
+          mt: ['margin-top'],
+          mr: ['margin-right'],
+          mb: ['margin-bottom'],
+          ml: ['margin-left']
+        }
+
+        // Negative margins for gap-based spacing
+        Object.entries(marginDirections).forEach(([key, properties]) => {
+          matchUtilities(
+            { [key]: (value) => properties.reduce((acc, prop) => ({ ...acc, [prop]: value }), {}) },
+            {
+              values: {
+                gap: 'var(--gap)',
+                'full-gap': 'var(--computed-gap)',
+                popout: 'var(--popout)',
+                breakout: 'var(--breakout-padding)'
+              },
+              supportsNegativeValues: true
+            }
+          )
         })
       } catch (error) {
         console.error('Tailwind Breakout Grid Plugin - Error during CSS generation:', error)
