@@ -430,8 +430,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
   let validatedAlign = align
 
   try {
-    debugLog(config, `Creating grid template for type: ${type}, align: ${align}`)
-
     // Validate that type exists in our allowed types (except 'full' which is default)
     if (type !== 'full' && !BREAKOUT_TYPES.includes(type)) {
       console.warn(`Tailwind Breakout Grid Plugin - Invalid grid type: ${type}. Using default template.`)
@@ -443,6 +441,8 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
     validatedType = 'full'
     validatedAlign = 'center'
   }
+
+  debugLog(config, `Creating grid template for type: ${validatedType}, align: ${validatedAlign}`)
 
   if (validatedType === 'feature-popout' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
