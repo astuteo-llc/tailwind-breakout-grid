@@ -42,12 +42,13 @@
 
       // Grid areas configuration (matches plugin)
       gridAreas: [
-        { name: 'full', label: 'Full', color: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgb(239, 68, 68)' },
-        { name: 'feature-popout', label: 'Feature Popout', color: 'rgba(249, 115, 22, 0.1)', borderColor: 'rgb(249, 115, 22)' },
-        { name: 'feature', label: 'Feature', color: 'rgba(234, 179, 8, 0.1)', borderColor: 'rgb(234, 179, 8)' },
-        { name: 'popout', label: 'Popout', color: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgb(34, 197, 94)' },
-        { name: 'content', label: 'Content', color: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgb(59, 130, 246)' },
-        { name: 'narrow', label: 'Narrow', color: 'rgba(168, 85, 247, 0.1)', borderColor: 'rgb(168, 85, 247)' },
+        { name: 'full', label: 'Full', className: '.col-full', color: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgb(239, 68, 68)' },
+        { name: 'full-limit', label: 'Full Limit', className: '.col-full-limit', color: 'rgba(220, 38, 38, 0.1)', borderColor: 'rgb(220, 38, 38)' },
+        { name: 'feature-popout', label: 'Feature Popout', className: '.col-feature-popout', color: 'rgba(249, 115, 22, 0.1)', borderColor: 'rgb(249, 115, 22)' },
+        { name: 'feature', label: 'Feature', className: '.col-feature', color: 'rgba(234, 179, 8, 0.1)', borderColor: 'rgb(234, 179, 8)' },
+        { name: 'popout', label: 'Popout', className: '.col-popout', color: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgb(34, 197, 94)' },
+        { name: 'content', label: 'Content', className: '.col-content', color: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgb(59, 130, 246)' },
+        { name: 'narrow', label: 'Narrow', className: '.col-narrow', color: 'rgba(168, 85, 247, 0.1)', borderColor: 'rgb(168, 85, 247)' },
       ],
 
       // CSS variables to display
@@ -146,7 +147,7 @@
                        transform: 'translate(-50%, -50%)',
                        backgroundColor: area.borderColor,
                        color: 'white',
-                       padding: '0.5rem 1rem',
+                       padding: '0.75rem 1rem',
                        borderRadius: '0.375rem',
                        fontSize: '0.75rem',
                        fontWeight: '600',
@@ -154,9 +155,18 @@
                        letterSpacing: '0.05em',
                        whiteSpace: 'nowrap',
                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                       opacity: isSelected(area.name) ? '1' : '0.8'
-                     }"
-                     x-text="area.label">
+                       opacity: isSelected(area.name) ? '1' : '0.8',
+                       textAlign: 'center'
+                     }">
+                  <div x-text="area.label"></div>
+                  <div :style="{
+                    fontSize: '0.625rem',
+                    fontWeight: '500',
+                    textTransform: 'none',
+                    marginTop: '0.25rem',
+                    opacity: '0.9',
+                    fontFamily: 'monospace'
+                  }" x-text="area.className"></div>
                 </div>
               </div>
             </template>
@@ -221,7 +231,7 @@
               <div style="font-size: 0.75rem; font-weight: 600; color: #1e40af; margin-bottom: 0.25rem;">
                 Selected Column
               </div>
-              <div style="font-size: 0.875rem; color: #1e3a8a; font-weight: 700;" x-text="'col-' + selectedArea"></div>
+              <div style="font-size: 0.875rem; color: #1e3a8a; font-weight: 700; font-family: monospace;" x-text="gridAreas.find(a => a.name === selectedArea)?.className || ''"></div>
               <div style="font-size: 0.625rem; color: #3b82f6; margin-top: 0.25rem;">
                 Click another column to compare
               </div>
