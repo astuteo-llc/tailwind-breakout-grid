@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breakout Grid Demo - Tailwind Plugin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Simulate the breakout-grid plugin CSS */
+    :root {
+      --base-gap: 1.5rem;
+      --max-gap: 15rem;
+      --narrow-min: 40rem;
+      --narrow-max: 50rem;
+      --narrow-base: 52vw;
+      --gap: clamp(var(--base-gap), 4vw, var(--max-gap));
+      --computed-gap: max(var(--gap), calc((100vw - var(--narrow)) / 10));
+      --full-limit: 120rem;
+      --narrow-inset: min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), calc(100% - var(--gap)));
+      --full: minmax(var(--gap), 1fr);
+      --feature-popout: minmax(0, 5rem);
+      --feature: minmax(0, 6vw);
+      --popout: minmax(0, 5rem);
+      --content: minmax(0, 4vw);
+      --narrow: min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), 100% - var(--gap) * 2);
+      --narrow-half: calc(var(--narrow) / 2);
+    }
+
+    @media (min-width: 1024px) {
+      :root {
+        --gap: clamp(var(--base-gap), 5vw, var(--max-gap));
+      }
+    }
+
+    @media (min-width: 1280px) {
+      :root {
+        --gap: clamp(var(--base-gap), 6vw, var(--max-gap));
+      }
+    }
+
+    .grid-cols-breakout {
+      display: grid;
+      grid-template-columns:
+        [full-start] var(--full)
+        [feature-popout-start] var(--feature-popout)
+        [feature-start] var(--feature)
+        [popout-start] var(--popout)
+        [content-start] var(--content)
+        [narrow-start] var(--narrow-half) [center-start center-end] var(--narrow-half) [narrow-end]
+        var(--content) [content-end]
+        var(--popout) [popout-end]
+        var(--feature) [feature-end]
+        var(--feature-popout) [feature-popout-end]
+        var(--full) [full-end];
+    }
+
+    .grid-cols-breakout > *:not([class*='col-']) {
+      grid-column: content;
+    }
+
+    /* Column utilities */
+    .col-narrow { grid-column: narrow; }
+    .col-content { grid-column: content; }
+    .col-popout { grid-column: popout; }
+    .col-feature { grid-column: feature; }
+    .col-feature-popout { grid-column: feature-popout; }
+    .col-full { grid-column: full; }
+    .col-full-limit {
+      grid-column: full;
+      width: 100%;
+      max-width: var(--full-limit);
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+    }
+
+    /* Spacing utilities */
+    .p-gap { padding: var(--gap); }
+    .px-gap { padding-left: var(--gap); padding-right: var(--gap); }
+    .py-gap { padding-top: var(--gap); padding-bottom: var(--gap); }
+    .pt-gap { padding-top: var(--gap); }
+    .pr-gap { padding-right: var(--gap); }
+    .pb-gap { padding-bottom: var(--gap); }
+    .pl-gap { padding-left: var(--gap); }
+
+    /* Nested grid - feature left */
+    .grid-cols-feature-left {
+      display: grid;
+      grid-template-columns:
+        [full-start] var(--full)
+        [feature-popout-start] var(--feature-popout)
+        [feature-start] var(--feature)
+        [popout-start] var(--popout)
+        [content-start] var(--content)
+        [narrow-start] var(--narrow-inset) [narrow-end]
+        var(--content) [content-end]
+        var(--popout) [popout-end]
+        var(--feature) [feature-end full-end];
+    }
+
+    /* Nested grid - content right */
+    .grid-cols-content-right {
+      display: grid;
+      grid-template-columns:
+        [full-start content-start] var(--content)
+        [narrow-start] var(--narrow-inset) [narrow-end]
+        var(--content) [content-end]
+        var(--popout) [popout-end]
+        var(--feature) [feature-end]
+        var(--feature-popout) [feature-popout-end]
+        var(--full) [full-end];
+    }
+
+    /* Demo styling */
+    .demo-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .demo-box {
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .grid-overlay {
+      background-image:
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 0.05) 0px,
+          rgba(255, 0, 0, 0.05) 1px,
+          transparent 1px,
+          transparent 50px
+        );
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div class="max-w-[100vw] overflow-x-hidden">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 py-8 mb-12">
+      <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-4xl font-bold mb-2">Breakout Grid Demo</h1>
+        <p class="text-gray-600">Visual demonstration of the Tailwind breakout-grid plugin</p>
+      </div>
+    </header>
+
+    <!-- Section 1: Column Width Hierarchy -->
+    <section class="mb-16">
+      <div class="max-w-7xl mx-auto px-4 mb-8">
+        <h2 class="text-3xl font-bold mb-2">Column Width Hierarchy</h2>
+        <p class="text-gray-600">From narrowest to widest - resize your browser to see responsive behavior</p>
+      </div>
+
+      <div class="grid-cols-breakout gap-y-6">
+        <div class="col-narrow">
+          <div class="demo-label">col-narrow</div>
+          <div class="demo-box bg-purple-100 border-2 border-purple-400">
+            <p class="text-sm">Optimal reading width (40-50rem). Perfect for long-form text content and articles.</p>
+          </div>
+        </div>
+
+        <div class="col-content">
+          <div class="demo-label">col-content (default)</div>
+          <div class="demo-box bg-blue-100 border-2 border-blue-400">
+            <p class="text-sm">Standard content width (~4vw on each side). This is the default column if no class is specified.</p>
+          </div>
+        </div>
+
+        <div class="col-popout">
+          <div class="demo-label">col-popout</div>
+          <div class="demo-box bg-green-100 border-2 border-green-400">
+            <p class="text-sm">Pops out slightly into the margins (~5rem on each side). Great for blockquotes and callouts.</p>
+          </div>
+        </div>
+
+        <div class="col-feature">
+          <div class="demo-label">col-feature</div>
+          <div class="demo-box bg-yellow-100 border-2 border-yellow-400">
+            <p class="text-sm">Extra wide for emphasis content (~6vw extension). Ideal for hero images and featured content.</p>
+          </div>
+        </div>
+
+        <div class="col-feature-popout">
+          <div class="demo-label">col-feature-popout</div>
+          <div class="demo-box bg-orange-100 border-2 border-orange-400">
+            <p class="text-sm">Maximum content width (~5rem + 6vw). Perfect for hero sections and major visual emphasis.</p>
+          </div>
+        </div>
+
+        <div class="col-full">
+          <div class="demo-label px-gap">col-full</div>
+          <div class="demo-box bg-red-100 border-2 border-red-400">
+            <p class="text-sm">Full viewport width (edge-to-edge with gap padding). Use for full-bleed sections.</p>
+          </div>
+        </div>
+
+        <div class="col-full-limit">
+          <div class="demo-label">col-full-limit</div>
+          <div class="demo-box bg-pink-100 border-2 border-pink-400">
+            <p class="text-sm">Full width but never exceeds fullLimit (120rem by default). Best for wide containers on ultra-wide screens.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Article Layout Example -->
+    <section class="mb-16">
+      <div class="max-w-7xl mx-auto px-4 mb-8">
+        <h2 class="text-3xl font-bold mb-2">Article Layout Example</h2>
+        <p class="text-gray-600">A typical editorial layout with varied content widths</p>
+      </div>
+
+      <article class="grid-cols-breakout gap-y-8">
+        <h1 class="col-content text-4xl font-bold text-gray-900">
+          The Art of Responsive Typography
+        </h1>
+
+        <p class="col-narrow text-lg leading-relaxed text-gray-700">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. The narrow column provides optimal reading width
+          for long-form content, typically between 40-50rem for comfortable reading. This width has been scientifically
+          proven to be the most comfortable for extended reading sessions.
+        </p>
+
+        <div class="col-feature">
+          <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=600&fit=crop"
+               alt="Hero image"
+               class="w-full h-[400px] object-cover rounded-lg shadow-lg">
+        </div>
+
+        <p class="col-narrow text-lg leading-relaxed text-gray-700">
+          Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Notice how body paragraphs stay
+          within the narrow column for readability, while images can break out to wider columns for visual impact.
+        </p>
+
+        <blockquote class="col-popout bg-blue-50 p-gap rounded-lg border-l-4 border-blue-500">
+          <p class="text-xl italic text-gray-800">
+            "The popout column is perfect for blockquotes and callouts that need visual distinction
+            without overwhelming the layout."
+          </p>
+          <cite class="text-sm text-gray-600 mt-2 block">— Design Expert</cite>
+        </blockquote>
+
+        <p class="col-narrow text-lg leading-relaxed text-gray-700">
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. The system automatically
+          maintains visual hierarchy while keeping content readable and scannable.
+        </p>
+
+        <div class="col-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-gap py-16">
+          <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-4">Full-Width Call to Action</h2>
+            <p class="text-lg mb-6">
+              Use col-full for edge-to-edge sections. Combine with p-gap for proper spacing.
+            </p>
+            <button class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+              Get Started
+            </button>
+          </div>
+        </div>
+
+        <p class="col-narrow text-lg leading-relaxed text-gray-700">
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+          The layout system makes it easy to create engaging, dynamic content experiences.
+        </p>
+      </article>
+    </section>
+
+    <!-- Section 3: Spacing Utilities -->
+    <section class="mb-16 bg-white py-12">
+      <div class="max-w-7xl mx-auto px-4 mb-8">
+        <h2 class="text-3xl font-bold mb-2">Spacing Utilities</h2>
+        <p class="text-gray-600">Gap-based spacing utilities for consistent layouts</p>
+      </div>
+
+      <div class="grid-cols-breakout gap-y-6">
+        <div class="col-content">
+          <div class="demo-label">Without p-gap</div>
+          <div class="demo-box bg-gray-200 border-2 border-gray-400">
+            <div class="bg-gray-800 text-white p-4 rounded">
+              No gap padding - content touches edges
+            </div>
+          </div>
+        </div>
+
+        <div class="col-popout bg-green-100 p-gap">
+          <div class="demo-label">With p-gap</div>
+          <div class="demo-box bg-white border-2 border-green-400">
+            <div class="bg-green-600 text-white p-4 rounded">
+              Uses p-gap for padding that matches grid gap
+            </div>
+          </div>
+        </div>
+
+        <div class="col-feature bg-blue-100 px-gap py-8">
+          <div class="demo-label">With px-gap and py-8</div>
+          <div class="demo-box bg-white border-2 border-blue-400">
+            <div class="bg-blue-600 text-white p-4 rounded">
+              Horizontal gap padding with custom vertical spacing
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Nested Grids -->
+    <section class="mb-16">
+      <div class="max-w-7xl mx-auto px-4 mb-8">
+        <h2 class="text-3xl font-bold mb-2">Nested Grids (Asymmetric Layouts)</h2>
+        <p class="text-gray-600">Use left/right aligned nested grids for complex layouts</p>
+      </div>
+
+      <div class="grid-cols-breakout gap-y-8">
+        <div class="col-feature bg-gray-100 p-gap rounded-lg">
+          <div class="demo-label mb-4">Feature Left Grid: col-feature grid-cols-feature-left</div>
+          <div class="grid-cols-feature-left gap-6">
+            <div class="col-feature">
+              <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop"
+                   alt="Chart"
+                   class="w-full h-[300px] object-cover rounded-lg">
+            </div>
+            <div class="col-narrow bg-white p-6 rounded-lg">
+              <h3 class="text-xl font-bold mb-2">Content on the Right</h3>
+              <p class="text-gray-700">
+                The image spans the feature column on the left, while text content is constrained
+                to the narrow column on the right for optimal readability.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-content bg-gray-100 p-gap rounded-lg">
+          <div class="demo-label mb-4">Content Right Grid: col-content grid-cols-content-right</div>
+          <div class="grid-cols-content-right gap-6">
+            <div class="col-narrow bg-white p-6 rounded-lg">
+              <h3 class="text-xl font-bold mb-2">Content on the Right</h3>
+              <p class="text-gray-700">
+                Text appears on the right side, while images or other content can use the left columns.
+              </p>
+            </div>
+            <div class="col-content">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop"
+                   alt="Analytics"
+                   class="w-full h-[250px] object-cover rounded-lg">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Marketing Hero Example -->
+    <section class="mb-16">
+      <div class="max-w-7xl mx-auto px-4 mb-8">
+        <h2 class="text-3xl font-bold mb-2">Marketing Hero Layout</h2>
+        <p class="text-gray-600">A complete marketing page section</p>
+      </div>
+
+      <div class="grid-cols-breakout gap-y-0">
+        <div class="col-full bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 text-white p-gap py-20">
+          <div class="max-w-5xl mx-auto text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">
+              Build Amazing Things
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-blue-100">
+              The breakout grid system makes it easy to create dynamic, engaging layouts
+            </p>
+            <div class="flex gap-4 justify-center">
+              <button class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition">
+                Get Started
+              </button>
+              <button class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/10 transition">
+                Learn More
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-feature-popout grid md:grid-cols-3 gap-8 py-16 px-gap bg-white">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+              1
+            </div>
+            <h3 class="text-xl font-bold mb-2">Flexible</h3>
+            <p class="text-gray-600">Adapt to any content type and layout requirement</p>
+          </div>
+          <div class="text-center">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+              2
+            </div>
+            <h3 class="text-xl font-bold mb-2">Responsive</h3>
+            <p class="text-gray-600">Automatic spacing adjustment based on viewport</p>
+          </div>
+          <div class="text-center">
+            <div class="w-16 h-16 bg-cyan-100 text-cyan-600 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+              3
+            </div>
+            <h3 class="text-xl font-bold mb-2">Accessible</h3>
+            <p class="text-gray-600">Maintains readability and usability standards</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Grid Visualization -->
+    <section class="mb-16 bg-white py-12">
+      <div class="max-w-7xl mx-auto px-4 mb-8">
+        <h2 class="text-3xl font-bold mb-2">Grid Structure Visualization</h2>
+        <p class="text-gray-600">See the underlying grid columns with labels</p>
+      </div>
+
+      <div class="grid-cols-breakout gap-y-2">
+        <div class="col-full bg-red-50 p-4 text-center text-sm font-mono border-2 border-red-300">
+          full (edge to edge)
+        </div>
+        <div class="col-feature-popout bg-orange-50 p-4 text-center text-sm font-mono border-2 border-orange-300">
+          feature-popout
+        </div>
+        <div class="col-feature bg-yellow-50 p-4 text-center text-sm font-mono border-2 border-yellow-300">
+          feature
+        </div>
+        <div class="col-popout bg-green-50 p-4 text-center text-sm font-mono border-2 border-green-300">
+          popout
+        </div>
+        <div class="col-content bg-blue-50 p-4 text-center text-sm font-mono border-2 border-blue-300">
+          content (default)
+        </div>
+        <div class="col-narrow bg-purple-50 p-4 text-center text-sm font-mono border-2 border-purple-300">
+          narrow (40-50rem)
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <h3 class="text-2xl font-bold mb-2">Tailwind Breakout Grid Plugin</h3>
+        <p class="text-gray-400 mb-4">
+          A flexible grid system for modern web layouts
+        </p>
+        <p class="text-sm text-gray-500">
+          Resize your browser window to see responsive behavior •
+          Open browser dev tools to inspect grid structure
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Add visual indicators on hover
+    document.querySelectorAll('.demo-box').forEach(box => {
+      box.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.02)';
+        this.style.transition = 'transform 0.2s';
+      });
+      box.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+      });
+    });
+
+    // Log current viewport width for debugging
+    function logViewportWidth() {
+      console.log('Viewport width:', window.innerWidth + 'px');
+    }
+    window.addEventListener('resize', logViewportWidth);
+    logViewportWidth();
+  </script>
+</body>
+</html>
