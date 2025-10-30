@@ -42,18 +42,6 @@ export default {
 }
 ```
 
-### Manual Installation
-
-Alternatively, copy `index.js` to your project (e.g., `./tailwind-plugins/breakout-grid.js`):
-
-```js
-import breakoutGrid from './tailwind-plugins/breakout-grid.js'
-
-export default {
-  plugins: [breakoutGrid()]
-}
-```
-
 ## Quick Start
 
 Apply the base grid class to a container, then use column utilities on children:
