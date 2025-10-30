@@ -37,6 +37,8 @@
       isVisible: false,
       showLabels: true,
       showMeasurements: true,
+      showGapPadding: false,
+      showBreakoutPadding: false,
       viewportWidth: window.innerWidth,
       selectedArea: null,
 
@@ -168,6 +170,58 @@
                     fontFamily: 'monospace'
                   }" x-text="area.className"></div>
                 </div>
+
+                <!-- p-gap / px-gap Padding Overlay -->
+                <div x-show="showGapPadding"
+                     :style="{
+                       position: 'absolute',
+                       inset: 'var(--gap)',
+                       border: '2px dotted ' + area.borderColor,
+                       backgroundColor: area.color.replace('0.1', '0.2'),
+                       pointerEvents: 'none',
+                       zIndex: '10'
+                     }">
+                  <div :style="{
+                    position: 'absolute',
+                    top: '0.5rem',
+                    left: '0.5rem',
+                    fontSize: '0.625rem',
+                    fontWeight: '700',
+                    color: area.borderColor,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    backgroundColor: 'white',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '0.25rem',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                  }">p-gap</div>
+                </div>
+
+                <!-- p-breakout / px-breakout Padding Overlay -->
+                <div x-show="showBreakoutPadding"
+                     :style="{
+                       position: 'absolute',
+                       inset: 'var(--breakout-padding)',
+                       border: '3px dashed ' + area.borderColor,
+                       backgroundColor: area.color.replace('0.1', '0.25'),
+                       pointerEvents: 'none',
+                       zIndex: '10'
+                     }">
+                  <div :style="{
+                    position: 'absolute',
+                    top: '0.5rem',
+                    left: '0.5rem',
+                    fontSize: '0.625rem',
+                    fontWeight: '700',
+                    color: area.borderColor,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    backgroundColor: 'white',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '0.25rem',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                  }">p-breakout</div>
+                </div>
               </div>
             </template>
           </div>
@@ -210,7 +264,7 @@
             </div>
 
             <!-- Toggles -->
-            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
               <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
                 <input type="checkbox" x-model="showLabels" style="margin-right: 0.375rem; cursor: pointer;">
                 Show Labels
@@ -218,6 +272,14 @@
               <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
                 <input type="checkbox" x-model="showMeasurements" style="margin-right: 0.375rem; cursor: pointer;">
                 Show Values
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #10b981;">
+                <input type="checkbox" x-model="showGapPadding" style="margin-right: 0.375rem; cursor: pointer;">
+                Show p-gap
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #3b82f6;">
+                <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.375rem; cursor: pointer;">
+                Show p-breakout
               </label>
             </div>
 
