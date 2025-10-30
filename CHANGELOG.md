@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2025-10-30
+
+### Improved
+
+- **Grid Visualizer Enhancements:**
+  - Display class names (`.col-full`, `.col-feature`, etc.) below each label in monospace font
+  - Add `col-full-limit` as a visible option in the grid overlay
+  - Show selected column's class name in control panel
+  - Better label styling and spacing
+
 ## [1.1.1] - 2025-10-30
 
 ### Fixed
@@ -48,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic default column assignment for child elements
 - Debug mode for template generation logging
 
+[1.1.2]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.2
 [1.1.1]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.1
 [1.1.0]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.0
 [1.0.0]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.0.0
