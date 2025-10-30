@@ -26,14 +26,15 @@
   ],
   "author": "Astuteo LLC",
   "license": "MIT",
+  "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/astuteo/tailwind-breakout-grid.git"
+    "url": "git+ssh://git@github.com:astuteo-llc/tailwind-breakout-grid.git"
   },
   "bugs": {
-    "url": "https://github.com/astuteo/tailwind-breakout-grid/issues"
+    "url": "https://github.com/astuteo-llc/tailwind-breakout-grid/issues"
   },
-  "homepage": "https://github.com/astuteo/tailwind-breakout-grid#readme",
+  "homepage": "https://github.com/astuteo-llc/tailwind-breakout-grid#readme",
   "peerDependencies": {
     "tailwindcss": ">=3.0.0"
   },

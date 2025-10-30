@@ -29,4 +29,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic default column assignment for child elements
 - Debug mode for template generation logging
 
-[1.0.0]: https://github.com/astuteo/tailwind-breakout-grid/releases/tag/v1.0.0
+[1.0.0]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.0.0
