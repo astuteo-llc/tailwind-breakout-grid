@@ -90,6 +90,29 @@ export interface BreakoutGridConfig {
    * @default false
    */
   debug?: boolean;
+
+  /**
+   * Fixed responsive padding values for legacy project integration
+   * Creates utilities like p-breakout, px-breakout, etc. with built-in responsive breakpoints
+   * @default { base: '1.5rem', md: '4rem', lg: '5rem' }
+   * @example
+   * ```js
+   * breakoutPadding: {
+   *   base: '1.5rem',  // Mobile (equivalent to p-6)
+   *   md: '4rem',      // Medium screens (equivalent to p-16)
+   *   lg: '5rem'       // Large screens (equivalent to p-20)
+   * }
+   * ```
+   */
+  breakoutPadding?: {
+    base?: string;
+    sm?: string;
+    md?: string;
+    lg?: string;
+    xl?: string;
+    '2xl'?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 /**

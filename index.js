@@ -87,6 +87,12 @@ const defaultConfig = {
     default: '4vw',    // Default scaling
     lg: '5vw',         // Large screens
     xl: '6vw'          // Extra large screens
+  },
+  // Fixed responsive padding for legacy project integration
+  breakoutPadding: {
+    base: '1.5rem',    // Mobile padding (p-6 = 1.5rem)
+    md: '4rem',        // Medium screens (px-16 = 4rem)
+    lg: '5rem'         // Large screens
   }
 }
 
@@ -216,6 +222,73 @@ const createSpacingUtilities = () => {
       return { ...acc, ...utilities }
     }, {})
 }
+
+/**
+ * Generates fixed responsive padding utilities for legacy project integration.
+ * Creates utilities that mimic traditional Tailwind responsive padding patterns
+ * but are pre-configured for breakout grid contexts.
+ *
+ * Generated classes:
+ * - .p-breakout: Responsive padding on all sides
+ * - .px-breakout: Responsive horizontal padding
+ * - .py-breakout: Responsive vertical padding
+ * - .pt-breakout, .pr-breakout, .pb-breakout, .pl-breakout: Individual sides
+ *
+ * These utilities use fixed rem values that scale with breakpoints, unlike
+ * p-gap which uses reactive CSS variables.
+ *
+ * Example: p-breakout is equivalent to:
+ *   p-6 md:p-16 lg:p-20
+ *
+ * @param {Object} config - Plugin configuration
+ * @param {Object} screens - Tailwind breakpoint configuration
+ * @returns {Object} Breakout padding utility classes
+ * @private
+ */
+const createBreakoutPaddingUtilities = (config, screens) => {
+  const { breakoutPadding } = config;
+
+  const spacingDirections = {
+    p: ['padding'],
+    px: ['padding-left', 'padding-right'],
+    py: ['padding-top', 'padding-bottom'],
+    pt: ['padding-top'],
+    pr: ['padding-right'],
+    pb: ['padding-bottom'],
+    pl: ['padding-left']
+  };
+
+  const utilities = {};
+
+  // Generate base utilities and responsive variants
+  Object.entries(spacingDirections).forEach(([key, properties]) => {
+    const className = `.${key}-breakout`;
+
+    // Base (mobile) styles
+    utilities[className] = properties.reduce((acc, prop) => {
+      acc[prop] = breakoutPadding.base;
+      return acc;
+    }, {});
+
+    // Responsive variants
+    Object.entries(screens).forEach(([breakpoint, minWidth]) => {
+      if (breakoutPadding[breakpoint]) {
+        const mediaQuery = `@media (min-width: ${minWidth})`;
+
+        if (!utilities[mediaQuery]) {
+          utilities[mediaQuery] = {};
+        }
+
+        utilities[mediaQuery][className] = properties.reduce((acc, prop) => {
+          acc[prop] = breakoutPadding[breakpoint];
+          return acc;
+        }, {});
+      }
+    });
+  });
+
+  return utilities;
+};
 
 /**
  * Generates grid templates for different section types and alignments.
@@ -573,6 +646,7 @@ export default (config = {}) => {
     // Add all utility classes
     addUtilities({
       ...createSpacingUtilities(),
+      ...createBreakoutPaddingUtilities(pluginConfig, screens),
       ...createGridUtilities(pluginConfig, templates),
       ...createColumnUtilities(templates),
       '.col-full-limit': {

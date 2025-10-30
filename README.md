@@ -99,6 +99,13 @@ breakoutGrid({
     xl: '6vw'             // Extra large screens (1280px+)
   },
 
+  // Fixed responsive padding (for legacy project integration)
+  breakoutPadding: {
+    base: '1.5rem',       // Mobile padding (p-6 equivalent)
+    md: '4rem',           // Medium screens (p-16 equivalent)
+    lg: '5rem'            // Large screens (p-20 equivalent)
+  },
+
   // Development
   debug: false            // Enable console logging
 })
@@ -201,6 +208,45 @@ The plugin generates spacing utilities based on grid measurements:
 
 <!-- All directional variants available: p, px, py, pt, pr, pb, pl, m, mx, my, mt, mr, mb, ml -->
 ```
+
+### Fixed Responsive Padding (p-breakout)
+
+For legacy projects that need traditional fixed padding with responsive breakpoints:
+
+```html
+<!-- p-breakout: Responsive padding with built-in breakpoints -->
+<div class="col-full bg-gray-100 p-breakout">
+  <!-- Equivalent to: p-6 md:p-16 lg:p-20 -->
+  Fixed padding that scales with breakpoints
+</div>
+
+<!-- Directional variants -->
+<div class="px-breakout">Horizontal padding only</div>
+<div class="py-breakout">Vertical padding only</div>
+<div class="pt-breakout pr-breakout pb-breakout pl-breakout">Individual sides</div>
+```
+
+**Default values:**
+- Base (mobile): `1.5rem` (equivalent to `p-6`)
+- Medium screens: `4rem` (equivalent to `p-16`)
+- Large screens: `5rem` (equivalent to `p-20`)
+
+**Customize in config:**
+```js
+breakoutGrid({
+  breakoutPadding: {
+    base: '2rem',   // Mobile
+    md: '5rem',     // Medium screens
+    lg: '6rem',     // Large screens
+    xl: '8rem'      // Extra large screens
+  }
+})
+```
+
+**When to use p-breakout vs p-gap:**
+- Use **p-breakout** for fixed, predictable padding that matches traditional Tailwind patterns
+- Use **p-gap** for dynamic padding that adapts to the grid's responsive gap values
+- Use **p-breakout** when migrating legacy projects with existing `p-6 md:p-16` patterns
 
 ### Nested Grids (Left/Right Alignment)
 
@@ -507,6 +553,44 @@ When converting an existing page:
   </div>
 </div>
 ```
+
+### Using p-breakout for Easy Migration
+
+If your legacy project uses consistent padding patterns like `p-6 md:px-16`, use `p-breakout` utilities to quickly replace them:
+
+**Before (Legacy):**
+```html
+<section class="bg-blue-900 p-6 md:px-16 md:pt-12 md:pb-20 relative z-10">
+  <h2>Section Title</h2>
+  <p>Content here...</p>
+</section>
+```
+
+**After (Quick Migration):**
+```html
+<section class="col-full bg-blue-900 p-breakout relative z-10">
+  <h2>Section Title</h2>
+  <p>Content here...</p>
+</section>
+```
+
+**Customize if needed:**
+```js
+// tailwind.config.js - Match your existing padding patterns
+breakoutGrid({
+  breakoutPadding: {
+    base: '1.5rem',  // Matches p-6
+    md: '4rem',      // Matches md:px-16/pt-12
+    lg: '5rem'       // Matches lg:px-20
+  }
+})
+```
+
+This approach lets you:
+- ✅ Keep familiar padding values from your legacy project
+- ✅ Reduce HTML verbosity (one class vs multiple responsive classes)
+- ✅ Maintain design consistency across the migration
+- ✅ Easily adjust all breakout padding globally via config
 
 ### Real-World Example: Converting a Blog Post
 
