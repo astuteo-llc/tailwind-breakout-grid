@@ -69,7 +69,7 @@ Apply the base grid class to a container, then use column utilities on children:
 
 ## Configuration
 
-All options are optional and have sensible defaults:
+All options are optional and have sensible defaults. The plugin includes built-in validation that will warn about invalid CSS units or configuration issues without breaking your build:
 
 ```js
 breakoutGrid({
@@ -107,7 +107,31 @@ breakoutGrid({
   },
 
   // Development
-  debug: false            // Enable console logging
+  debug: false            // Enable console logging and template generation details
+})
+```
+
+### Configuration Validation
+
+The plugin automatically validates your configuration and provides helpful warnings for common issues:
+
+```js
+// ❌ Invalid CSS units will generate warnings
+breakoutGrid({
+  baseGap: 'invalid-unit',     // Warning: Invalid CSS unit
+  narrowMax: '50',             // Warning: Missing unit (should be '50rem')
+  gapScale: {
+    lg: 'bad-value'            // Warning: Invalid CSS unit for gapScale.lg
+  }
+})
+
+// ✅ Valid configuration
+breakoutGrid({
+  baseGap: '1.5rem',           // Valid CSS unit
+  narrowMax: '50rem',          // Valid CSS unit with rem
+  gapScale: {
+    lg: '5vw'                  // Valid CSS unit with vw
+  }
 })
 ```
 
@@ -153,6 +177,8 @@ Viewport edges
 
 ### Column Width Classes
 
+#### Basic Column Utilities
+
 ```html
 <div class="grid-cols-breakout">
   <!-- Narrow: Optimal reading width (40-50rem) -->
@@ -189,25 +215,117 @@ Viewport edges
   <div class="col-full-limit">
     Content that spans full but never exceeds fullLimit (90rem default)
   </div>
+
+  <!-- Center: Single point (rarely used directly) -->
+  <div class="col-center">
+    Centered at the exact middle point of the layout
+  </div>
 </div>
 ```
 
+#### Grid Template Classes
+
+The plugin provides several grid template classes for different layout contexts:
+
+**Main Grid Template:**
+- `grid-cols-breakout` - The primary centered grid template with all column areas
+
+**Left-Aligned Templates:**
+- `grid-cols-feature-popout-left` - Feature-popout width container, left-aligned
+- `grid-cols-feature-left` - Feature width container, left-aligned
+- `grid-cols-popout-left` - Popout width container, left-aligned
+- `grid-cols-content-left` - Content width container, left-aligned
+- `grid-cols-narrow-left` - Narrow width container, left-aligned
+
+**Right-Aligned Templates:**
+- `grid-cols-feature-popout-right` - Feature-popout width container, right-aligned
+- `grid-cols-feature-right` - Feature width container, right-aligned
+- `grid-cols-popout-right` - Popout width container, right-aligned
+- `grid-cols-content-right` - Content width container, right-aligned
+- `grid-cols-narrow-right` - Narrow width container, right-aligned
+
 ### Spacing Utilities
 
-The plugin generates spacing utilities based on grid measurements:
+The plugin generates spacing utilities based on grid measurements for consistent layouts:
+
+#### Gap-Based Spacing
+
+Uses the responsive grid gap value (`--gap` CSS variable):
 
 ```html
-<!-- Gap-based spacing (matches grid gap) -->
-<div class="p-gap">Padding equal to grid gap</div>
-<div class="px-gap">Horizontal padding</div>
-<div class="py-gap">Vertical padding</div>
-<div class="mt-gap">Top margin</div>
+<!-- Padding utilities -->
+<div class="p-gap">Padding equal to grid gap on all sides</div>
+<div class="px-gap">Horizontal padding (left and right)</div>
+<div class="py-gap">Vertical padding (top and bottom)</div>
+<div class="pt-gap">Top padding only</div>
+<div class="pr-gap">Right padding only</div>
+<div class="pb-gap">Bottom padding only</div>
+<div class="pl-gap">Left padding only</div>
 
-<!-- Popout-based spacing -->
-<div class="pl-popout">Padding equal to popout width</div>
-
-<!-- All directional variants available: p, px, py, pt, pr, pb, pl, m, mx, my, mt, mr, mb, ml -->
+<!-- Margin utilities -->
+<div class="m-gap">Margin equal to grid gap on all sides</div>
+<div class="mx-gap">Horizontal margin (left and right)</div>
+<div class="my-gap">Vertical margin (top and bottom)</div>
+<div class="mt-gap">Top margin only</div>
+<div class="mr-gap">Right margin only</div>
+<div class="mb-gap">Bottom margin only</div>
+<div class="ml-gap">Left margin only</div>
 ```
+
+#### Computed Gap Spacing
+
+Uses the computed gap value for larger spacing:
+
+```html
+<!-- Padding with computed gap (larger than regular gap) -->
+<div class="p-full-gap">Larger padding for full-width sections</div>
+<div class="px-full-gap">Horizontal computed gap padding</div>
+<div class="py-full-gap">Vertical computed gap padding</div>
+<div class="pt-full-gap">Top computed gap padding</div>
+<div class="pr-full-gap">Right computed gap padding</div>
+<div class="pb-full-gap">Bottom computed gap padding</div>
+<div class="pl-full-gap">Left computed gap padding</div>
+
+<!-- Margin with computed gap -->
+<div class="m-full-gap">Computed gap margin on all sides</div>
+<div class="mx-full-gap">Horizontal computed gap margin</div>
+<div class="my-full-gap">Vertical computed gap margin</div>
+<div class="mt-full-gap">Top computed gap margin</div>
+<div class="mr-full-gap">Right computed gap margin</div>
+<div class="mb-full-gap">Bottom computed gap margin</div>
+<div class="ml-full-gap">Left computed gap margin</div>
+```
+
+#### Popout-Based Spacing
+
+Uses the popout width value for specialized spacing:
+
+```html
+<!-- Padding with popout width -->
+<div class="p-popout">Padding equal to popout extension</div>
+<div class="px-popout">Horizontal popout padding</div>
+<div class="py-popout">Vertical popout padding</div>
+<div class="pt-popout">Top popout padding</div>
+<div class="pr-popout">Right popout padding</div>
+<div class="pb-popout">Bottom popout padding</div>
+<div class="pl-popout">Left popout padding</div>
+
+<!-- Margin with popout width -->
+<div class="m-popout">Popout margin on all sides</div>
+<div class="mx-popout">Horizontal popout margin</div>
+<div class="my-popout">Vertical popout margin</div>
+<div class="mt-popout">Top popout margin</div>
+<div class="mr-popout">Right popout margin</div>
+<div class="mb-popout">Bottom popout margin</div>
+<div class="ml-popout">Left popout margin</div>
+```
+
+#### When to Use Each Spacing Type
+
+- **`*-gap`**: Standard spacing that matches the grid's responsive gap
+- **`*-full-gap`**: Larger spacing for full-width sections and major layout breaks
+- **`*-popout`**: Specialized spacing that matches the popout extension distance
+- **`p-breakout`**: Fixed responsive padding for legacy project integration (see below)
 
 ### Fixed Responsive Padding (p-breakout)
 
@@ -271,16 +389,27 @@ For asymmetric layouts, use left/right aligned nested grids:
 </div>
 ```
 
-Available nested grid classes:
-- `grid-cols-feature-popout-left` / `grid-cols-feature-popout-right`
-- `grid-cols-feature-left` / `grid-cols-feature-right`
-- `grid-cols-popout-left` / `grid-cols-popout-right`
-- `grid-cols-content-left` / `grid-cols-content-right`
-- `grid-cols-narrow-left` / `grid-cols-narrow-right`
+#### Available Nested Grid Classes
+
+**Left-Aligned Grids** (content flows from left edge):
+- `grid-cols-feature-popout-left` - Feature-popout width, left-aligned
+- `grid-cols-feature-left` - Feature width, left-aligned  
+- `grid-cols-popout-left` - Popout width, left-aligned
+- `grid-cols-content-left` - Content width, left-aligned
+- `grid-cols-narrow-left` - Narrow width, left-aligned
+
+**Right-Aligned Grids** (content flows from right edge):
+- `grid-cols-feature-popout-right` - Feature-popout width, right-aligned
+- `grid-cols-feature-right` - Feature width, right-aligned
+- `grid-cols-popout-right` - Popout width, right-aligned  
+- `grid-cols-content-right` - Content width, right-aligned
+- `grid-cols-narrow-right` - Narrow width, right-aligned
+
+**Key Difference**: Left/right grids use `--narrow-inset` instead of `--narrow` for proper text width in nested contexts.
 
 ### Advanced: Fine-Grained Control
 
-Use start/end utilities for custom spans:
+Use start/end utilities for custom spans and precise positioning:
 
 ```html
 <div class="grid-cols-breakout">
@@ -289,15 +418,66 @@ Use start/end utilities for custom spans:
     Custom width spanning multiple grid tracks
   </div>
 
-  <!-- Left-aligned columns (start at full-start, end at specified column) -->
-  <div class="col-feature-left">Spans from left edge to feature-end</div>
-  <div class="col-content-left">Spans from left edge to content-end</div>
+  <!-- Span from narrow-start to popout-end -->
+  <div class="col-start-narrow col-end-popout">
+    Spans from narrow column start to popout column end
+  </div>
 
-  <!-- Right-aligned columns (start at specified column, end at full-end) -->
-  <div class="col-feature-right">Spans from feature-start to right edge</div>
-  <div class="col-narrow-right">Spans from narrow-start to right edge</div>
+  <!-- Start at feature-popout-start, end at center -->
+  <div class="col-start-feature-popout col-end-center">
+    Complex asymmetric layout spanning to center point
+  </div>
 </div>
 ```
+
+#### Available Start/End Utilities
+
+**Column Start Utilities:**
+- `col-start-full` - Start at viewport edge
+- `col-start-feature-popout` - Start at feature-popout boundary
+- `col-start-feature` - Start at feature boundary
+- `col-start-popout` - Start at popout boundary
+- `col-start-content` - Start at content boundary
+- `col-start-narrow` - Start at narrow column boundary
+- `col-start-center` - Start at center point
+
+**Column End Utilities:**
+- `col-end-center` - End at center point
+- `col-end-narrow` - End at narrow column boundary
+- `col-end-content` - End at content boundary
+- `col-end-popout` - End at popout boundary
+- `col-end-feature` - End at feature boundary
+- `col-end-feature-popout` - End at feature-popout boundary
+- `col-end-full` - End at viewport edge
+
+#### Left/Right Aligned Utilities
+
+For content that spans from one edge to a specific column:
+
+```html
+<div class="grid-cols-breakout">
+  <!-- Left-aligned: spans from left edge to specified column end -->
+  <div class="col-full-left">Full width from left edge</div>
+  <div class="col-feature-popout-left">From left edge to feature-popout-end</div>
+  <div class="col-feature-left">From left edge to feature-end</div>
+  <div class="col-popout-left">From left edge to popout-end</div>
+  <div class="col-content-left">From left edge to content-end</div>
+  <div class="col-narrow-left">From left edge to narrow-end</div>
+
+  <!-- Right-aligned: spans from specified column start to right edge -->
+  <div class="col-narrow-right">From narrow-start to right edge</div>
+  <div class="col-content-right">From content-start to right edge</div>
+  <div class="col-popout-right">From popout-start to right edge</div>
+  <div class="col-feature-right">From feature-start to right edge</div>
+  <div class="col-feature-popout-right">From feature-popout-start to right edge</div>
+</div>
+```
+
+**Use cases for left/right utilities:**
+- Asymmetric hero sections
+- Image galleries with text overlays
+- Split-screen layouts
+- Progressive disclosure interfaces
 
 ## Common Patterns
 
@@ -624,6 +804,198 @@ This approach lets you:
 - ✅ Blockquote visually distinct with `col-popout`
 - ✅ More design flexibility without changing HTML structure
 
+### Advanced Layout Examples
+
+#### Complex Editorial Layout
+
+```html
+<article class="grid-cols-breakout gap-y-8">
+  <!-- Hero section with overlay text -->
+  <div class="col-full relative">
+    <img src="hero.jpg" class="w-full h-96 object-cover" />
+    <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+      <h1 class="text-white text-5xl font-bold text-center">Article Title</h1>
+    </div>
+  </div>
+
+  <!-- Intro paragraph -->
+  <p class="col-content text-xl leading-relaxed">
+    Introduction paragraph at content width for emphasis.
+  </p>
+
+  <!-- Body text -->
+  <p class="col-narrow">
+    Main body text at optimal reading width...
+  </p>
+
+  <!-- Pull quote spanning from narrow to popout -->
+  <blockquote class="col-start-narrow col-end-popout bg-blue-50 p-gap border-l-4 border-blue-500">
+    <p class="text-2xl italic">"This quote spans from narrow-start to popout-end for visual impact."</p>
+  </blockquote>
+
+  <!-- Image gallery -->
+  <div class="col-feature grid grid-cols-2 gap-4">
+    <img src="image1.jpg" class="w-full h-48 object-cover rounded" />
+    <img src="image2.jpg" class="w-full h-48 object-cover rounded" />
+  </div>
+
+  <!-- Sidebar-style content using nested grid -->
+  <div class="col-feature grid-cols-feature-left gap-8">
+    <div class="col-feature">
+      <img src="chart.jpg" class="w-full h-64 object-cover rounded" />
+    </div>
+    <div class="col-narrow bg-gray-50 p-gap rounded">
+      <h3 class="font-bold mb-2">Key Insights</h3>
+      <ul class="space-y-2 text-sm">
+        <li>• Insight one</li>
+        <li>• Insight two</li>
+        <li>• Insight three</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Call-to-action -->
+  <div class="col-full bg-gradient-to-r from-purple-600 to-blue-600 text-white p-gap py-16">
+    <div class="max-w-2xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+      <button class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold">
+        Learn More
+      </button>
+    </div>
+  </div>
+</article>
+```
+
+#### Product Landing Page
+
+```html
+<main class="grid-cols-breakout">
+  <!-- Hero with asymmetric layout -->
+  <section class="col-feature-popout grid-cols-feature-popout-left gap-12 py-20">
+    <div class="col-feature-popout">
+      <img src="product.jpg" class="w-full h-96 object-cover rounded-lg shadow-xl" />
+    </div>
+    <div class="col-content flex flex-col justify-center">
+      <h1 class="text-4xl font-bold mb-4">Revolutionary Product</h1>
+      <p class="col-narrow text-lg mb-6">
+        Product description at optimal reading width within the content column.
+      </p>
+      <div class="flex gap-4">
+        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg">Buy Now</button>
+        <button class="border border-gray-300 px-6 py-3 rounded-lg">Learn More</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature grid -->
+  <section class="col-feature-popout py-16">
+    <h2 class="text-3xl font-bold text-center mb-12">Features</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4"></div>
+        <h3 class="font-bold mb-2">Feature One</h3>
+        <p class="text-gray-600">Feature description</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4"></div>
+        <h3 class="font-bold mb-2">Feature Two</h3>
+        <p class="text-gray-600">Feature description</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-4"></div>
+        <h3 class="font-bold mb-2">Feature Three</h3>
+        <p class="text-gray-600">Feature description</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonial with custom span -->
+  <blockquote class="col-start-content col-end-feature bg-gray-50 p-gap py-12 text-center">
+    <p class="text-2xl italic mb-4">"This product changed everything for our team."</p>
+    <cite class="text-gray-600">— Happy Customer</cite>
+  </blockquote>
+</main>
+```
+
+## Utility Reference
+
+### Complete Class List
+
+#### Grid Template Classes
+- `grid-cols-breakout` - Main centered grid template
+- `grid-cols-feature-popout-left` / `grid-cols-feature-popout-right`
+- `grid-cols-feature-left` / `grid-cols-feature-right`
+- `grid-cols-popout-left` / `grid-cols-popout-right`
+- `grid-cols-content-left` / `grid-cols-content-right`
+- `grid-cols-narrow-left` / `grid-cols-narrow-right`
+
+#### Column Placement Classes
+- `col-full` - Full viewport width
+- `col-feature-popout` - Maximum content width
+- `col-feature` - Extra wide content
+- `col-popout` - Slightly wider content
+- `col-content` - Standard content width (default)
+- `col-narrow` - Optimal reading width
+- `col-center` - Center point
+- `col-full-limit` - Full width with max-width constraint
+
+#### Column Start Classes
+- `col-start-full` - Start at viewport edge
+- `col-start-feature-popout` - Start at feature-popout boundary
+- `col-start-feature` - Start at feature boundary
+- `col-start-popout` - Start at popout boundary
+- `col-start-content` - Start at content boundary
+- `col-start-narrow` - Start at narrow boundary
+- `col-start-center` - Start at center point
+
+#### Column End Classes
+- `col-end-center` - End at center point
+- `col-end-narrow` - End at narrow boundary
+- `col-end-content` - End at content boundary
+- `col-end-popout` - End at popout boundary
+- `col-end-feature` - End at feature boundary
+- `col-end-feature-popout` - End at feature-popout boundary
+- `col-end-full` - End at viewport edge
+
+#### Left/Right Span Classes
+- `col-feature-popout-left` / `col-feature-popout-right`
+- `col-feature-left` / `col-feature-right`
+- `col-popout-left` / `col-popout-right`
+- `col-content-left` / `col-content-right`
+- `col-narrow-left` / `col-narrow-right`
+
+#### Spacing Classes
+
+**Gap-based spacing:**
+- `p-gap`, `px-gap`, `py-gap`, `pt-gap`, `pr-gap`, `pb-gap`, `pl-gap`
+- `m-gap`, `mx-gap`, `my-gap`, `mt-gap`, `mr-gap`, `mb-gap`, `ml-gap`
+
+**Computed gap spacing:**
+- `p-full-gap`, `px-full-gap`, `py-full-gap`, `pt-full-gap`, `pr-full-gap`, `pb-full-gap`, `pl-full-gap`
+- `m-full-gap`, `mx-full-gap`, `my-full-gap`, `mt-full-gap`, `mr-full-gap`, `mb-full-gap`, `ml-full-gap`
+
+**Popout-based spacing:**
+- `p-popout`, `px-popout`, `py-popout`, `pt-popout`, `pr-popout`, `pb-popout`, `pl-popout`
+- `m-popout`, `mx-popout`, `my-popout`, `mt-popout`, `mr-popout`, `mb-popout`, `ml-popout`
+
+**Fixed responsive padding:**
+- `p-breakout`, `px-breakout`, `py-breakout`, `pt-breakout`, `pr-breakout`, `pb-breakout`, `pl-breakout`
+
+### CSS Custom Properties
+
+The plugin generates these CSS variables that you can use in custom CSS:
+
+- `--gap` - Current responsive gap value
+- `--computed-gap` - Computed gap for larger spacing
+- `--narrow` - Narrow column width (centered layouts)
+- `--narrow-inset` - Narrow column width (nested layouts)
+- `--content` - Content column extension
+- `--popout` - Popout column extension
+- `--feature` - Feature column extension
+- `--feature-popout` - Feature-popout column extension
+- `--full` - Full column definition
+- `--breakout-padding` - Current responsive breakout padding
+
 ## Best Practices
 
 1. **Use semantic HTML** - The grid system works with any HTML elements
@@ -632,20 +1004,44 @@ This approach lets you:
 4. **Test responsively** - The gaps scale automatically, but test your content at different viewports
 5. **Don't nest breakout grids deeply** - Use left/right aligned grids instead
 6. **Use col-full-limit for wide containers** - Prevents excessive width on ultra-wide screens
+7. **Leverage the visualizer** - Use Ctrl/Cmd + G during development to understand layouts
+8. **Validate configuration** - Pay attention to console warnings about invalid CSS units
 
 ## Grid Visualizer (Development Tool)
 
-An Alpine.js-powered visual debugging tool that helps designers see and understand the grid structure while building layouts.
+An Alpine.js-powered visual debugging tool that helps designers see and understand the grid structure while building layouts. The visualizer provides real-time feedback about grid behavior and measurements.
 
 ### Features
 
-- **Visual overlay** showing all grid columns with color coding
-- **Column labels** identifying each grid area
-- **Live measurements** displaying current CSS variable values
-- **Viewport width** tracker for responsive debugging
-- **Click to highlight** individual columns
-- **Keyboard shortcut** (Ctrl/Cmd + G) to toggle
-- **Persistent state** remembers visibility across page reloads
+- **Visual overlay** showing all grid columns with color-coded boundaries
+- **Interactive column selection** - click any column to highlight and identify
+- **Column labels** with both human-readable names and CSS class names
+- **Live measurements** displaying current CSS variable values in real-time
+- **Viewport width tracker** for responsive debugging
+- **Padding visualization** for both `p-gap` and `p-breakout` utilities
+- **Keyboard shortcut** (Ctrl/Cmd + G) to toggle visibility
+- **Persistent state** remembers visibility and settings across page reloads
+- **Responsive updates** automatically refreshes measurements on window resize
+
+### Visual Indicators
+
+The visualizer uses a consistent color scheme to identify different grid areas:
+
+- **Full** (Red) - Edge-to-edge viewport width
+- **Feature Popout** (Orange) - Maximum content width
+- **Feature** (Yellow) - Extra wide content areas
+- **Popout** (Green) - Slightly wider than standard content
+- **Content** (Blue) - Standard content width (default)
+- **Narrow** (Purple) - Optimal reading width (40-50rem)
+
+### Interactive Controls
+
+- **Labels Toggle** - Show/hide column name labels
+- **Class Names Toggle** - Display CSS class names (e.g., `.col-feature`)
+- **Values Toggle** - Show/hide live CSS variable measurements
+- **p-gap Visualization** - Overlay showing `p-gap` padding areas
+- **p-breakout Visualization** - Overlay showing `p-breakout` padding areas
+- **Column Selection** - Click any column to highlight and view details
 
 ### Installation
 
@@ -767,13 +1163,109 @@ Open `demo.html` in your browser to see the visualizer in action. Press `Ctrl/Cm
 
 ## Debugging
 
-Enable debug mode to see generated templates in the console:
+### Debug Mode
+
+Enable debug mode to see detailed information about grid template generation:
 
 ```js
 breakoutGrid({
   debug: true
 })
 ```
+
+When debug mode is enabled, you'll see console output showing:
+- Generated grid templates for each layout type
+- CSS custom property values
+- Configuration validation results
+- Template creation process
+
+### Using the Grid Visualizer
+
+The most effective way to debug layouts is using the built-in Grid Visualizer:
+
+1. **Load the visualizer** in development (see Grid Visualizer section above)
+2. **Press Ctrl/Cmd + G** to toggle the overlay
+3. **Click columns** to identify which grid area elements are using
+4. **Check measurements** to see current CSS variable values
+5. **Toggle padding visualization** to see `p-gap` and `p-breakout` areas
+
+### Common Issues and Solutions
+
+#### Content Not Breaking Out
+
+**Problem**: Elements with `col-full` or `col-feature` aren't spanning the expected width.
+
+**Solution**: Check that the parent container doesn't have constraining styles:
+
+```html
+<!-- ❌ Container prevents breakout -->
+<div class="max-w-7xl mx-auto px-4">
+  <div class="grid-cols-breakout">
+    <div class="col-full">Not actually full width!</div>
+  </div>
+</div>
+
+<!-- ✅ Let the grid span full viewport -->
+<div class="grid-cols-breakout">
+  <div class="col-full">Actually full width!</div>
+</div>
+```
+
+#### Text Too Wide or Narrow
+
+**Problem**: Text in `col-narrow` doesn't look right at certain viewport sizes.
+
+**Solution**: Adjust the narrow column configuration:
+
+```js
+breakoutGrid({
+  narrowMin: '35rem',    // Smaller minimum for mobile
+  narrowMax: '45rem',    // Smaller maximum for tighter text
+  narrowBase: '48vw'     // Adjust viewport-based width
+})
+```
+
+#### Gaps Too Large or Small
+
+**Problem**: Spacing between columns doesn't feel right.
+
+**Solution**: Adjust gap scaling configuration:
+
+```js
+breakoutGrid({
+  baseGap: '0.75rem',    // Smaller minimum gap
+  maxGap: '12rem',       // Smaller maximum gap
+  gapScale: {
+    default: '3vw',      // Less aggressive scaling
+    lg: '4vw',
+    xl: '5vw'
+  }
+})
+```
+
+#### Nested Grids Not Working
+
+**Problem**: Content in nested grids (left/right aligned) doesn't align properly.
+
+**Solution**: Ensure you're using the correct nested grid class and column utilities:
+
+```html
+<!-- ✅ Correct nested grid usage -->
+<div class="col-feature grid-cols-feature-left">
+  <img class="col-feature" src="image.jpg" />
+  <div class="col-narrow">Text content</div>
+</div>
+```
+
+### Browser Developer Tools
+
+Use browser dev tools to inspect the grid:
+
+1. **Right-click** on a grid container and select "Inspect"
+2. **Look for the grid badge** in the HTML panel
+3. **Click the grid badge** to see grid lines overlay
+4. **Check the Computed tab** to see CSS custom property values
+5. **Use the Console** to check CSS variables: `getComputedStyle(document.documentElement).getPropertyValue('--gap')`
 
 ## Browser Support
 
