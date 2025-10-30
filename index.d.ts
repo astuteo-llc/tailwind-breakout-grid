@@ -153,4 +153,4 @@ declare const breakoutGrid: {
   __isOptionsFunction: true;
 };
 
-export default breakoutGrid;
+export = breakoutGrid;

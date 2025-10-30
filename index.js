@@ -34,6 +34,76 @@ const GRID_AREAS = ['full', 'feature-popout', 'feature', 'popout', 'content', 'c
 const BREAKOUT_TYPES = GRID_AREAS.filter(area => area !== 'full')
 
 /**
+ * Validates if a string is a valid CSS unit.
+ * Checks for common CSS units like rem, em, px, vw, vh, %, etc.
+ * 
+ * @param {string} value - The CSS value to validate
+ * @returns {boolean} True if valid CSS unit, false otherwise
+ * @private
+ */
+const isValidCSSUnit = (value) => {
+  if (typeof value !== 'string') return false
+  
+  // Allow CSS functions like clamp(), calc(), min(), max()
+  if (/^(clamp|calc|min|max|var)\s*\(/.test(value.trim())) return true
+  
+  // Check for valid CSS units
+  const cssUnitRegex = /^-?(\d*\.?\d+)(rem|em|px|pt|pc|in|cm|mm|ex|ch|vw|vh|vmin|vmax|%|fr)$/
+  return cssUnitRegex.test(value.trim())
+}
+
+/**
+ * Validates the plugin configuration and logs warnings for invalid values.
+ * Does not throw errors to avoid breaking builds, only provides helpful warnings.
+ * 
+ * @param {Object} config - The plugin configuration to validate
+ * @returns {Object} Validation result with warnings array
+ * @private
+ */
+const validateConfig = (config) => {
+  const warnings = []
+  
+  // Validate CSS unit properties
+  const cssUnitProperties = [
+    'baseGap', 'maxGap', 'narrowMin', 'narrowMax', 'narrowBase',
+    'featurePopoutWidth', 'featureWidth', 'popoutWidth', 'content', 'fullLimit'
+  ]
+  
+  cssUnitProperties.forEach(prop => {
+    if (config[prop] && !isValidCSSUnit(config[prop])) {
+      warnings.push(`Invalid CSS unit for '${prop}': '${config[prop]}'. Expected a valid CSS unit like '1rem', '10px', '4vw', etc.`)
+    }
+  })
+  
+  // Validate gapScale values
+  if (config.gapScale && typeof config.gapScale === 'object') {
+    Object.entries(config.gapScale).forEach(([breakpoint, value]) => {
+      if (!isValidCSSUnit(value)) {
+        warnings.push(`Invalid CSS unit for gapScale.${breakpoint}: '${value}'. Expected a valid CSS unit like '4vw', '2rem', etc.`)
+      }
+    })
+  } else if (config.gapScale && typeof config.gapScale === 'string' && !isValidCSSUnit(config.gapScale)) {
+    warnings.push(`Invalid CSS unit for gapScale: '${config.gapScale}'. Expected a valid CSS unit like '4vw', '2rem', etc.`)
+  }
+  
+  // Validate breakoutPadding values
+  if (config.breakoutPadding && typeof config.breakoutPadding === 'object') {
+    Object.entries(config.breakoutPadding).forEach(([breakpoint, value]) => {
+      if (!isValidCSSUnit(value)) {
+        warnings.push(`Invalid CSS unit for breakoutPadding.${breakpoint}: '${value}'. Expected a valid CSS unit like '1.5rem', '4rem', etc.`)
+      }
+    })
+  }
+  
+  // Validate defaultCol is a valid grid area
+  if (config.defaultCol && !GRID_AREAS.includes(config.defaultCol)) {
+    warnings.push(`Invalid defaultCol: '${config.defaultCol}'. Must be one of: ${GRID_AREAS.join(', ')}`)
+  }
+  
+  return { warnings }
+}
+
+/**
  * Default configuration values for the grid system.
  * These can be overridden in tailwind.config.js
  *
@@ -606,7 +676,14 @@ const createGridUtilities = (config, templates) => {
  *   }
  * })
  */
-export default (config = {}) => {
+module.exports = (config = {}) => {
+  // Validate configuration and log warnings
+  const validation = validateConfig(config)
+  if (validation.warnings.length > 0) {
+    console.warn('Tailwind Breakout Grid Plugin - Configuration warnings:')
+    validation.warnings.forEach(warning => console.warn(`  - ${warning}`))
+  }
+  
   const pluginConfig = {
     ...defaultConfig,
     ...config,
