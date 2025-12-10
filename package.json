@@ -1,6 +1,6 @@
 {
   "name": "@astuteo/tailwind-breakout-grid",
-  "version": "1.1.6",
+  "version": "1.2.0",
   "description": "A Tailwind CSS plugin for creating fluid breakout grid layouts with optimal reading widths",
   "main": "index.js",
   "types": "index.d.ts",
