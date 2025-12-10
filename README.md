@@ -381,7 +381,9 @@ breakoutGrid({
 
 ### Nested Grids (Left/Right Alignment)
 
-For asymmetric layouts, use left/right aligned nested grids:
+For asymmetric layouts, use left/right aligned nested grids.
+
+> **Nested inside constrained containers?** See [Nested Grid Modifiers](docs/nested-grids.md) for the `breakout-to-*` utilities that collapse outer tracks for proper nesting in sidebar layouts and other constrained contexts.
 
 ```html
 <div class="grid-cols-breakout">
@@ -942,6 +944,12 @@ This approach lets you:
 - `grid-cols-content-left` / `grid-cols-content-right`
 - `grid-cols-narrow-left` / `grid-cols-narrow-right`
 
+#### Nested Grid Modifiers
+- `breakout-to-narrow` - Collapse all outer tracks (full container width)
+- `breakout-to-content` - Keep content margins, collapse outer tracks
+- `breakout-to-popout` - Keep popout and content margins
+- `breakout-to-feature` - Keep feature, popout, and content margins
+
 #### Column Placement Classes
 - `col-full` - Full viewport width
 - `col-feature-popout` - Maximum content width
@@ -1293,6 +1301,12 @@ Works in all browsers that support:
 - CSS `clamp()`
 
 This includes all modern browsers and IE11 with appropriate fallbacks.
+
+## Additional Documentation
+
+- [Nested Grid Modifiers](docs/nested-grids.md) - Using `breakout-to-*` utilities for nested grids in constrained containers
+- [Install from GitHub](docs/INSTALL-FROM-GITHUB.md) - Installing directly from GitHub instead of npm
+- [Publishing Guide](docs/PUBLISHING.md) - For maintainers: how to publish new versions
 
 ## Related Resources
 
