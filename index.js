@@ -723,8 +723,40 @@ const createGridUtilities = (config, templates) => {
     }
   })
 
-  debugLog(config, 'Generated utilities:', utilities)
-  return utilities
+  // Modifier classes that constrain nested breakout grids to a specific level
+  // These collapse outer tracks so the grid fits within its container
+  // while still maintaining the named grid lines for col-* utilities
+  const breakoutModifiers = {
+    // Constrain to narrow - collapses all outer tracks
+    '.breakout-to-narrow': {
+      '--full': 'minmax(0, 0)',
+      '--feature-popout': '0',
+      '--feature': '0',
+      '--popout': '0',
+      '--content': '0'
+    },
+    // Constrain to content - keeps content margins
+    '.breakout-to-content': {
+      '--full': 'minmax(0, 0)',
+      '--feature-popout': '0',
+      '--feature': '0',
+      '--popout': '0'
+    },
+    // Constrain to popout - keeps popout and content margins
+    '.breakout-to-popout': {
+      '--full': 'minmax(0, 0)',
+      '--feature-popout': '0',
+      '--feature': '0'
+    },
+    // Constrain to feature - keeps feature, popout, and content margins
+    '.breakout-to-feature': {
+      '--full': 'minmax(0, 0)',
+      '--feature-popout': '0'
+    }
+  }
+
+  debugLog(config, 'Generated utilities:', { ...utilities, ...breakoutModifiers })
+  return { ...utilities, ...breakoutModifiers }
 }
 
 /**
