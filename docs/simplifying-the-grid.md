@@ -4,7 +4,7 @@ The breakout grid includes 7 column levels by default. If your project doesn't n
 
 ## Collapsing Unused Tracks
 
-Set any track width to `'0'` in your config:
+Set any track width to `'0px'` in your config:
 
 ```js
 // tailwind.config.js
@@ -14,10 +14,10 @@ export default {
   plugins: [
     breakoutGrid({
       // Collapse feature-popout (you just need full → feature → content → narrow)
-      featurePopoutWidth: '0',
+      featurePopoutWidth: '0px',
 
       // Collapse popout too if you only need feature and content
-      popoutWidth: '0',
+      popoutWidth: '0px',
     })
   ]
 }
@@ -31,9 +31,9 @@ For simple editorial layouts that only need three widths:
 
 ```js
 breakoutGrid({
-  featurePopoutWidth: '0',
-  featureWidth: '0',
-  popoutWidth: '0',
+  featurePopoutWidth: '0px',
+  featureWidth: '0px',
+  popoutWidth: '0px',
 })
 ```
 
@@ -50,8 +50,8 @@ If you want full, feature, content, and narrow but don't need the popout variati
 
 ```js
 breakoutGrid({
-  featurePopoutWidth: '0',
-  popoutWidth: '0',
+  featurePopoutWidth: '0px',
+  popoutWidth: '0px',
 })
 ```
 
