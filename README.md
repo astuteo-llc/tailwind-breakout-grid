@@ -815,6 +815,7 @@ This includes all modern browsers and IE11 with appropriate fallbacks.
 - [Migration Guide](docs/migration-guide.md) - Strategies for integrating with existing projects
 - [Layout Examples](docs/layout-examples.md) - Real-world layout patterns and code samples
 - [Nested Grid Modifiers](docs/nested-grids.md) - Using `breakout-to-*` utilities for nested grids
+- [Simplifying the Grid](docs/simplifying-the-grid.md) - Collapse unused tracks for simpler layouts
 - [Install from GitHub](docs/INSTALL-FROM-GITHUB.md) - Installing directly from GitHub instead of npm
 - [Publishing Guide](docs/PUBLISHING.md) - For maintainers: how to publish new versions
 
