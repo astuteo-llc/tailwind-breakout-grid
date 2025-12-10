@@ -724,34 +724,25 @@ const createGridUtilities = (config, templates) => {
   })
 
   // Modifier classes that constrain nested breakout grids to a specific level
-  // These collapse outer tracks so the grid fits within its container
-  // while still maintaining the named grid lines for col-* utilities
+  // These redefine grid-template-columns with collapsed outer tracks
+  // while maintaining named grid lines for col-* utilities
+  // Uses minmax(0, 1fr) for the center column to fill available space
   const breakoutModifiers = {
-    // Constrain to narrow - collapses all outer tracks
-    '.breakout-to-narrow': {
-      '--full': 'minmax(0, 0)',
-      '--feature-popout': '0',
-      '--feature': '0',
-      '--popout': '0',
-      '--content': '0'
+    // Constrain to narrow - collapses all outer tracks, content spans full width
+    '.grid-cols-breakout.breakout-to-narrow': {
+      'grid-template-columns': `[full-start feature-popout-start feature-start popout-start content-start narrow-start center-start] minmax(0, 1fr) [center-end narrow-end content-end popout-end feature-end feature-popout-end full-end]`
     },
-    // Constrain to content - keeps content margins
-    '.breakout-to-content': {
-      '--full': 'minmax(0, 0)',
-      '--feature-popout': '0',
-      '--feature': '0',
-      '--popout': '0'
+    // Constrain to content - keeps content margins only
+    '.grid-cols-breakout.breakout-to-content': {
+      'grid-template-columns': `[full-start feature-popout-start feature-start popout-start content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end popout-end feature-end feature-popout-end full-end]`
     },
     // Constrain to popout - keeps popout and content margins
-    '.breakout-to-popout': {
-      '--full': 'minmax(0, 0)',
-      '--feature-popout': '0',
-      '--feature': '0'
+    '.grid-cols-breakout.breakout-to-popout': {
+      'grid-template-columns': `[full-start feature-popout-start feature-start popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end feature-end feature-popout-end full-end]`
     },
     // Constrain to feature - keeps feature, popout, and content margins
-    '.breakout-to-feature': {
-      '--full': 'minmax(0, 0)',
-      '--feature-popout': '0'
+    '.grid-cols-breakout.breakout-to-feature': {
+      'grid-template-columns': `[full-start feature-popout-start feature-start] var(--feature) [popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end] var(--feature) [feature-end feature-popout-end full-end]`
     }
   }
 
