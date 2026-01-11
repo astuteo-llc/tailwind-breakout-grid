@@ -34,7 +34,7 @@
   document.addEventListener('alpine:init', () => {
     Alpine.data('breakoutGridVisualizer', () => ({
       // Constants
-      version: 'v2.1-beta.8',
+      version: 'v2.1-beta.10',
       loremContent: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
 
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.`,
@@ -234,6 +234,18 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         const opt = this.configOptions[key];
         if (opt && opt.liveVar) {
           document.documentElement.style.setProperty(opt.liveVar, value);
+        }
+        // Special handling for track widths (need minmax wrapper)
+        if (key === 'popoutWidth') {
+          document.documentElement.style.setProperty('--popout', `minmax(0, ${value})`);
+          document.documentElement.style.setProperty('--breakout-padding', `clamp(1rem, 5vw, ${value})`);
+          document.documentElement.style.setProperty('--popout-to-content', `clamp(1rem, 5vw, ${value})`);
+        }
+        if (key === 'featureWidth') {
+          document.documentElement.style.setProperty('--feature', `minmax(0, ${value})`);
+        }
+        if (key === 'content') {
+          document.documentElement.style.setProperty('--content', `minmax(0, ${value})`);
         }
       },
 
@@ -599,10 +611,11 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                   </template>
                 </select>
                 <div style="font-size: 0.625rem; color: #a8a29e; margin-top: 0.125rem;" x-text="configOptions.defaultCol.desc"></div>
+                <div style="font-size: 0.5625rem; color: #dc2626; margin-top: 0.125rem;">Requires rebuild</div>
               </div>
 
               <!-- Gap Scale -->
-              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.75rem; border-top: 1px dashed #fde68a;">gapScale (responsive)</div>
+              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.75rem; border-top: 1px dashed #fde68a;">gapScale <span style="font-size: 0.5625rem; color: #dc2626; font-weight: 400; text-transform: none;">(requires rebuild)</span></div>
               <template x-for="key in Object.keys(gapScaleOptions)" :key="'gs_'+key">
                 <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
                   <label style="color: #78716c; font-weight: 600; font-size: 0.6875rem; font-family: Monaco, monospace; min-width: 3.5rem;" x-text="key + ':'"></label>
