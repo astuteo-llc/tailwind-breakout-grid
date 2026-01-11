@@ -1,6 +1,6 @@
 # Simplifying the Grid
 
-The breakout grid includes 7 column levels by default. If your project doesn't need all of them, you can collapse unused tracks to zero width. The grid lines still exist (so utilities won't break), but they take no space.
+The breakout grid includes 6 column levels by default. If your project doesn't need all of them, you can collapse unused tracks to zero width. The grid lines still exist (so utilities won't break), but they take no space.
 
 ## Collapsing Unused Tracks
 
@@ -13,10 +13,7 @@ import breakoutGrid from '@astuteo/tailwind-breakout-grid'
 export default {
   plugins: [
     breakoutGrid({
-      // Collapse feature-popout (you just need full → feature → content → narrow)
-      featurePopoutWidth: '0px',
-
-      // Collapse popout too if you only need feature and content
+      // Collapse popout if you only need full → feature → content → narrow
       popoutWidth: '0px',
     })
   ]
@@ -31,7 +28,6 @@ For simple editorial layouts that only need three widths:
 
 ```js
 breakoutGrid({
-  featurePopoutWidth: '0px',
   featureWidth: '0px',
   popoutWidth: '0px',
 })
@@ -42,15 +38,14 @@ This gives you:
 - `col-content` - Standard content width
 - `col-narrow` - Optimal reading width
 
-The `col-feature`, `col-popout`, and `col-feature-popout` classes still work—they just resolve to the same width as `col-content`.
+The `col-feature` and `col-popout` classes still work—they just resolve to the same width as `col-content`.
 
-### No Popout Levels
+### No Popout Level
 
-If you want full, feature, content, and narrow but don't need the popout variations:
+If you want full, feature, content, and narrow but don't need popout:
 
 ```js
 breakoutGrid({
-  featurePopoutWidth: '0px',
   popoutWidth: '0px',
 })
 ```

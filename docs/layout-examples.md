@@ -71,8 +71,8 @@ A marketing page with asymmetric hero, feature grid, and testimonials.
 ```html
 <main class="grid-cols-breakout">
   <!-- Hero with asymmetric layout -->
-  <section class="col-feature-popout grid-cols-feature-popout-left gap-12 py-20">
-    <div class="col-feature-popout">
+  <section class="col-feature grid-cols-feature-left gap-12 py-20">
+    <div class="col-feature">
       <img src="product.jpg" class="w-full h-96 object-cover rounded-lg shadow-xl" />
     </div>
     <div class="col-content flex flex-col justify-center">
@@ -88,7 +88,7 @@ A marketing page with asymmetric hero, feature grid, and testimonials.
   </section>
 
   <!-- Feature grid -->
-  <section class="col-feature-popout py-16">
+  <section class="col-feature py-16">
     <h2 class="text-3xl font-bold text-center mb-12">Features</h2>
     <div class="grid md:grid-cols-3 gap-8">
       <div class="text-center">
@@ -160,7 +160,7 @@ A hero section with full-width background and feature grid.
     </div>
   </div>
 
-  <div class="col-feature-popout grid grid-cols-2 gap-8 py-12">
+  <div class="col-feature grid grid-cols-2 gap-8 py-12">
     <div>Feature 1</div>
     <div>Feature 2</div>
   </div>
@@ -276,8 +276,8 @@ A gallery layout with mixed image sizes.
     <img class="h-64 w-full object-cover rounded" src="img2.jpg" alt="" />
   </div>
 
-  <!-- Three-column gallery at feature-popout width -->
-  <div class="col-feature-popout grid grid-cols-3 gap-4">
+  <!-- Three-column gallery at feature width -->
+  <div class="col-feature grid grid-cols-3 gap-4">
     <img class="h-48 w-full object-cover rounded" src="img3.jpg" alt="" />
     <img class="h-48 w-full object-cover rounded" src="img4.jpg" alt="" />
     <img class="h-48 w-full object-cover rounded" src="img5.jpg" alt="" />

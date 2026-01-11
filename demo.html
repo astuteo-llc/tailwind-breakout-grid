@@ -19,7 +19,6 @@
       --full-limit: 120rem;
       --narrow-inset: min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), calc(100% - var(--gap)));
       --full: minmax(var(--gap), 1fr);
-      --feature-popout: minmax(0, 5rem);
       --feature: minmax(0, 6vw);
       --popout: minmax(0, 5rem);
       --content: minmax(0, 4vw);
@@ -43,7 +42,6 @@
       display: grid;
       grid-template-columns:
         [full-start] var(--full)
-        [feature-popout-start] var(--feature-popout)
         [feature-start] var(--feature)
         [popout-start] var(--popout)
         [content-start] var(--content)
@@ -51,7 +49,6 @@
         var(--content) [content-end]
         var(--popout) [popout-end]
         var(--feature) [feature-end]
-        var(--feature-popout) [feature-popout-end]
         var(--full) [full-end];
     }
 
@@ -64,7 +61,6 @@
     .col-content { grid-column: content; }
     .col-popout { grid-column: popout; }
     .col-feature { grid-column: feature; }
-    .col-feature-popout { grid-column: feature-popout; }
     .col-full { grid-column: full; }
     .col-full-limit {
       grid-column: full;
@@ -89,7 +85,6 @@
       display: grid;
       grid-template-columns:
         [full-start] var(--full)
-        [feature-popout-start] var(--feature-popout)
         [feature-start] var(--feature)
         [popout-start] var(--popout)
         [content-start] var(--content)
@@ -108,7 +103,6 @@
         var(--content) [content-end]
         var(--popout) [popout-end]
         var(--feature) [feature-end]
-        var(--feature-popout) [feature-popout-end]
         var(--full) [full-end];
     }
 
@@ -189,13 +183,6 @@
           <div class="demo-label">col-feature</div>
           <div class="demo-box bg-yellow-100 border-2 border-yellow-400">
             <p class="text-sm">Extra wide for emphasis content (~6vw extension). Ideal for hero images and featured content.</p>
-          </div>
-        </div>
-
-        <div class="col-feature-popout">
-          <div class="demo-label">col-feature-popout</div>
-          <div class="demo-box bg-orange-100 border-2 border-orange-400">
-            <p class="text-sm">Maximum content width (~5rem + 6vw). Perfect for hero sections and major visual emphasis.</p>
           </div>
         </div>
 
@@ -385,7 +372,7 @@
           </div>
         </div>
 
-        <div class="col-feature-popout grid md:grid-cols-3 gap-8 py-16 px-gap bg-white">
+        <div class="col-feature grid md:grid-cols-3 gap-8 py-16 px-gap bg-white">
           <div class="text-center">
             <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
               1
@@ -421,9 +408,6 @@
       <div class="grid-cols-breakout gap-y-2">
         <div class="col-full bg-red-50 p-4 text-center text-sm font-mono border-2 border-red-300">
           full (edge to edge)
-        </div>
-        <div class="col-feature-popout bg-orange-50 p-4 text-center text-sm font-mono border-2 border-orange-300">
-          feature-popout
         </div>
         <div class="col-feature bg-yellow-50 p-4 text-center text-sm font-mono border-2 border-yellow-300">
           feature

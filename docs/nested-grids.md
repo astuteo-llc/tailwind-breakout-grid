@@ -18,7 +18,7 @@ The `breakout-to-*` modifier classes solve this by collapsing the outer tracks, 
 The standard `grid-cols-breakout` creates a grid with tracks for each breakout level:
 
 ```
-[full] [feature-popout] [feature] [popout] [content] [narrow] [content] [popout] [feature] [feature-popout] [full]
+[full] [feature] [popout] [content] [narrow] [content] [popout] [feature] [full]
 ```
 
 When nested inside a constrained container, those outer tracks (especially `--full` which uses `minmax(var(--gap), 1fr)`) still try to claim space based on viewport calculations.
@@ -116,18 +116,18 @@ Each modifier redefines `grid-template-columns` with a simplified template. For 
 ```css
 .grid-cols-breakout.breakout-to-content {
   grid-template-columns:
-    [full-start feature-popout-start feature-start popout-start content-start]
+    [full-start feature-start popout-start content-start]
     var(--content)
     [narrow-start center-start]
     minmax(0, 1fr)
     [center-end narrow-end]
     var(--content)
-    [content-end popout-end feature-end feature-popout-end full-end];
+    [content-end popout-end feature-end full-end];
 }
 ```
 
 Key points:
-- Outer grid line names are stacked at the edges (e.g., `full-start`, `feature-popout-start`, etc. all at the same position)
+- Outer grid line names are stacked at the edges (e.g., `full-start`, `feature-start`, etc. all at the same position)
 - The center column uses `minmax(0, 1fr)` to fill available space
 - Inner track variables (like `var(--content)`) are preserved where appropriate
 

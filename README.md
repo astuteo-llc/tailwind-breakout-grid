@@ -6,7 +6,7 @@ Inspired by [Viget's Fluid Breakout Layout](https://www.viget.com/articles/fluid
 
 ## Features
 
-- **7 content width levels** - From narrow reading columns to full viewport width
+- **6 content width levels** - From narrow reading columns to full viewport width
 - **Responsive spacing** - Automatic gap scaling based on viewport size
 - **Left/right alignment** - Nested grids for asymmetric layouts
 - **Fluid by default** - Uses CSS clamp() for smooth viewport adaptation
@@ -74,7 +74,6 @@ breakoutGrid({
   content: '4vw',         // Standard content rail width
   popoutWidth: '5rem',    // Popout extension distance
   featureWidth: '12vw',   // Feature rail extension
-  featurePopoutWidth: '5rem', // Extra feature extension
 
   // Layout behavior
   defaultCol: 'content',  // Default column for items without col-* class
@@ -133,9 +132,6 @@ Viewport edges
 │ ╔══════════col-full════════════╗        │ Full width (with gap padding)
 │ ║                              ║        │
 │ ╚══════════════════════════════╝        │
-│   ╔════col-feature-popout════╗          │ Widest content
-│   ║     ~featurePopoutWidth  ║          │
-│   ╚══════════════════════════╝          │
 │     ╔════col-feature═══════╗            │ Extra wide content
 │     ║    ~featureWidth     ║            │
 │     ╚══════════════════════╝            │
@@ -187,11 +183,6 @@ Viewport edges
   <!-- Feature: Wide emphasis content -->
   <img class="col-feature" src="hero.jpg" alt="Hero image" />
 
-  <!-- Feature Popout: Maximum content width -->
-  <div class="col-feature-popout bg-gradient-to-r from-blue-500 to-purple-600 text-white p-gap">
-    <h2>Hero Section</h2>
-  </div>
-
   <!-- Full: Edge-to-edge (respects gap padding) -->
   <div class="col-full bg-gray-100 p-gap">
     <p class="max-w-4xl mx-auto">
@@ -219,14 +210,12 @@ The plugin provides several grid template classes for different layout contexts:
 - `grid-cols-breakout` - The primary centered grid template with all column areas
 
 **Left-Aligned Templates:**
-- `grid-cols-feature-popout-left` - Feature-popout width container, left-aligned
 - `grid-cols-feature-left` - Feature width container, left-aligned
 - `grid-cols-popout-left` - Popout width container, left-aligned
 - `grid-cols-content-left` - Content width container, left-aligned
 - `grid-cols-narrow-left` - Narrow width container, left-aligned
 
 **Right-Aligned Templates:**
-- `grid-cols-feature-popout-right` - Feature-popout width container, right-aligned
 - `grid-cols-feature-right` - Feature width container, right-aligned
 - `grid-cols-popout-right` - Popout width container, right-aligned
 - `grid-cols-content-right` - Content width container, right-aligned
@@ -407,16 +396,14 @@ For asymmetric layouts, use left/right aligned nested grids.
 #### Available Nested Grid Classes
 
 **Left-Aligned Grids** (content flows from left edge):
-- `grid-cols-feature-popout-left` - Feature-popout width, left-aligned
-- `grid-cols-feature-left` - Feature width, left-aligned  
+- `grid-cols-feature-left` - Feature width, left-aligned
 - `grid-cols-popout-left` - Popout width, left-aligned
 - `grid-cols-content-left` - Content width, left-aligned
 - `grid-cols-narrow-left` - Narrow width, left-aligned
 
 **Right-Aligned Grids** (content flows from right edge):
-- `grid-cols-feature-popout-right` - Feature-popout width, right-aligned
 - `grid-cols-feature-right` - Feature width, right-aligned
-- `grid-cols-popout-right` - Popout width, right-aligned  
+- `grid-cols-popout-right` - Popout width, right-aligned
 - `grid-cols-content-right` - Content width, right-aligned
 - `grid-cols-narrow-right` - Narrow width, right-aligned
 
@@ -438,8 +425,8 @@ Use start/end utilities for custom spans and precise positioning:
     Spans from narrow column start to popout column end
   </div>
 
-  <!-- Start at feature-popout-start, end at center -->
-  <div class="col-start-feature-popout col-end-center">
+  <!-- Start at feature-start, end at center -->
+  <div class="col-start-feature col-end-center">
     Complex asymmetric layout spanning to center point
   </div>
 </div>
@@ -449,7 +436,6 @@ Use start/end utilities for custom spans and precise positioning:
 
 **Column Start Utilities:**
 - `col-start-full` - Start at viewport edge
-- `col-start-feature-popout` - Start at feature-popout boundary
 - `col-start-feature` - Start at feature boundary
 - `col-start-popout` - Start at popout boundary
 - `col-start-content` - Start at content boundary
@@ -462,7 +448,6 @@ Use start/end utilities for custom spans and precise positioning:
 - `col-end-content` - End at content boundary
 - `col-end-popout` - End at popout boundary
 - `col-end-feature` - End at feature boundary
-- `col-end-feature-popout` - End at feature-popout boundary
 - `col-end-full` - End at viewport edge
 
 #### Left/Right Aligned Utilities
@@ -473,7 +458,6 @@ For content that spans from one edge to a specific column:
 <div class="grid-cols-breakout">
   <!-- Left-aligned: spans from left edge to specified column end -->
   <div class="col-full-left">Full width from left edge</div>
-  <div class="col-feature-popout-left">From left edge to feature-popout-end</div>
   <div class="col-feature-left">From left edge to feature-end</div>
   <div class="col-popout-left">From left edge to popout-end</div>
   <div class="col-content-left">From left edge to content-end</div>
@@ -484,7 +468,6 @@ For content that spans from one edge to a specific column:
   <div class="col-content-right">From content-start to right edge</div>
   <div class="col-popout-right">From popout-start to right edge</div>
   <div class="col-feature-right">From feature-start to right edge</div>
-  <div class="col-feature-popout-right">From feature-popout-start to right edge</div>
 </div>
 ```
 
@@ -535,7 +518,7 @@ For content that spans from one edge to a specific column:
     </div>
   </div>
 
-  <div class="col-feature-popout grid grid-cols-2 gap-8 py-12">
+  <div class="col-feature grid grid-cols-2 gap-8 py-12">
     <div>Feature 1</div>
     <div>Feature 2</div>
   </div>
@@ -573,7 +556,6 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 
 #### Grid Template Classes
 - `grid-cols-breakout` - Main centered grid template
-- `grid-cols-feature-popout-left` / `grid-cols-feature-popout-right`
 - `grid-cols-feature-left` / `grid-cols-feature-right`
 - `grid-cols-popout-left` / `grid-cols-popout-right`
 - `grid-cols-content-left` / `grid-cols-content-right`
@@ -587,7 +569,6 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 
 #### Column Placement Classes
 - `col-full` - Full viewport width
-- `col-feature-popout` - Maximum content width
 - `col-feature` - Extra wide content
 - `col-popout` - Slightly wider content
 - `col-content` - Standard content width (default)
@@ -597,7 +578,6 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 
 #### Column Start Classes
 - `col-start-full` - Start at viewport edge
-- `col-start-feature-popout` - Start at feature-popout boundary
 - `col-start-feature` - Start at feature boundary
 - `col-start-popout` - Start at popout boundary
 - `col-start-content` - Start at content boundary
@@ -610,11 +590,9 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 - `col-end-content` - End at content boundary
 - `col-end-popout` - End at popout boundary
 - `col-end-feature` - End at feature boundary
-- `col-end-feature-popout` - End at feature-popout boundary
 - `col-end-full` - End at viewport edge
 
 #### Left/Right Span Classes
-- `col-feature-popout-left` / `col-feature-popout-right`
 - `col-feature-left` / `col-feature-right`
 - `col-popout-left` / `col-popout-right`
 - `col-content-left` / `col-content-right`
@@ -653,7 +631,6 @@ The plugin generates these CSS variables that you can use in custom CSS:
 - `--content` - Content column extension
 - `--popout` - Popout column extension
 - `--feature` - Feature column extension
-- `--feature-popout` - Feature-popout column extension
 - `--full` - Full column definition
 - `--breakout-padding` - Current responsive breakout padding
 

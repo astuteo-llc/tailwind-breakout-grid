@@ -86,7 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial release of the Tailwind Breakout Grid plugin
-- 7 content width levels: narrow, content, popout, feature, feature-popout, full, and center
+- 6 content width levels: narrow, content, popout, feature, full, and center
 - Responsive gap scaling with customizable breakpoints
 - Left/right aligned nested grids for asymmetric layouts
 - Spacing utilities (p-gap, m-gap, etc.) based on grid measurements

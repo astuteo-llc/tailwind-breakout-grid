@@ -6,7 +6,7 @@
  * layouts, marketing pages, and content-rich applications.
  *
  * Features:
- * - 7 content width levels (narrow, content, popout, feature, feature-popout, full, center)
+ * - 6 content width levels (narrow, content, popout, feature, full, center)
  * - Responsive gap scaling based on viewport size
  * - Left/right aligned nested grids for asymmetric layouts
  * - Fluid by default using CSS clamp() for smooth adaptation
@@ -30,7 +30,7 @@
  */
 
 // Ordered from widest to narrowest, following the visual hierarchy
-const GRID_AREAS = ['full', 'feature-popout', 'feature', 'popout', 'content', 'center', 'narrow']
+const GRID_AREAS = ['full', 'feature', 'popout', 'content', 'center', 'narrow']
 const BREAKOUT_TYPES = GRID_AREAS.filter(area => area !== 'full')
 
 /**
@@ -66,7 +66,7 @@ const validateConfig = (config) => {
   // Validate CSS unit properties
   const cssUnitProperties = [
     'baseGap', 'maxGap', 'narrowMin', 'narrowMax', 'narrowBase',
-    'featurePopoutWidth', 'featureWidth', 'popoutWidth', 'content', 'fullLimit'
+    'featureWidth', 'popoutWidth', 'content', 'fullLimit'
   ]
   
   cssUnitProperties.forEach(prop => {
@@ -146,7 +146,6 @@ const defaultConfig = {
   narrowMin: '40rem',  // Best width for reading text
   narrowMax: '50rem',  // Max width before text gets hard to read
   narrowBase: '52vw',  // Preferred/default width for narrow sections
-  featurePopoutWidth: '5rem', // How far "feature" sections pop out
   featureWidth: '12vw', // How far "feature" sections stick out
   defaultCol: 'content',  // Default column for elements without a col-* class
   fullLimit: '90rem',  // Maximum width for full-limit sections
@@ -177,9 +176,6 @@ const defaultConfig = {
  *    │ ╔═════════col-full════════╗ │ full: edge-to-edge with gap
  *    │ ║    spans all columns    ║ │
  *    │ ╚═════════════════════════╝ │
- *    │   ╔═col-feature-popout═╗    │ feature-popout: widest content
- *    │   ║     widest text    ║    │ (~5rem + feature width)
- *    │   ╚════════════════════╝    │
  *    │     ╔═══col-feature═══╗     │ feature: extra wide content
  *    │     ║   extra wide    ║     │ (~12vw on each side)
  *    │     ╚═════════════════╝     │
@@ -219,7 +215,6 @@ const createRootCSS = (pluginConfig) => {
       '--full-limit': pluginConfig.fullLimit,
       '--narrow-inset': 'min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), calc(100% - var(--gap)))',
       '--full': 'minmax(var(--gap), 1fr)',
-      '--feature-popout': `minmax(0, ${pluginConfig.featurePopoutWidth})`,
       '--feature': `minmax(0, ${pluginConfig.featureWidth})`,
       '--popout': `minmax(0, ${pluginConfig.popoutWidth})`,
       '--content': `minmax(0, ${pluginConfig.content})`,
@@ -450,42 +445,11 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
 
   debugLog(config, `Creating grid template for type: ${validatedType}, align: ${validatedAlign}`)
 
-  if (validatedType === 'feature-popout' && validatedAlign === 'left') {
-    const template = `[full-start] var(--full)
-    [feature-popout-start] var(--feature-popout)
-    [feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content)
-    [narrow-start] var(--narrow-inset) [narrow-end]
-    var(--content) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--feature-popout) [feature-popout-end full-end]`
-    debugLog(config, 'Generated feature-popout-left template:', template)
-    return template
-  }
-
-  if (validatedType === 'feature-popout' && validatedAlign === 'right') {
-    const template = `[full-start feature-popout-start] var(--feature-popout)
-    [feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content)
-    [narrow-start] var(--narrow-inset) [narrow-end]
-    var(--content) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--feature-popout) [feature-popout-end]
-    var(--full) [full-end]`
-    debugLog(config, 'Generated feature-popout-right template:', template)
-    return template
-  }
-
   /**
    * Feature Left Template
    */
   if (validatedType === 'feature' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
-    [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
     [popout-start] var(--popout)
     [content-start] var(--content)
@@ -508,7 +472,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
     var(--content) [content-end]
     var(--popout) [popout-end]
     var(--feature) [feature-end]
-    var(--feature-popout) [feature-popout-end]
     var(--full) [full-end]`
     debugLog(config, 'Generated feature-right template:', template)
     return template
@@ -519,7 +482,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
    */
   if (validatedType === 'content' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
-    [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
     [popout-start] var(--popout)
     [content-start] var(--content)
@@ -538,7 +500,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
     var(--content) [content-end]
     var(--popout) [popout-end]
     var(--feature) [feature-end]
-    var(--feature-popout) [feature-popout-end]
     var(--full) [full-end]`
     debugLog(config, 'Generated content-right template:', template)
     return template
@@ -549,7 +510,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
    */
   if (validatedType === 'popout' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
-    [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
     [popout-start] var(--popout)
     [content-start] var(--content)
@@ -570,7 +530,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
     var(--content) [content-end]
     var(--popout) [popout-end]
     var(--feature) [feature-end]
-    var(--feature-popout) [feature-popout-end]
     var(--full) [full-end]`
     debugLog(config, 'Generated popout-right template:', template)
     return template
@@ -581,7 +540,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
    */
   if (validatedType === 'narrow' && validatedAlign === 'left') {
     const template = `[full-start] var(--full)
-    [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
     [popout-start] var(--popout)
     [content-start] var(--content)
@@ -597,7 +555,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
     const template = `[full-start narrow-start] var(--narrow-inset) [narrow-end content-end]
     var(--popout) [popout-end]
     var(--feature) [feature-end]
-    var(--feature-popout) [feature-popout-end]
     var(--full) [full-end]`
     debugLog(config, 'Generated narrow-right template:', template)
     return template
@@ -607,7 +564,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
    * Default (Center) Template
    */
   const template = `[full-start] var(--full)
-    [feature-popout-start] var(--feature-popout)
     [feature-start] var(--feature)
     [popout-start] var(--popout)
     [content-start] var(--content)
@@ -615,7 +571,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
     var(--content) [content-end]
     var(--popout) [popout-end]
     var(--feature) [feature-end]
-    var(--feature-popout) [feature-popout-end]
     var(--full) [full-end]`
   debugLog(config, 'Generated default template:', template)
   return template
@@ -627,7 +582,6 @@ const createGridTemplate = (config, type = 'full', align = 'center') => {
  *
  * Generated templates:
  * - default: Center-aligned grid (used by .grid-cols-breakout)
- * - featurePopoutLeft/Right: Feature popout aligned grids
  * - featureLeft/Right: Feature aligned grids
  * - popoutLeft/Right: Popout aligned grids
  * - contentLeft/Right: Content aligned grids
@@ -730,19 +684,19 @@ const createGridUtilities = (config, templates) => {
   const breakoutModifiers = {
     // Constrain to narrow - collapses all outer tracks, content spans full width
     '.grid-cols-breakout.breakout-to-narrow': {
-      'grid-template-columns': `[full-start feature-popout-start feature-start popout-start content-start narrow-start center-start] minmax(0, 1fr) [center-end narrow-end content-end popout-end feature-end feature-popout-end full-end]`
+      'grid-template-columns': `[full-start feature-start popout-start content-start narrow-start center-start] minmax(0, 1fr) [center-end narrow-end content-end popout-end feature-end full-end]`
     },
     // Constrain to content - keeps content margins only
     '.grid-cols-breakout.breakout-to-content': {
-      'grid-template-columns': `[full-start feature-popout-start feature-start popout-start content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end popout-end feature-end feature-popout-end full-end]`
+      'grid-template-columns': `[full-start feature-start popout-start content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end popout-end feature-end full-end]`
     },
     // Constrain to popout - keeps popout and content margins
     '.grid-cols-breakout.breakout-to-popout': {
-      'grid-template-columns': `[full-start feature-popout-start feature-start popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end feature-end feature-popout-end full-end]`
+      'grid-template-columns': `[full-start feature-start popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end feature-end full-end]`
     },
     // Constrain to feature - keeps feature, popout, and content margins
     '.grid-cols-breakout.breakout-to-feature': {
-      'grid-template-columns': `[full-start feature-popout-start feature-start] var(--feature) [popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end] var(--feature) [feature-end feature-popout-end full-end]`
+      'grid-template-columns': `[full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end]`
     }
   }
 
@@ -763,7 +717,6 @@ const createGridUtilities = (config, templates) => {
  * @param {string} [config.content='4vw'] - Standard content rail width
  * @param {string} [config.popoutWidth='5rem'] - Popout extension distance
  * @param {string} [config.featureWidth='12vw'] - Feature rail extension
- * @param {string} [config.featurePopoutWidth='5rem'] - Extra feature extension
  * @param {string} [config.defaultCol='content'] - Default column for items without col-* class
  * @param {string} [config.fullLimit='90rem'] - Maximum width for col-full-limit
  * @param {Object|string} [config.gapScale] - Responsive gap scaling

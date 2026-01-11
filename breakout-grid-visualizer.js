@@ -40,6 +40,7 @@
       showMeasurements: true,
       showGapPadding: false,
       showBreakoutPadding: false,
+      showAdvancedSpan: false,
       viewportWidth: window.innerWidth,
       selectedArea: null,
 
@@ -47,7 +48,6 @@
       gridAreas: [
         { name: 'full', label: 'Full', className: '.col-full', color: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgb(239, 68, 68)' },
         { name: 'full-limit', label: 'Full Limit', className: '.col-full-limit', color: 'rgba(220, 38, 38, 0.1)', borderColor: 'rgb(220, 38, 38)' },
-        { name: 'feature-popout', label: 'Feature Popout', className: '.col-feature-popout', color: 'rgba(249, 115, 22, 0.1)', borderColor: 'rgb(249, 115, 22)' },
         { name: 'feature', label: 'Feature', className: '.col-feature', color: 'rgba(234, 179, 8, 0.1)', borderColor: 'rgb(234, 179, 8)' },
         { name: 'popout', label: 'Popout', className: '.col-popout', color: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgb(34, 197, 94)' },
         { name: 'content', label: 'Content', className: '.col-content', color: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgb(59, 130, 246)' },
@@ -60,8 +60,7 @@
         '--narrow',
         '--content',
         '--popout',
-        '--feature',
-        '--feature-popout'
+        '--feature'
       ],
 
       // Initialize
@@ -124,6 +123,32 @@
              x-transition
              class="breakout-grid-visualizer"
              style="position: fixed; inset: 0; pointer-events: none; z-index: 9999;">
+
+          <!-- Advanced Span Example Overlay -->
+          <div x-show="showAdvancedSpan"
+               class="grid-cols-breakout"
+               style="position: absolute; inset: 0; height: 100%; pointer-events: none; z-index: 5;">
+            <div style="grid-column: full-start / feature-end;
+                        background: linear-gradient(135deg, rgba(236, 72, 153, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%);
+                        border: 3px solid rgb(168, 85, 247);
+                        border-radius: 0.5rem;
+                        margin: 2rem 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;">
+              <div style="background: rgb(139, 92, 246);
+                          color: white;
+                          padding: 1rem 1.5rem;
+                          border-radius: 0.5rem;
+                          font-size: 0.875rem;
+                          font-weight: 700;
+                          text-align: center;
+                          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="font-family: monospace; margin-bottom: 0.25rem;">col-start-full col-end-feature</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500;">Asymmetric span: left edge to feature boundary</div>
+              </div>
+            </div>
+          </div>
 
           <!-- Grid Overlay -->
           <div class="grid-cols-breakout" style="height: 100%; position: relative;">
@@ -290,6 +315,10 @@
                 <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #3b82f6;">
                   <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.375rem; cursor: pointer;">
                   p-breakout
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #8b5cf6;">
+                  <input type="checkbox" x-model="showAdvancedSpan" style="margin-right: 0.375rem; cursor: pointer;">
+                  Span Example
                 </label>
               </div>
             </div>

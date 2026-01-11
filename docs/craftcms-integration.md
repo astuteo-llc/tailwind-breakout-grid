@@ -235,7 +235,7 @@ For entries with Matrix or CKEditor fields containing various block types:
         </div>
 
       {% elseif block.type == 'gallery' %}
-        <div class="col-feature-popout grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        <div class="col-feature grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
           {% for image in block.images.all() %}
             <img src="{{ image.url }}" alt="{{ image.title }}" class="w-full h-48 object-cover rounded">
           {% endfor %}
@@ -286,7 +286,7 @@ Use Twig to dynamically set column classes based on CMS fields:
 ```twig
 {% set relatedEntries = craft.entries.section('blog').relatedTo(entry).limit(3).all() %}
 {% if relatedEntries|length %}
-  <section class="col-feature-popout py-12">
+  <section class="col-feature py-12">
     <h2 class="text-2xl font-bold mb-8">Related Posts</h2>
     <div class="grid md:grid-cols-3 gap-8">
       {% for related in relatedEntries %}

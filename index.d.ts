@@ -53,16 +53,10 @@ export interface BreakoutGridConfig {
   featureWidth?: string;
 
   /**
-   * Additional extension for feature-popout sections
-   * @default '5rem'
-   */
-  featurePopoutWidth?: string;
-
-  /**
    * Default column for elements without a col-* class
    * @default 'content'
    */
-  defaultCol?: 'narrow' | 'content' | 'popout' | 'feature' | 'feature-popout' | 'full';
+  defaultCol?: 'narrow' | 'content' | 'popout' | 'feature' | 'full';
 
   /**
    * Maximum width for col-full-limit sections
