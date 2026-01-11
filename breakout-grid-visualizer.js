@@ -348,102 +348,66 @@
           </div>
 
           <!-- Control Panel -->
-          <div style="position: fixed; bottom: 1rem; right: 1rem; pointer-events: auto; background: white; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); padding: 1rem; max-width: 320px; font-family: system-ui, -apple-system, sans-serif;">
+          <div style="position: fixed; bottom: 1rem; right: 1rem; pointer-events: auto; background: white; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); padding: 0.75rem; max-width: 280px; font-family: system-ui, -apple-system, sans-serif; z-index: 10000;">
 
-            <!-- Header -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e5e7eb;">
-              <h3 style="font-weight: 700; font-size: 0.875rem; margin: 0; color: #111827;">
-                Grid Visualizer
-              </h3>
+            <!-- Header with viewport -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <div>
+                <span style="font-weight: 700; font-size: 0.75rem; color: #111827;">Grid</span>
+                <span style="font-size: 0.75rem; color: #6b7280; margin-left: 0.5rem; font-variant-numeric: tabular-nums;" x-text="viewportWidth + 'px'"></span>
+              </div>
               <button @click="toggle()"
-                      style="background: #ef4444; color: white; border: none; border-radius: 0.375rem; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                      style="background: #ef4444; color: white; border: none; border-radius: 0.25rem; padding: 0.125rem 0.5rem; font-size: 0.625rem; font-weight: 600; cursor: pointer;">
                 Close
               </button>
             </div>
 
-            <!-- Viewport Info -->
-            <div style="margin-bottom: 1rem; padding: 0.75rem; background: #f3f4f6; border-radius: 0.375rem;">
-              <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
-                Viewport Width
-              </div>
-              <div style="font-size: 1.25rem; font-weight: 700; color: #111827; font-variant-numeric: tabular-nums;" x-text="viewportWidth + 'px'"></div>
-            </div>
-
-            <!-- CSS Variables -->
-            <div x-show="showMeasurements" style="margin-bottom: 1rem;">
-              <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
-                Current Values
-              </div>
-              <div style="background: #f9fafb; border-radius: 0.375rem; padding: 0.5rem; font-size: 0.75rem; font-family: 'Monaco', 'Courier New', monospace;">
-                <template x-for="variable in getAllCSSVariables()" :key="variable.name">
-                  <div style="display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px solid #e5e7eb;">
-                    <span style="color: #6b7280;" x-text="variable.name"></span>
-                    <span style="color: #111827; font-weight: 600;" x-text="variable.value"></span>
-                  </div>
-                </template>
-              </div>
+            <!-- CSS Variables (collapsible) -->
+            <div x-show="showMeasurements" style="margin-bottom: 0.5rem; background: #f9fafb; border-radius: 0.25rem; padding: 0.375rem; font-size: 0.625rem; font-family: 'Monaco', 'Courier New', monospace;">
+              <template x-for="variable in getAllCSSVariables()" :key="variable.name">
+                <div style="display: flex; justify-content: space-between; padding: 0.125rem 0;">
+                  <span style="color: #6b7280;" x-text="variable.name"></span>
+                  <span style="color: #111827; font-weight: 600;" x-text="variable.value"></span>
+                </div>
+              </template>
             </div>
 
             <!-- Toggles -->
-            <div style="margin-bottom: 0.75rem;">
-              <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
-                Show
-              </div>
-              <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
-                  <input type="checkbox" x-model="showLabels" style="margin-right: 0.375rem; cursor: pointer;">
-                  Labels
-                </label>
-                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
-                  <input type="checkbox" x-model="showClassNames" style="margin-right: 0.375rem; cursor: pointer;">
-                  Class Names
-                </label>
-                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #374151;">
-                  <input type="checkbox" x-model="showMeasurements" style="margin-right: 0.375rem; cursor: pointer;">
-                  Values
-                </label>
-                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #10b981;">
-                  <input type="checkbox" x-model="showGapPadding" style="margin-right: 0.375rem; cursor: pointer;">
-                  p-gap
-                </label>
-                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #3b82f6;">
-                  <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.375rem; cursor: pointer;">
-                  p-breakout
-                </label>
-              </div>
-            </div>
-
-            <!-- Advanced Section -->
-            <div style="margin-bottom: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                <div style="font-size: 0.75rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
-                  Advanced
-                </div>
-                <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #8b5cf6;">
-                  <input type="checkbox" x-model="showAdvanced" style="margin-right: 0.375rem; cursor: pointer;">
-                  Show Spans
-                </label>
-              </div>
-              <div x-show="showAdvanced" style="font-size: 0.625rem; color: #6b7280; padding: 0.5rem; background: #f3f4f6; border-radius: 0.25rem; line-height: 1.4;">
-                <div style="margin-bottom: 0.25rem;"><code style="background: #e5e7eb; padding: 0.125rem 0.25rem; border-radius: 0.125rem;">.col-*-left</code> anchors to left edge</div>
-                <div><code style="background: #e5e7eb; padding: 0.125rem 0.25rem; border-radius: 0.125rem;">.col-*-right</code> anchors to right edge</div>
-              </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem;">
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #374151;">
+                <input type="checkbox" x-model="showLabels" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
+                Labels
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #374151;">
+                <input type="checkbox" x-model="showClassNames" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
+                Classes
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #374151;">
+                <input type="checkbox" x-model="showMeasurements" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
+                Values
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #10b981;">
+                <input type="checkbox" x-model="showGapPadding" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
+                p-gap
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #3b82f6;">
+                <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
+                p-breakout
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #8b5cf6;">
+                <input type="checkbox" x-model="showAdvanced" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
+                Advanced
+              </label>
             </div>
 
             <!-- Keyboard Shortcut -->
-            <div style="font-size: 0.625rem; color: #9ca3af; text-align: center; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">
-              Press <kbd style="background: #f3f4f6; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-weight: 600; color: #374151;">Ctrl/Cmd + G</kbd> to toggle
+            <div style="font-size: 0.5rem; color: #9ca3af; text-align: center;">
+              <kbd style="background: #f3f4f6; padding: 0.0625rem 0.25rem; border-radius: 0.125rem; font-weight: 600; color: #374151;">⌘G</kbd> toggle
             </div>
 
             <!-- Selected Area Info -->
-            <div x-show="selectedArea" style="margin-top: 0.75rem; padding: 0.75rem; background: #eff6ff; border-radius: 0.375rem; border-left: 3px solid #3b82f6;">
-              <div style="font-size: 0.75rem; font-weight: 600; color: #1e40af; margin-bottom: 0.25rem;">
-                Selected Column
-              </div>
-              <div style="font-size: 0.875rem; color: #1e3a8a; font-weight: 700; font-family: monospace;" x-text="gridAreas.find(a => a.name === selectedArea)?.className || ''"></div>
-              <div style="font-size: 0.625rem; color: #3b82f6; margin-top: 0.25rem;">
-                Click another column to compare
-              </div>
+            <div x-show="selectedArea" style="margin-top: 0.5rem; padding: 0.5rem; background: #eff6ff; border-radius: 0.25rem; border-left: 2px solid #3b82f6;">
+              <div style="font-size: 0.75rem; color: #1e3a8a; font-weight: 700; font-family: monospace;" x-text="gridAreas.find(a => a.name === selectedArea)?.className || ''"></div>
             </div>
 
           </div>
