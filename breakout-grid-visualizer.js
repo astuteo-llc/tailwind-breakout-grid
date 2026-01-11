@@ -41,9 +41,12 @@
       showGapPadding: false,
       showBreakoutPadding: false,
       showAdvanced: false,
+      editMode: false,
       viewportWidth: window.innerWidth,
       selectedArea: null,
       hoveredArea: null,
+      editValues: {},
+      originalValues: {},
 
       // Grid areas configuration (matches plugin)
       gridAreas: [
@@ -116,6 +119,31 @@
       // Check if area is selected
       isSelected(areaName) {
         return this.selectedArea === areaName;
+      },
+
+      // Toggle edit mode
+      toggleEditMode() {
+        this.editMode = !this.editMode;
+        if (this.editMode) {
+          // Store original values and init edit values
+          this.cssVariables.forEach(varName => {
+            const value = this.getCSSVariable(varName);
+            this.originalValues[varName] = value;
+            this.editValues[varName] = value;
+          });
+        } else {
+          // Restore original values
+          this.cssVariables.forEach(varName => {
+            document.documentElement.style.removeProperty(varName);
+          });
+          this.editValues = {};
+        }
+      },
+
+      // Update CSS variable live
+      updateCSSVariable(varName, value) {
+        this.editValues[varName] = value;
+        document.documentElement.style.setProperty(varName, value);
       },
 
       // Template for the visualizer UI
@@ -365,15 +393,45 @@
               </button>
             </div>
 
-            <!-- CSS Variables (collapsible) -->
-            <div x-show="showMeasurements" style="margin-bottom: 0.5rem; background: #f9fafb; border-radius: 0.25rem; padding: 0.375rem; font-size: 0.625rem; font-family: 'Monaco', 'Courier New', monospace;">
+            <!-- CSS Variables (collapsible, editable in edit mode) -->
+            <div x-show="showMeasurements && !editMode" style="margin-bottom: 0.5rem; background: #f9fafb; border-radius: 0.25rem; padding: 0.375rem; font-size: 0.625rem; font-family: 'Monaco', 'Courier New', monospace;">
               <template x-for="variable in getAllCSSVariables()" :key="variable.name">
-                <div style="display: flex; justify-content: space-between; padding: 0.125rem 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.125rem 0;">
                   <span style="color: #6b7280;" x-text="variable.name"></span>
                   <span style="color: #111827; font-weight: 600;" x-text="variable.value"></span>
                 </div>
               </template>
             </div>
+
+            <!-- Edit Mode Inputs (expanded) -->
+            <div x-show="editMode" style="margin-bottom: 0.5rem; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 0.25rem; padding: 0.5rem; font-size: 0.625rem; font-family: 'Monaco', 'Courier New', monospace;">
+              <template x-for="variable in getAllCSSVariables()" :key="variable.name">
+                <div style="margin-bottom: 0.375rem;">
+                  <label style="display: block; color: #92400e; font-weight: 600; margin-bottom: 0.125rem;" x-text="variable.name"></label>
+                  <input type="text"
+                         :value="editValues[variable.name] || variable.value"
+                         @input="updateCSSVariable(variable.name, $event.target.value)"
+                         style="width: 100%; padding: 0.25rem 0.375rem; font-size: 0.75rem; font-family: inherit; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white;">
+                </div>
+              </template>
+            </div>
+
+            <!-- Edit Mode Toggle -->
+            <button @click="toggleEditMode()"
+                    :style="{
+                      width: '100%',
+                      padding: '0.25rem 0.5rem',
+                      marginBottom: '0.5rem',
+                      fontSize: '0.5rem',
+                      fontWeight: '600',
+                      border: editMode ? 'none' : '1px solid #f59e0b',
+                      borderRadius: '0.25rem',
+                      cursor: 'pointer',
+                      background: editMode ? '#f59e0b' : 'white',
+                      color: editMode ? 'white' : '#f59e0b'
+                    }">
+              <span x-text="editMode ? '✓ Editing Live - Click to Reset' : 'Edit CSS Variables'"></span>
+            </button>
 
             <!-- Toggles -->
             <div style="display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.5rem;">
