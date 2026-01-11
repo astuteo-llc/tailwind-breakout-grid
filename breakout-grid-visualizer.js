@@ -33,6 +33,11 @@
   // Register Alpine.js component
   document.addEventListener('alpine:init', () => {
     Alpine.data('breakoutGridVisualizer', () => ({
+      // Constants
+      loremContent: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.`,
+
       // State
       isVisible: false,
       showLabels: true,
@@ -41,31 +46,51 @@
       showGapPadding: false,
       showBreakoutPadding: false,
       showAdvanced: false,
+      showLoremIpsum: false,
       editMode: false,
       viewportWidth: window.innerWidth,
       selectedArea: null,
       hoveredArea: null,
       editValues: {},
       originalValues: {},
+      copySuccess: false,
 
       // Grid areas configuration (matches plugin)
       gridAreas: [
-        { name: 'full', label: 'Full', className: '.col-full', color: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgb(239, 68, 68)' },
-        { name: 'full-limit', label: 'Full Limit', className: '.col-full-limit', color: 'rgba(220, 38, 38, 0.1)', borderColor: 'rgb(220, 38, 38)' },
-        { name: 'feature', label: 'Feature', className: '.col-feature', color: 'rgba(234, 179, 8, 0.1)', borderColor: 'rgb(234, 179, 8)' },
-        { name: 'popout', label: 'Popout', className: '.col-popout', color: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgb(34, 197, 94)' },
-        { name: 'content', label: 'Content', className: '.col-content', color: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgb(59, 130, 246)' },
-        { name: 'narrow', label: 'Narrow', className: '.col-narrow', color: 'rgba(168, 85, 247, 0.1)', borderColor: 'rgb(168, 85, 247)' },
+        { name: 'full', label: 'Full', className: '.col-full', color: 'rgba(239, 68, 68, 0.25)', borderColor: 'rgb(239, 68, 68)' },
+        { name: 'full-limit', label: 'Full Limit', className: '.col-full-limit', color: 'rgba(220, 38, 38, 0.25)', borderColor: 'rgb(220, 38, 38)' },
+        { name: 'feature', label: 'Feature', className: '.col-feature', color: 'rgba(234, 179, 8, 0.25)', borderColor: 'rgb(234, 179, 8)' },
+        { name: 'popout', label: 'Popout', className: '.col-popout', color: 'rgba(34, 197, 94, 0.25)', borderColor: 'rgb(34, 197, 94)' },
+        { name: 'content', label: 'Content', className: '.col-content', color: 'rgba(59, 130, 246, 0.25)', borderColor: 'rgb(59, 130, 246)' },
+        { name: 'narrow', label: 'Narrow', className: '.col-narrow', color: 'rgba(168, 85, 247, 0.25)', borderColor: 'rgb(168, 85, 247)' },
       ],
 
-      // CSS variables to display
-      cssVariables: [
-        '--gap',
-        '--narrow',
-        '--content',
-        '--popout',
-        '--feature'
-      ],
+      // Full plugin config structure with defaults and CSS var mappings
+      configOptions: {
+        // Base measurements
+        baseGap: { value: '1rem', desc: 'Minimum gap between columns (mobile)', cssVar: '--config-base-gap', liveVar: '--base-gap' },
+        maxGap: { value: '15rem', desc: 'Maximum gap cap for ultra-wide screens', cssVar: '--config-max-gap', liveVar: '--max-gap' },
+        narrowMin: { value: '40rem', desc: 'Minimum width for readable text', cssVar: '--config-narrow-min', liveVar: '--narrow-min' },
+        narrowMax: { value: '50rem', desc: 'Maximum before text gets hard to read', cssVar: '--config-narrow-max', liveVar: '--narrow-max' },
+        narrowBase: { value: '52vw', desc: 'Preferred width for narrow sections', cssVar: '--config-narrow-base', liveVar: '--narrow-base' },
+        // Track widths
+        content: { value: '4vw', desc: 'Content rail width. Affects col-content', cssVar: '--config-content', liveVar: null },
+        popoutWidth: { value: '5rem', desc: 'How far popout extends beyond content', cssVar: '--config-popout', liveVar: null },
+        featureWidth: { value: '12vw', desc: 'How far feature extends (images, heroes)', cssVar: '--config-feature', liveVar: null },
+        fullLimit: { value: '90rem', desc: 'Max width for col-full-limit (≤ feature)', cssVar: '--config-full-limit', liveVar: '--full-limit' },
+        // Default column
+        defaultCol: { value: 'content', desc: 'Default column when no col-* class', type: 'select', options: ['narrow', 'content', 'popout', 'feature', 'full'], cssVar: '--config-default-col' },
+      },
+      gapScaleOptions: {
+        default: { value: '4vw', desc: 'Mobile/default gap scaling' },
+        lg: { value: '5vw', desc: 'Large screens (1024px+)' },
+        xl: { value: '6vw', desc: 'Extra large screens (1280px+)' },
+      },
+      breakoutPaddingOptions: {
+        base: { value: '1.5rem', desc: 'Mobile (p-6 equivalent)' },
+        md: { value: '4rem', desc: 'Medium screens (p-16)' },
+        lg: { value: '5rem', desc: 'Large screens (p-20)' },
+      },
 
       // Initialize
       init() {
@@ -103,12 +128,72 @@
         return value || 'Not set';
       },
 
-      // Get all CSS variable values
-      getAllCSSVariables() {
-        return this.cssVariables.map(varName => ({
-          name: varName,
-          value: this.getCSSVariable(varName)
-        }));
+      // Load current values from CSS variables where available
+      loadCurrentValues() {
+        Object.keys(this.configOptions).forEach(key => {
+          const opt = this.configOptions[key];
+          if (opt.cssVar) {
+            const computed = this.getCSSVariable(opt.cssVar);
+            if (computed && computed !== 'Not set' && computed !== '') {
+              this.editValues[key] = computed;
+            } else {
+              this.editValues[key] = opt.value;
+            }
+          } else {
+            this.editValues[key] = opt.value;
+          }
+        });
+        // Try to read gapScale from CSS (only default is directly readable)
+        const gapDefault = this.getCSSVariable('--gap');
+        Object.keys(this.gapScaleOptions).forEach(key => {
+          this.editValues[`gapScale_${key}`] = this.gapScaleOptions[key].value;
+        });
+        // Try to read breakoutPadding base from CSS
+        const bpBase = this.getCSSVariable('--breakout-padding');
+        if (bpBase && bpBase !== 'Not set') {
+          this.editValues['breakoutPadding_base'] = bpBase;
+        }
+        Object.keys(this.breakoutPaddingOptions).forEach(key => {
+          if (!this.editValues[`breakoutPadding_${key}`]) {
+            this.editValues[`breakoutPadding_${key}`] = this.breakoutPaddingOptions[key].value;
+          }
+        });
+      },
+
+      // Generate export config object
+      generateConfigExport() {
+        const config = {};
+        Object.keys(this.configOptions).forEach(key => {
+          config[key] = this.editValues[key] || this.configOptions[key].value;
+        });
+        config.gapScale = {};
+        Object.keys(this.gapScaleOptions).forEach(key => {
+          config.gapScale[key] = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
+        });
+        config.breakoutPadding = {};
+        Object.keys(this.breakoutPaddingOptions).forEach(key => {
+          config.breakoutPadding[key] = this.editValues[`breakoutPadding_${key}`] || this.breakoutPaddingOptions[key].value;
+        });
+        return config;
+      },
+
+      // Copy config to clipboard
+      copyConfig() {
+        const config = this.generateConfigExport();
+        const configStr = `breakoutGrid(${JSON.stringify(config, null, 2)})`;
+        navigator.clipboard.writeText(configStr).then(() => {
+          this.copySuccess = true;
+          setTimeout(() => this.copySuccess = false, 2000);
+        });
+      },
+
+      // Update a config value (and live CSS var if applicable)
+      updateConfigValue(key, value) {
+        this.editValues[key] = value;
+        const opt = this.configOptions[key];
+        if (opt && opt.liveVar) {
+          document.documentElement.style.setProperty(opt.liveVar, value);
+        }
       },
 
       // Select a grid area
@@ -125,25 +210,17 @@
       toggleEditMode() {
         this.editMode = !this.editMode;
         if (this.editMode) {
-          // Store original values and init edit values
-          this.cssVariables.forEach(varName => {
-            const value = this.getCSSVariable(varName);
-            this.originalValues[varName] = value;
-            this.editValues[varName] = value;
-          });
+          this.loadCurrentValues();
         } else {
-          // Restore original values
-          this.cssVariables.forEach(varName => {
-            document.documentElement.style.removeProperty(varName);
+          // Restore original CSS vars (remove overrides)
+          Object.keys(this.configOptions).forEach(key => {
+            const opt = this.configOptions[key];
+            if (opt.liveVar) {
+              document.documentElement.style.removeProperty(opt.liveVar);
+            }
           });
           this.editValues = {};
         }
-      },
-
-      // Update CSS variable live
-      updateCSSVariable(varName, value) {
-        this.editValues[varName] = value;
-        document.documentElement.style.setProperty(varName, value);
       },
 
       // Template for the visualizer UI
@@ -281,7 +358,7 @@
                    @mouseenter="hoveredArea = area.name"
                    @mouseleave="hoveredArea = null"
                    :style="{
-                     backgroundColor: (hoveredArea === area.name || isSelected(area.name)) ? area.color.replace('0.1', '0.4') : area.color,
+                     backgroundColor: (hoveredArea === area.name || isSelected(area.name)) ? area.color.replace('0.25', '0.6') : area.color,
                      borderLeft: '1px solid ' + area.borderColor,
                      borderRight: '1px solid ' + area.borderColor,
                      position: 'relative',
@@ -291,7 +368,7 @@
                      transition: 'background-color 0.2s'
                    }">
 
-                <!-- Label -->
+                <!-- Label (centered) -->
                 <div x-show="showLabels"
                      :style="{
                        position: 'absolute',
@@ -309,7 +386,8 @@
                        whiteSpace: 'nowrap',
                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                        opacity: isSelected(area.name) ? '1' : '0.8',
-                       textAlign: 'center'
+                       textAlign: 'center',
+                       zIndex: '10'
                      }">
                   <div x-text="area.label"></div>
                   <div x-show="showClassNames"
@@ -322,6 +400,22 @@
                     fontFamily: 'monospace'
                   }" x-text="area.className"></div>
                 </div>
+
+                <!-- Lorem Ipsum Content (behind label) -->
+                <div x-show="showLoremIpsum"
+                     :style="{
+                       position: 'absolute',
+                       inset: '0',
+                       padding: showGapPadding ? 'var(--gap)' : (showBreakoutPadding ? 'var(--breakout-padding)' : '1.5rem 0'),
+                       boxSizing: 'border-box',
+                       overflow: 'hidden',
+                       whiteSpace: 'pre-line',
+                       fontSize: '1.125rem',
+                       lineHeight: '1.75',
+                       color: 'white',
+                       textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                       zIndex: '1'
+                     }" x-text="loremContent"></div>
 
                 <!-- p-gap / px-gap Padding Overlay -->
                 <div x-show="showGapPadding"
@@ -379,7 +473,20 @@
           </div>
 
           <!-- Control Panel -->
-          <div style="position: fixed; bottom: 1rem; right: 1rem; pointer-events: auto; background: white; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); padding: 0.75rem; max-width: 280px; font-family: system-ui, -apple-system, sans-serif; z-index: 10000;">
+          <div :style="{
+                 position: 'fixed',
+                 bottom: '1rem',
+                 right: '1rem',
+                 pointerEvents: 'auto',
+                 background: 'white',
+                 borderRadius: '0.5rem',
+                 boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.2)',
+                 padding: '0.75rem',
+                 maxWidth: editMode ? '380px' : '280px',
+                 fontFamily: 'system-ui, -apple-system, sans-serif',
+                 zIndex: '10000',
+                 transition: 'max-width 0.2s ease'
+               }">
 
             <!-- Header with viewport -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
@@ -393,27 +500,101 @@
               </button>
             </div>
 
-            <!-- CSS Variables (collapsible, editable in edit mode) -->
+            <!-- CSS Variables (read-only when not in edit mode) -->
             <div x-show="showMeasurements && !editMode" style="margin-bottom: 0.5rem; background: #f9fafb; border-radius: 0.25rem; padding: 0.375rem; font-size: 0.625rem; font-family: 'Monaco', 'Courier New', monospace;">
-              <template x-for="variable in getAllCSSVariables()" :key="variable.name">
+              <template x-for="key in Object.keys(configOptions).slice(0, 5)" :key="key">
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.125rem 0;">
-                  <span style="color: #6b7280;" x-text="variable.name"></span>
-                  <span style="color: #111827; font-weight: 600;" x-text="variable.value"></span>
+                  <span style="color: #6b7280;" x-text="key"></span>
+                  <span style="color: #111827; font-weight: 600;" x-text="configOptions[key].cssVar ? getCSSVariable(configOptions[key].cssVar) : configOptions[key].value"></span>
                 </div>
               </template>
             </div>
 
-            <!-- Edit Mode Inputs (expanded) -->
-            <div x-show="editMode" style="margin-bottom: 0.5rem; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 0.25rem; padding: 0.5rem; font-size: 0.625rem; font-family: 'Monaco', 'Courier New', monospace;">
-              <template x-for="variable in getAllCSSVariables()" :key="variable.name">
-                <div style="margin-bottom: 0.375rem;">
-                  <label style="display: block; color: #92400e; font-weight: 600; margin-bottom: 0.125rem;" x-text="variable.name"></label>
+            <!-- Edit Mode - Full Config Editor -->
+            <div x-show="editMode" style="margin-bottom: 0.5rem; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 0.375rem; padding: 1rem; max-height: 60vh; overflow-y: auto;">
+
+              <!-- Base Measurements -->
+              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Base Measurements</div>
+              <template x-for="key in ['baseGap', 'maxGap', 'narrowMin', 'narrowMax', 'narrowBase']" :key="key">
+                <div style="margin-bottom: 0.75rem;">
+                  <label style="display: block; color: #78716c; font-weight: 600; font-size: 0.75rem; font-family: Monaco, monospace; margin-bottom: 0.25rem;" x-text="key"></label>
                   <input type="text"
-                         :value="editValues[variable.name] || variable.value"
-                         @input="updateCSSVariable(variable.name, $event.target.value)"
-                         style="width: 100%; padding: 0.25rem 0.375rem; font-size: 0.75rem; font-family: inherit; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white;">
+                         :value="editValues[key] || configOptions[key].value"
+                         @input="updateConfigValue(key, $event.target.value)"
+                         style="width: 100%; padding: 0.375rem 0.5rem; font-size: 0.75rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                  <div style="font-size: 0.625rem; color: #a8a29e; margin-top: 0.125rem;" x-text="configOptions[key].desc"></div>
                 </div>
               </template>
+
+              <!-- Track Widths -->
+              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.75rem; border-top: 1px dashed #fde68a;">Track Widths</div>
+              <template x-for="key in ['content', 'popoutWidth', 'featureWidth', 'fullLimit']" :key="key">
+                <div style="margin-bottom: 0.75rem;">
+                  <label style="display: block; color: #78716c; font-weight: 600; font-size: 0.75rem; font-family: Monaco, monospace; margin-bottom: 0.25rem;" x-text="key"></label>
+                  <input type="text"
+                         :value="editValues[key] || configOptions[key].value"
+                         @input="updateConfigValue(key, $event.target.value)"
+                         style="width: 100%; padding: 0.375rem 0.5rem; font-size: 0.75rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                  <div style="font-size: 0.625rem; color: #a8a29e; margin-top: 0.125rem;" x-text="configOptions[key].desc"></div>
+                </div>
+              </template>
+
+              <!-- Default Column -->
+              <div style="margin-bottom: 0.75rem;">
+                <label style="display: block; color: #78716c; font-weight: 600; font-size: 0.75rem; font-family: Monaco, monospace; margin-bottom: 0.25rem;">defaultCol</label>
+                <select @change="editValues.defaultCol = $event.target.value"
+                        style="width: 100%; padding: 0.375rem 0.5rem; font-size: 0.75rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                  <template x-for="opt in configOptions.defaultCol.options" :key="opt">
+                    <option :value="opt" :selected="(editValues.defaultCol || configOptions.defaultCol.value) === opt" x-text="opt"></option>
+                  </template>
+                </select>
+                <div style="font-size: 0.625rem; color: #a8a29e; margin-top: 0.125rem;" x-text="configOptions.defaultCol.desc"></div>
+              </div>
+
+              <!-- Gap Scale -->
+              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.75rem; border-top: 1px dashed #fde68a;">gapScale (responsive)</div>
+              <template x-for="key in Object.keys(gapScaleOptions)" :key="'gs_'+key">
+                <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                  <label style="color: #78716c; font-weight: 600; font-size: 0.6875rem; font-family: Monaco, monospace; min-width: 3.5rem;" x-text="key + ':'"></label>
+                  <input type="text"
+                         :value="editValues['gapScale_'+key] || gapScaleOptions[key].value"
+                         @input="editValues['gapScale_'+key] = $event.target.value"
+                         style="flex: 1; padding: 0.25rem 0.375rem; font-size: 0.6875rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                </div>
+              </template>
+
+              <!-- Breakout Padding -->
+              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.75rem; border-top: 1px dashed #fde68a;">breakoutPadding (responsive)</div>
+              <template x-for="key in Object.keys(breakoutPaddingOptions)" :key="'bp_'+key">
+                <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                  <label style="color: #78716c; font-weight: 600; font-size: 0.6875rem; font-family: Monaco, monospace; min-width: 3.5rem;" x-text="key + ':'"></label>
+                  <input type="text"
+                         :value="editValues['breakoutPadding_'+key] || breakoutPaddingOptions[key].value"
+                         @input="editValues['breakoutPadding_'+key] = $event.target.value"
+                         style="flex: 1; padding: 0.25rem 0.375rem; font-size: 0.6875rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                </div>
+              </template>
+
+              <!-- Copy Config Button -->
+              <button @click="copyConfig()"
+                      :style="{
+                        width: '100%',
+                        padding: '0.625rem',
+                        marginTop: '1rem',
+                        fontSize: '0.75rem',
+                        fontWeight: '700',
+                        border: 'none',
+                        borderRadius: '0.375rem',
+                        cursor: 'pointer',
+                        background: copySuccess ? '#10b981' : '#1e40af',
+                        color: 'white',
+                        transition: 'background 0.2s'
+                      }">
+                <span x-text="copySuccess ? '✓ Copied to Clipboard!' : 'Copy Config Object'"></span>
+              </button>
+              <div style="font-size: 0.5625rem; color: #78716c; text-align: center; margin-top: 0.5rem;">
+                Exports breakoutGrid({ ... }) for tailwind.config.js
+              </div>
             </div>
 
             <!-- Edit Mode Toggle -->
@@ -454,6 +635,10 @@
               <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #3b82f6;">
                 <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
                 p-breakout
+              </label>
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #6b7280;">
+                <input type="checkbox" x-model="showLoremIpsum" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
+                Lorem Ipsum
               </label>
             </div>
 

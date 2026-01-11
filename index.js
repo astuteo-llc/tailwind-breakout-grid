@@ -205,6 +205,18 @@ const defaultConfig = {
 const createRootCSS = (pluginConfig) => {
   try {
     return {
+      // Raw config values (for visualizer/debugging)
+      '--config-base-gap': pluginConfig.baseGap,
+      '--config-max-gap': pluginConfig.maxGap,
+      '--config-narrow-min': pluginConfig.narrowMin,
+      '--config-narrow-max': pluginConfig.narrowMax,
+      '--config-narrow-base': pluginConfig.narrowBase,
+      '--config-content': pluginConfig.content,
+      '--config-popout': pluginConfig.popoutWidth,
+      '--config-feature': pluginConfig.featureWidth,
+      '--config-full-limit': pluginConfig.fullLimit,
+      '--config-default-col': pluginConfig.defaultCol,
+      // Computed values
       '--base-gap': pluginConfig.baseGap,
       '--max-gap': pluginConfig.maxGap,
       '--narrow-min': pluginConfig.narrowMin,
