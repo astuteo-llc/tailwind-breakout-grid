@@ -34,7 +34,7 @@
   document.addEventListener('alpine:init', () => {
     Alpine.data('breakoutGridVisualizer', () => ({
       // Constants
-      version: 'v2.1-beta.13',
+      version: 'v2.1-beta.20',
       loremContent: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
 
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.`,
@@ -188,6 +188,326 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           this.configCopied = true;
           setTimeout(() => this.copySuccess = false, 2000);
         });
+      },
+
+      // Generate and download standalone CSS file
+      downloadCSS() {
+        const c = this.generateConfigExport();
+        const css = `/**
+ * Breakout Grid - Standalone CSS
+ * Generated from Tailwind Breakout Grid Plugin
+ * https://github.com/astuteo-llc/tailwind-breakout-grid
+ *
+ * NOTE: This CSS export feature is in beta and not fully tested.
+ * Please verify output before using in production.
+ */
+
+/* ========================================
+   CSS Custom Properties
+   ======================================== */
+:root {
+  /* Base measurements */
+  --base-gap: ${c.baseGap};
+  --max-gap: ${c.maxGap};
+  --narrow-min: ${c.narrowMin};
+  --narrow-max: ${c.narrowMax};
+  --narrow-base: ${c.narrowBase};
+
+  /* Computed values */
+  --gap: clamp(var(--base-gap), ${c.gapScale?.default || '4vw'}, var(--max-gap));
+  --narrow: min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), 100% - var(--gap) * 2);
+  --narrow-half: calc(var(--narrow) / 2);
+
+  /* Track widths */
+  --full: minmax(var(--gap), 1fr);
+  --feature: minmax(0, ${c.featureWidth});
+  --popout: minmax(0, ${c.popoutWidth});
+  --content: minmax(0, ${c.content});
+  --full-limit: ${c.fullLimit};
+
+  /* Padding/margin utilities */
+  --breakout-padding: clamp(1rem, 5vw, ${c.popoutWidth});
+  --popout-to-content: clamp(1rem, 5vw, ${c.popoutWidth});
+  --feature-to-content: calc(${c.featureWidth} + ${c.popoutWidth});
+}
+
+/* ========================================
+   Grid Container - Main
+   ======================================== */
+.grid-cols-breakout {
+  display: grid;
+  grid-template-columns:
+    [full-start] var(--full)
+    [feature-start] var(--feature)
+    [popout-start] var(--popout)
+    [content-start] var(--content)
+    [narrow-start center-start] minmax(0, var(--narrow-half))
+    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
+    var(--content) [content-end]
+    var(--popout) [popout-end]
+    var(--feature) [feature-end]
+    var(--full) [full-end];
+}
+
+/* Default column for direct children */
+.grid-cols-breakout > * { grid-column: ${c.defaultCol || 'content'}; }
+
+/* ========================================
+   Grid Container - Left Aligned Variants
+   ======================================== */
+.grid-cols-feature-left {
+  display: grid;
+  grid-template-columns:
+    [full-start feature-start] var(--feature)
+    [popout-start] var(--popout)
+    [content-start] var(--content)
+    [narrow-start center-start] minmax(0, var(--narrow-half))
+    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
+    var(--content) [content-end]
+    var(--popout) [popout-end]
+    var(--feature) [feature-end]
+    var(--full) [full-end];
+}
+
+.grid-cols-popout-left {
+  display: grid;
+  grid-template-columns:
+    [full-start feature-start popout-start] var(--popout)
+    [content-start] var(--content)
+    [narrow-start center-start] minmax(0, var(--narrow-half))
+    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
+    var(--content) [content-end]
+    var(--popout) [popout-end]
+    var(--feature) [feature-end]
+    var(--full) [full-end];
+}
+
+.grid-cols-content-left {
+  display: grid;
+  grid-template-columns:
+    [full-start feature-start popout-start content-start] var(--content)
+    [narrow-start center-start] minmax(0, var(--narrow-half))
+    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
+    var(--content) [content-end]
+    var(--popout) [popout-end]
+    var(--feature) [feature-end]
+    var(--full) [full-end];
+}
+
+/* ========================================
+   Grid Container - Right Aligned Variants
+   ======================================== */
+.grid-cols-feature-right {
+  display: grid;
+  grid-template-columns:
+    [full-start] var(--full)
+    [feature-start] var(--feature)
+    [popout-start] var(--popout)
+    [content-start] var(--content)
+    [narrow-start center-start] minmax(0, var(--narrow-half))
+    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
+    var(--content) [content-end]
+    var(--popout) [popout-end]
+    var(--feature) [feature-end full-end];
+}
+
+.grid-cols-popout-right {
+  display: grid;
+  grid-template-columns:
+    [full-start] var(--full)
+    [feature-start] var(--feature)
+    [popout-start] var(--popout)
+    [content-start] var(--content)
+    [narrow-start center-start] minmax(0, var(--narrow-half))
+    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
+    var(--content) [content-end]
+    var(--popout) [popout-end feature-end full-end];
+}
+
+.grid-cols-content-right {
+  display: grid;
+  grid-template-columns:
+    [full-start] var(--full)
+    [feature-start] var(--feature)
+    [popout-start] var(--popout)
+    [content-start] var(--content)
+    [narrow-start center-start] minmax(0, var(--narrow-half))
+    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
+    var(--content) [content-end popout-end feature-end full-end];
+}
+
+/* ========================================
+   Breakout Modifiers (for nested grids)
+   ======================================== */
+.grid-cols-breakout.breakout-to-narrow {
+  grid-template-columns: [full-start feature-start popout-start content-start narrow-start center-start] minmax(0, 1fr) [center-end narrow-end content-end popout-end feature-end full-end];
+}
+
+.grid-cols-breakout.breakout-to-content {
+  grid-template-columns: [full-start feature-start popout-start content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end popout-end feature-end full-end];
+}
+
+.grid-cols-breakout.breakout-to-popout {
+  grid-template-columns: [full-start feature-start popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end feature-end full-end];
+}
+
+.grid-cols-breakout.breakout-to-feature {
+  grid-template-columns: [full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end];
+}
+
+/* ========================================
+   Column Utilities - Basic
+   ======================================== */
+.col-full { grid-column: full; }
+.col-feature { grid-column: feature; }
+.col-popout { grid-column: popout; }
+.col-content { grid-column: content; }
+.col-narrow { grid-column: narrow; }
+.col-center { grid-column: center; }
+
+/* ========================================
+   Column Utilities - Start/End
+   ======================================== */
+.col-start-full { grid-column-start: full-start; }
+.col-start-feature { grid-column-start: feature-start; }
+.col-start-popout { grid-column-start: popout-start; }
+.col-start-content { grid-column-start: content-start; }
+.col-start-narrow { grid-column-start: narrow-start; }
+.col-start-center { grid-column-start: center-start; }
+
+.col-end-full { grid-column-end: full-end; }
+.col-end-feature { grid-column-end: feature-end; }
+.col-end-popout { grid-column-end: popout-end; }
+.col-end-content { grid-column-end: content-end; }
+.col-end-narrow { grid-column-end: narrow-end; }
+.col-end-center { grid-column-end: center-end; }
+
+/* ========================================
+   Column Utilities - Left/Right Spans
+   ======================================== */
+.col-feature-left { grid-column: full-start / feature-end; }
+.col-feature-right { grid-column: feature-start / full-end; }
+.col-popout-left { grid-column: full-start / popout-end; }
+.col-popout-right { grid-column: popout-start / full-end; }
+.col-content-left { grid-column: full-start / content-end; }
+.col-content-right { grid-column: content-start / full-end; }
+.col-narrow-left { grid-column: full-start / narrow-end; }
+.col-narrow-right { grid-column: narrow-start / full-end; }
+.col-center-left { grid-column: full-start / center-end; }
+.col-center-right { grid-column: center-start / full-end; }
+
+/* ========================================
+   Column Utilities - Advanced Spans
+   ======================================== */
+/* Feature to other columns */
+.col-feature-to-popout { grid-column: feature-start / popout-end; }
+.col-feature-to-content { grid-column: feature-start / content-end; }
+.col-feature-to-narrow { grid-column: feature-start / narrow-end; }
+.col-feature-to-center { grid-column: feature-start / center-end; }
+
+/* Popout to other columns */
+.col-popout-to-content { grid-column: popout-start / content-end; }
+.col-popout-to-narrow { grid-column: popout-start / narrow-end; }
+.col-popout-to-center { grid-column: popout-start / center-end; }
+.col-popout-to-feature { grid-column: popout-start / feature-end; }
+
+/* Content to other columns */
+.col-content-to-narrow { grid-column: content-start / narrow-end; }
+.col-content-to-center { grid-column: content-start / center-end; }
+.col-content-to-popout { grid-column: content-start / popout-end; }
+.col-content-to-feature { grid-column: content-start / feature-end; }
+
+/* Full limit */
+.col-full-limit {
+  grid-column: full;
+  max-width: var(--full-limit);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ========================================
+   Padding Utilities - Breakout
+   ======================================== */
+.p-breakout { padding: var(--breakout-padding); }
+.px-breakout { padding-left: var(--breakout-padding); padding-right: var(--breakout-padding); }
+.py-breakout { padding-top: var(--breakout-padding); padding-bottom: var(--breakout-padding); }
+.pl-breakout { padding-left: var(--breakout-padding); }
+.pr-breakout { padding-right: var(--breakout-padding); }
+.pt-breakout { padding-top: var(--breakout-padding); }
+.pb-breakout { padding-bottom: var(--breakout-padding); }
+
+/* ========================================
+   Padding Utilities - Gap
+   ======================================== */
+.p-gap { padding: var(--gap); }
+.px-gap { padding-left: var(--gap); padding-right: var(--gap); }
+.py-gap { padding-top: var(--gap); padding-bottom: var(--gap); }
+.pl-gap { padding-left: var(--gap); }
+.pr-gap { padding-right: var(--gap); }
+.pt-gap { padding-top: var(--gap); }
+.pb-gap { padding-bottom: var(--gap); }
+
+/* ========================================
+   Padding Utilities - Alignment
+   ======================================== */
+.p-popout-to-content { padding: var(--popout-to-content); }
+.px-popout-to-content { padding-left: var(--popout-to-content); padding-right: var(--popout-to-content); }
+.pl-popout-to-content { padding-left: var(--popout-to-content); }
+.pr-popout-to-content { padding-right: var(--popout-to-content); }
+
+.p-feature-to-content { padding: var(--feature-to-content); }
+.px-feature-to-content { padding-left: var(--feature-to-content); padding-right: var(--feature-to-content); }
+.pl-feature-to-content { padding-left: var(--feature-to-content); }
+.pr-feature-to-content { padding-right: var(--feature-to-content); }
+
+/* ========================================
+   Margin Utilities - Breakout
+   ======================================== */
+.m-breakout { margin: var(--breakout-padding); }
+.mx-breakout { margin-left: var(--breakout-padding); margin-right: var(--breakout-padding); }
+.my-breakout { margin-top: var(--breakout-padding); margin-bottom: var(--breakout-padding); }
+.ml-breakout { margin-left: var(--breakout-padding); }
+.mr-breakout { margin-right: var(--breakout-padding); }
+.mt-breakout { margin-top: var(--breakout-padding); }
+.mb-breakout { margin-bottom: var(--breakout-padding); }
+
+/* Negative margins */
+.-m-breakout { margin: calc(var(--breakout-padding) * -1); }
+.-mx-breakout { margin-left: calc(var(--breakout-padding) * -1); margin-right: calc(var(--breakout-padding) * -1); }
+.-my-breakout { margin-top: calc(var(--breakout-padding) * -1); margin-bottom: calc(var(--breakout-padding) * -1); }
+.-ml-breakout { margin-left: calc(var(--breakout-padding) * -1); }
+.-mr-breakout { margin-right: calc(var(--breakout-padding) * -1); }
+.-mt-breakout { margin-top: calc(var(--breakout-padding) * -1); }
+.-mb-breakout { margin-bottom: calc(var(--breakout-padding) * -1); }
+
+/* ========================================
+   Margin Utilities - Gap
+   ======================================== */
+.m-gap { margin: var(--gap); }
+.mx-gap { margin-left: var(--gap); margin-right: var(--gap); }
+.my-gap { margin-top: var(--gap); margin-bottom: var(--gap); }
+.ml-gap { margin-left: var(--gap); }
+.mr-gap { margin-right: var(--gap); }
+.mt-gap { margin-top: var(--gap); }
+.mb-gap { margin-bottom: var(--gap); }
+
+/* Negative margins */
+.-m-gap { margin: calc(var(--gap) * -1); }
+.-mx-gap { margin-left: calc(var(--gap) * -1); margin-right: calc(var(--gap) * -1); }
+.-my-gap { margin-top: calc(var(--gap) * -1); margin-bottom: calc(var(--gap) * -1); }
+.-ml-gap { margin-left: calc(var(--gap) * -1); }
+.-mr-gap { margin-right: calc(var(--gap) * -1); }
+.-mt-gap { margin-top: calc(var(--gap) * -1); }
+.-mb-gap { margin-bottom: calc(var(--gap) * -1); }
+`;
+
+        const blob = new Blob([css], { type: 'text/css' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'breakout-grid.css';
+        a.click();
+        URL.revokeObjectURL(url);
       },
 
       // Parse CSS value into number and unit (e.g., "4rem" -> { num: 4, unit: "rem" })
@@ -471,6 +791,54 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   &lt;/div&gt;
 &lt;/div&gt;</pre>
                 </div>
+              </div>
+            </div>
+
+            <!-- Subgrid example: child aligns to parent grid tracks -->
+            <div style="grid-column: feature-start / full-end;
+                        display: grid;
+                        grid-template-columns: subgrid;
+                        border: 3px solid rgb(236, 72, 153);
+                        margin: 1rem 0;
+                        background: rgba(236, 72, 153, 0.05);
+                        transition: background 0.2s ease;"
+                 onmouseenter="this.style.background='rgba(236, 72, 153, 0.15)'"
+                 onmouseleave="this.style.background='rgba(236, 72, 153, 0.05)'">
+              <!-- Parent label -->
+              <div style="grid-column: 1 / -1;
+                          font-size: 0.625rem;
+                          font-family: monospace;
+                          color: rgb(157, 23, 77);
+                          padding: 0.5rem;
+                          background: rgba(236, 72, 153, 0.1);">
+                Parent: .col-feature-right + display: grid + grid-template-columns: subgrid
+              </div>
+              <!-- Child using subgrid to align to content-start -->
+              <div class="col-start-content col-end-popout"
+                   style="background: rgb(236, 72, 153);
+                          color: white;
+                          padding: 0.75rem 1rem;
+                          margin: 0.5rem 0;
+                          font-size: 0.75rem;
+                          font-weight: 700;
+                          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="font-family: monospace; margin-bottom: 0.5rem;">Child: .col-start-content .col-end-popout</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">Subgrid lets children align to grandparent's named lines</div>
+                <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="col-feature-right grid grid-cols-subgrid"&gt;
+  &lt;div class="col-start-content col-end-popout"&gt;
+    Aligns to main grid tracks!
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+              </div>
+              <!-- Another child spanning different tracks -->
+              <div class="col-content"
+                   style="background: rgba(236, 72, 153, 0.3);
+                          padding: 0.5rem;
+                          margin-bottom: 0.5rem;
+                          font-size: 0.625rem;
+                          font-family: monospace;
+                          color: rgb(157, 23, 77);">
+                Another child: .col-content (aligns perfectly)
               </div>
             </div>
 
@@ -797,10 +1165,18 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                 <div><span style="color: #059669;">px-feature-to-content</span></div>
               </div>
 
-              <!-- Copy Config -->
-              <button @click="copyConfig()" :style="{ width: '100%', padding: '0.5rem', marginTop: '0.75rem', fontSize: '0.6875rem', fontWeight: '700', border: 'none', borderRadius: '0.25rem', cursor: 'pointer', background: copySuccess ? '#10b981' : '#1e40af', color: 'white' }">
-                <span x-text="copySuccess ? '✓ Copied!' : 'Copy Config'"></span>
-              </button>
+              <!-- Action Buttons -->
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                <button @click="copyConfig()" :style="{ flex: 1, padding: '0.5rem', fontSize: '0.6875rem', fontWeight: '700', border: 'none', borderRadius: '0.25rem', cursor: 'pointer', background: copySuccess ? '#10b981' : '#1e40af', color: 'white' }">
+                  <span x-text="copySuccess ? '✓ Copied!' : 'Copy Config'"></span>
+                </button>
+                <button @click="downloadCSS()" style="flex: 1; padding: 0.5rem; font-size: 0.6875rem; font-weight: 700; border: none; border-radius: 0.25rem; cursor: pointer; background: #059669; color: white;">
+                  Download CSS
+                </button>
+              </div>
+              <div style="font-size: 0.5rem; color: #9ca3af; text-align: center; margin-top: 0.375rem;">
+                Config for Tailwind • CSS for standalone use
+              </div>
             </div>
           </div>
 
