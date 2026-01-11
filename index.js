@@ -157,12 +157,11 @@ const defaultConfig = {
     lg: '5vw',         // Large screens
     xl: '6vw'          // Extra large screens
   },
-  // Fixed responsive padding for legacy project integration
-  breakoutPadding: {
-    base: '1.5rem',    // Mobile padding (p-6 = 1.5rem)
-    md: '4rem',        // Medium screens (px-16 = 4rem)
-    lg: '5rem'         // Large screens
-  }
+  // Responsive edge padding that aligns with the breakout grid system.
+  // By default, uses var(--gap) to stay perfectly aligned with the grid.
+  // Only override if you need fixed values for legacy integration.
+  // Creates p-breakout, px-breakout, etc. utilities.
+  breakoutPadding: null  // null = use var(--gap), or provide { base, md, lg } for fixed values
 }
 
 /**
@@ -205,7 +204,7 @@ const defaultConfig = {
 const createRootCSS = (pluginConfig) => {
   try {
     return {
-      // Raw config values (for visualizer/debugging)
+      // Raw config values (for calculations and visualizer)
       '--config-base-gap': pluginConfig.baseGap,
       '--config-max-gap': pluginConfig.maxGap,
       '--config-narrow-min': pluginConfig.narrowMin,
@@ -216,6 +215,9 @@ const createRootCSS = (pluginConfig) => {
       '--config-feature': pluginConfig.featureWidth,
       '--config-full-limit': pluginConfig.fullLimit,
       '--config-default-col': pluginConfig.defaultCol,
+      // Padding to align content with inner columns (scales down, 1rem floor)
+      '--popout-to-content': `clamp(1rem, 5vw, ${pluginConfig.popoutWidth})`,
+      '--feature-to-content': `calc(${pluginConfig.featureWidth} + ${pluginConfig.popoutWidth})`,
       // Computed values
       '--base-gap': pluginConfig.baseGap,
       '--max-gap': pluginConfig.maxGap,
@@ -232,7 +234,8 @@ const createRootCSS = (pluginConfig) => {
       '--content': `minmax(0, ${pluginConfig.content})`,
       '--narrow': 'min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), 100% - var(--gap) * 2)',
       '--narrow-half': 'calc(var(--narrow) / 2)',
-      '--breakout-padding': pluginConfig.breakoutPadding.base,
+      // Breakout padding - scales with viewport, 1rem floor, popoutWidth ceiling
+      '--breakout-padding': pluginConfig.breakoutPadding?.base || `clamp(1rem, 5vw, ${pluginConfig.popoutWidth})`,
     }
   } catch (error) {
     console.warn(`Tailwind Breakout Grid Plugin - Error creating CSS custom properties: ${error.message}. This may be due to invalid or malformed configuration values (e.g., invalid CSS units or property names). Please check your plugin configuration for errors. Using fallback values.`)
@@ -322,7 +325,7 @@ const createSpacingUtilities = () => {
 
 /**
  * Generates responsive media queries for breakout padding.
- * Uses CSS custom properties that update at different breakpoints.
+ * Updates --breakout-padding CSS variable at different breakpoints.
  *
  * @param {Object} config - Plugin configuration
  * @param {Object} screens - Tailwind breakpoint configuration
@@ -343,23 +346,28 @@ const createBreakoutPaddingMediaQueries = (config, screens) => {
 };
 
 /**
- * Generates fixed responsive padding utilities for legacy project integration.
- * Creates utilities that mimic traditional Tailwind responsive padding patterns
- * but are pre-configured for breakout grid contexts.
+ * Generates edge-to-column padding utilities for full-width sections.
+ * Use these when you have a full-bleed section but want content to align with grid columns.
  *
  * Generated classes:
- * - .p-breakout: Responsive padding on all sides
- * - .px-breakout: Responsive horizontal padding
- * - .py-breakout: Responsive vertical padding
- * - .pt-breakout, .pr-breakout, .pb-breakout, .pl-breakout: Individual sides
+ * - .p-breakout / .px-breakout: Default (aligns with popout column)
+ * - .p-to-feature / .px-to-feature: Aligns content with feature column edge
+ * - .p-to-popout / .px-to-popout: Aligns content with popout column edge
+ * - .p-to-content / .px-to-content: Aligns content with content column edge
  *
- * These utilities use a CSS variable (--breakout-padding) that updates at breakpoints,
- * unlike p-gap which uses reactive grid-based CSS variables.
+ * Example usage:
+ * ```html
+ * <div class="col-full bg-blue-900 px-to-popout">
+ *   <p>This text aligns with col-popout content above/below</p>
+ * </div>
+ * ```
  *
- * Example: p-breakout is equivalent to:
- *   p-6 md:p-16 lg:p-20
+ * How it works:
+ * - p-to-feature: gap (aligns with feature column start)
+ * - p-to-popout: gap + featureWidth (aligns with popout column start)
+ * - p-to-content: gap + featureWidth + popoutWidth (aligns with content column start)
  *
- * @returns {Object} Breakout padding utility classes
+ * @returns {Object} Edge padding utility classes
  * @private
  */
 const createBreakoutPaddingUtilities = () => {
@@ -376,10 +384,21 @@ const createBreakoutPaddingUtilities = () => {
   const utilities = {};
 
   Object.entries(spacingDirections).forEach(([key, properties]) => {
-    const className = `.${key}-breakout`;
-
-    utilities[className] = properties.reduce((acc, prop) => {
+    // p-breakout: default (aligns with popout column)
+    utilities[`.${key}-breakout`] = properties.reduce((acc, prop) => {
       acc[prop] = 'var(--breakout-padding)';
+      return acc;
+    }, {});
+
+    // px-popout-to-content: padding to align popout content with content column
+    utilities[`.${key}-popout-to-content`] = properties.reduce((acc, prop) => {
+      acc[prop] = 'var(--popout-to-content)';
+      return acc;
+    }, {});
+
+    // px-feature-to-content: padding to align feature content with content column
+    utilities[`.${key}-feature-to-content`] = properties.reduce((acc, prop) => {
+      acc[prop] = 'var(--feature-to-content)';
       return acc;
     }, {});
   });
@@ -388,9 +407,11 @@ const createBreakoutPaddingUtilities = () => {
 };
 
 /**
- * Generates fixed responsive margin utilities for legacy project integration.
- * Creates utilities that mimic traditional Tailwind responsive margin patterns
- * but are pre-configured for breakout grid contexts.
+ * Generates responsive breakout margin utilities.
+ * Creates utilities for consistent edge margins that align with the breakout grid.
+ *
+ * Use case: When you need margins that match the breakout padding spacing,
+ * especially useful for negative margins to break out of containers.
  *
  * Generated classes:
  * - .m-breakout: Responsive margin on all sides
@@ -399,7 +420,7 @@ const createBreakoutPaddingUtilities = () => {
  * - .mt-breakout, .mr-breakout, .mb-breakout, .ml-breakout: Individual sides
  * - Negative versions: -m-breakout, -mx-breakout, etc.
  *
- * These utilities use a CSS variable (--breakout-padding) that updates at breakpoints,
+ * These utilities use --breakout-padding which updates at breakpoints,
  * providing consistent spacing that matches p-breakout utilities.
  *
  * Example: mx-breakout is equivalent to:
@@ -425,8 +446,7 @@ const createBreakoutMarginUtilities = () => {
   const utilities = {};
 
   Object.entries(spacingDirections).forEach(([key, properties]) => {
-    const className = `.${key}-breakout`;
-    utilities[className] = properties.reduce((acc, prop) => {
+    utilities[`.${key}-breakout`] = properties.reduce((acc, prop) => {
       acc[prop] = 'var(--breakout-padding)';
       return acc;
     }, {});
@@ -769,7 +789,9 @@ module.exports = (config = {}) => {
       gapScale: {
         ...defaultConfig.gapScale,
         ...(typeof config.gapScale === 'string' ? { default: config.gapScale } : config.gapScale || {})
-      }
+      },
+      // breakoutPadding: null = use var(--gap), object = fixed responsive values
+      breakoutPadding: config.breakoutPadding !== undefined ? config.breakoutPadding : defaultConfig.breakoutPadding
     }
 
     return ({
@@ -797,8 +819,8 @@ module.exports = (config = {}) => {
               acc[mediaQuery]['--gap'] = `clamp(var(--base-gap), ${pluginConfig.gapScale[breakpoint]}, var(--max-gap))`;
             }
 
-            // Add breakout padding for this breakpoint
-            if (pluginConfig.breakoutPadding[breakpoint]) {
+            // Add breakout padding for this breakpoint (only if using fixed values)
+            if (pluginConfig.breakoutPadding?.[breakpoint]) {
               acc[mediaQuery]['--breakout-padding'] = pluginConfig.breakoutPadding[breakpoint];
             }
 

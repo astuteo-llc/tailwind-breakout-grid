@@ -34,6 +34,7 @@
   document.addEventListener('alpine:init', () => {
     Alpine.data('breakoutGridVisualizer', () => ({
       // Constants
+      version: 'v2.1-beta.8',
       loremContent: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
 
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.`,
@@ -68,28 +69,28 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       // Full plugin config structure with defaults and CSS var mappings
       configOptions: {
         // Base measurements
-        baseGap: { value: '1rem', desc: 'Minimum gap between columns (mobile)', cssVar: '--config-base-gap', liveVar: '--base-gap' },
-        maxGap: { value: '15rem', desc: 'Maximum gap cap for ultra-wide screens', cssVar: '--config-max-gap', liveVar: '--max-gap' },
-        narrowMin: { value: '40rem', desc: 'Minimum width for readable text', cssVar: '--config-narrow-min', liveVar: '--narrow-min' },
-        narrowMax: { value: '50rem', desc: 'Maximum before text gets hard to read', cssVar: '--config-narrow-max', liveVar: '--narrow-max' },
-        narrowBase: { value: '52vw', desc: 'Preferred width for narrow sections', cssVar: '--config-narrow-base', liveVar: '--narrow-base' },
+        baseGap: { value: '1rem', desc: 'Minimum gap between columns. Use rem.', cssVar: '--config-base-gap', liveVar: '--base-gap' },
+        maxGap: { value: '15rem', desc: 'Maximum gap cap for ultra-wide. Use rem.', cssVar: '--config-max-gap', liveVar: '--max-gap' },
+        narrowMin: { value: '40rem', desc: 'Min width for readable text. Use rem.', cssVar: '--config-narrow-min', liveVar: '--narrow-min' },
+        narrowMax: { value: '50rem', desc: 'Max before text gets hard to read. Use rem.', cssVar: '--config-narrow-max', liveVar: '--narrow-max' },
+        narrowBase: { value: '52vw', desc: 'Preferred width for narrow sections. Use vw.', cssVar: '--config-narrow-base', liveVar: '--narrow-base' },
         // Track widths
-        content: { value: '4vw', desc: 'Content rail width. Affects col-content', cssVar: '--config-content', liveVar: null },
-        popoutWidth: { value: '5rem', desc: 'How far popout extends beyond content', cssVar: '--config-popout', liveVar: null },
-        featureWidth: { value: '12vw', desc: 'How far feature extends (images, heroes)', cssVar: '--config-feature', liveVar: null },
-        fullLimit: { value: '90rem', desc: 'Max width for col-full-limit (≤ feature)', cssVar: '--config-full-limit', liveVar: '--full-limit' },
+        content: { value: '4vw', desc: 'Content rail width. Use vw or rem.', cssVar: '--config-content', liveVar: null },
+        popoutWidth: { value: '4rem', desc: 'Popout extends beyond content. Use rem.', cssVar: '--config-popout', liveVar: null },
+        featureWidth: { value: '12vw', desc: 'Feature extends for images/heroes. Use vw.', cssVar: '--config-feature', liveVar: null },
+        fullLimit: { value: '90rem', desc: 'Max width for col-full-limit. Use rem.', cssVar: '--config-full-limit', liveVar: '--full-limit' },
         // Default column
         defaultCol: { value: 'content', desc: 'Default column when no col-* class', type: 'select', options: ['narrow', 'content', 'popout', 'feature', 'full'], cssVar: '--config-default-col' },
       },
       gapScaleOptions: {
-        default: { value: '4vw', desc: 'Mobile/default gap scaling' },
-        lg: { value: '5vw', desc: 'Large screens (1024px+)' },
-        xl: { value: '6vw', desc: 'Extra large screens (1280px+)' },
+        default: { value: '4vw', desc: 'Mobile/default gap scaling. Use vw.' },
+        lg: { value: '5vw', desc: 'Large screens (1024px+). Use vw.' },
+        xl: { value: '6vw', desc: 'Extra large (1280px+). Use vw.' },
       },
+      // Breakout padding - by default uses var(--gap) for perfect grid alignment
+      // Only configure if you need fixed responsive values for legacy integration
       breakoutPaddingOptions: {
-        base: { value: '1.5rem', desc: 'Mobile (p-6 equivalent)' },
-        md: { value: '4rem', desc: 'Medium screens (p-16)' },
-        lg: { value: '5rem', desc: 'Large screens (p-20)' },
+        base: { value: 'var(--gap)', desc: 'Uses grid gap by default' },
       },
 
       // Initialize
@@ -148,16 +149,13 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         Object.keys(this.gapScaleOptions).forEach(key => {
           this.editValues[`gapScale_${key}`] = this.gapScaleOptions[key].value;
         });
-        // Try to read breakoutPadding base from CSS
+        // Read breakout padding from CSS (defaults to var(--gap))
         const bpBase = this.getCSSVariable('--breakout-padding');
         if (bpBase && bpBase !== 'Not set') {
           this.editValues['breakoutPadding_base'] = bpBase;
+        } else {
+          this.editValues['breakoutPadding_base'] = 'var(--gap)';
         }
-        Object.keys(this.breakoutPaddingOptions).forEach(key => {
-          if (!this.editValues[`breakoutPadding_${key}`]) {
-            this.editValues[`breakoutPadding_${key}`] = this.breakoutPaddingOptions[key].value;
-          }
-        });
       },
 
       // Generate export config object
@@ -170,10 +168,8 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         Object.keys(this.gapScaleOptions).forEach(key => {
           config.gapScale[key] = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
         });
-        config.breakoutPadding = {};
-        Object.keys(this.breakoutPaddingOptions).forEach(key => {
-          config.breakoutPadding[key] = this.editValues[`breakoutPadding_${key}`] || this.breakoutPaddingOptions[key].value;
-        });
+        // Note: breakoutPadding is auto-calculated from gap + featureWidth
+        // Use px-to-feature, px-to-popout, or px-to-content for alignment
         return config;
       },
 
@@ -185,6 +181,51 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           this.copySuccess = true;
           setTimeout(() => this.copySuccess = false, 2000);
         });
+      },
+
+      // Parse CSS value into number and unit (e.g., "4rem" -> { num: 4, unit: "rem" })
+      parseValue(val) {
+        const match = String(val).match(/^([\d.]+)(.*)$/);
+        if (match) {
+          return { num: parseFloat(match[1]), unit: match[2] || 'rem' };
+        }
+        return { num: 0, unit: 'rem' };
+      },
+
+      // Get the numeric part of a config value
+      getNumericValue(key) {
+        const val = this.editValues[key] || this.configOptions[key].value;
+        return this.parseValue(val).num;
+      },
+
+      // Get the unit part of a config value
+      getUnit(key) {
+        const val = this.editValues[key] || this.configOptions[key].value;
+        return this.parseValue(val).unit;
+      },
+
+      // Update just the numeric part, keeping the unit
+      updateNumericValue(key, num) {
+        const unit = this.getUnit(key);
+        this.updateConfigValue(key, num + unit);
+      },
+
+      // Get numeric value for gapScale
+      getGapScaleNumeric(key) {
+        const val = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
+        return this.parseValue(val).num;
+      },
+
+      // Get unit for gapScale
+      getGapScaleUnit(key) {
+        const val = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
+        return this.parseValue(val).unit;
+      },
+
+      // Update gapScale numeric value
+      updateGapScaleNumeric(key, num) {
+        const unit = this.getGapScaleUnit(key);
+        this.editValues[`gapScale_${key}`] = num + unit;
       },
 
       // Update a config value (and live CSS var if applicable)
@@ -489,9 +530,10 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                }">
 
             <!-- Header with viewport -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; gap: 1rem;">
               <div>
                 <span style="font-weight: 700; font-size: 0.75rem; color: #111827;">Grid</span>
+                <span style="font-size: 0.625rem; color: #9ca3af; margin-left: 0.25rem;" x-text="version"></span>
                 <span style="font-size: 0.75rem; color: #6b7280; margin-left: 0.5rem; font-variant-numeric: tabular-nums;" x-text="viewportWidth + 'px'"></span>
               </div>
               <button @click="toggle()"
@@ -518,10 +560,14 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <template x-for="key in ['baseGap', 'maxGap', 'narrowMin', 'narrowMax', 'narrowBase']" :key="key">
                 <div style="margin-bottom: 0.75rem;">
                   <label style="display: block; color: #78716c; font-weight: 600; font-size: 0.75rem; font-family: Monaco, monospace; margin-bottom: 0.25rem;" x-text="key"></label>
-                  <input type="text"
-                         :value="editValues[key] || configOptions[key].value"
-                         @input="updateConfigValue(key, $event.target.value)"
-                         style="width: 100%; padding: 0.375rem 0.5rem; font-size: 0.75rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                  <div style="display: flex; align-items: center; gap: 0.25rem;">
+                    <input type="number"
+                           :value="getNumericValue(key)"
+                           @input="updateNumericValue(key, $event.target.value)"
+                           step="1"
+                           style="flex: 1; padding: 0.375rem 0.5rem; font-size: 0.75rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                    <span style="font-size: 0.75rem; font-family: Monaco, monospace; color: #78716c; min-width: 2rem;" x-text="getUnit(key)"></span>
+                  </div>
                   <div style="font-size: 0.625rem; color: #a8a29e; margin-top: 0.125rem;" x-text="configOptions[key].desc"></div>
                 </div>
               </template>
@@ -531,10 +577,14 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <template x-for="key in ['content', 'popoutWidth', 'featureWidth', 'fullLimit']" :key="key">
                 <div style="margin-bottom: 0.75rem;">
                   <label style="display: block; color: #78716c; font-weight: 600; font-size: 0.75rem; font-family: Monaco, monospace; margin-bottom: 0.25rem;" x-text="key"></label>
-                  <input type="text"
-                         :value="editValues[key] || configOptions[key].value"
-                         @input="updateConfigValue(key, $event.target.value)"
-                         style="width: 100%; padding: 0.375rem 0.5rem; font-size: 0.75rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                  <div style="display: flex; align-items: center; gap: 0.25rem;">
+                    <input type="number"
+                           :value="getNumericValue(key)"
+                           @input="updateNumericValue(key, $event.target.value)"
+                           step="1"
+                           style="flex: 1; padding: 0.375rem 0.5rem; font-size: 0.75rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                    <span style="font-size: 0.75rem; font-family: Monaco, monospace; color: #78716c; min-width: 2rem;" x-text="getUnit(key)"></span>
+                  </div>
                   <div style="font-size: 0.625rem; color: #a8a29e; margin-top: 0.125rem;" x-text="configOptions[key].desc"></div>
                 </div>
               </template>
@@ -556,24 +606,25 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <template x-for="key in Object.keys(gapScaleOptions)" :key="'gs_'+key">
                 <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
                   <label style="color: #78716c; font-weight: 600; font-size: 0.6875rem; font-family: Monaco, monospace; min-width: 3.5rem;" x-text="key + ':'"></label>
-                  <input type="text"
-                         :value="editValues['gapScale_'+key] || gapScaleOptions[key].value"
-                         @input="editValues['gapScale_'+key] = $event.target.value"
+                  <input type="number"
+                         :value="getGapScaleNumeric(key)"
+                         @input="updateGapScaleNumeric(key, $event.target.value)"
+                         step="1"
                          style="flex: 1; padding: 0.25rem 0.375rem; font-size: 0.6875rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
+                  <span style="font-size: 0.6875rem; font-family: Monaco, monospace; color: #78716c;" x-text="getGapScaleUnit(key)"></span>
                 </div>
               </template>
 
-              <!-- Breakout Padding -->
-              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.75rem; border-top: 1px dashed #fde68a;">breakoutPadding (responsive)</div>
-              <template x-for="key in Object.keys(breakoutPaddingOptions)" :key="'bp_'+key">
-                <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
-                  <label style="color: #78716c; font-weight: 600; font-size: 0.6875rem; font-family: Monaco, monospace; min-width: 3.5rem;" x-text="key + ':'"></label>
-                  <input type="text"
-                         :value="editValues['breakoutPadding_'+key] || breakoutPaddingOptions[key].value"
-                         @input="editValues['breakoutPadding_'+key] = $event.target.value"
-                         style="flex: 1; padding: 0.25rem 0.375rem; font-size: 0.6875rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white; box-sizing: border-box;">
-                </div>
-              </template>
+              <!-- Alignment Padding Utilities -->
+              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.75rem; border-top: 1px dashed #fde68a;">Align to Content Column</div>
+              <div style="font-size: 0.5625rem; color: #78716c; margin-bottom: 0.5rem; line-height: 1.4;">
+                Padding to align wider column content with content column:
+              </div>
+              <div style="font-size: 0.625rem; font-family: Monaco, monospace; color: #374151; line-height: 1.6;">
+                <div><span style="color: #059669;">px-popout-to-content</span> → popoutWidth</div>
+                <div><span style="color: #059669;">px-feature-to-content</span> → feature + popout</div>
+                <div style="margin-top: 0.25rem; color: #6b7280;"><span style="color: #3b82f6;">px-breakout</span> = popoutWidth (default)</div>
+              </div>
 
               <!-- Copy Config Button -->
               <button @click="copyConfig()"
@@ -601,9 +652,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             <button @click="toggleEditMode()"
                     :style="{
                       width: '100%',
-                      padding: '0.25rem 0.5rem',
+                      padding: '0.375rem 0.5rem',
                       marginBottom: '0.5rem',
-                      fontSize: '0.5rem',
+                      fontSize: '0.625rem',
                       fontWeight: '600',
                       border: editMode ? 'none' : '1px solid #f59e0b',
                       borderRadius: '0.25rem',
@@ -611,7 +662,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       background: editMode ? '#f59e0b' : 'white',
                       color: editMode ? 'white' : '#f59e0b'
                     }">
-              <span x-text="editMode ? '✓ Editing Live - Click to Reset' : 'Edit CSS Variables'"></span>
+              <span x-text="editMode ? '✓ Editing - Reset' : 'Edit CSS Variables'"></span>
             </button>
 
             <!-- Toggles -->
