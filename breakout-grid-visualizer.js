@@ -177,6 +177,30 @@
               </div>
             </div>
 
+            <!-- To center point: full-start to center -->
+            <div style="grid-column: full-start / center;
+                        background: linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%);
+                        border: 3px solid rgb(234, 179, 8);
+                        margin: 1rem 0;
+                        padding: 1rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                        transition: background 0.2s ease;"
+                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.45) 0%, rgba(234, 179, 8, 0.45) 100%)'"
+                 onmouseleave="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%)'">
+              <div style="background: rgb(234, 179, 8);
+                          color: white;
+                          padding: 0.75rem 1rem;
+                          font-size: 0.75rem;
+                          font-weight: 700;
+                          text-align: right;
+                          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="font-family: monospace; margin-bottom: 0.25rem;">.col-start-full .col-end-center</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500;">Left edge → center point</div>
+              </div>
+            </div>
+
             <!-- Nested grid example: breakout-to-feature inside col-feature -->
             <div style="grid-column: feature;
                         border: 3px dashed rgb(59, 130, 246);
