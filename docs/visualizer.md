@@ -13,6 +13,11 @@ An Alpine.js-powered visual debugging tool that helps designers see and understa
 - **Keyboard shortcut** (Ctrl/Cmd + G) to toggle visibility
 - **Persistent state** remembers visibility and settings across page reloads
 - **Responsive updates** automatically refreshes measurements on window resize
+- **Version display** in control panel header
+- **Config editor** - floating draggable window for live configuration editing
+- **Grid structure diagram** - visual representation of the grid template (toggle show/hide)
+- **Advanced spans view** - demonstrates start/end utilities and CSS subgrid
+- **CSS download (beta)** - export standalone CSS for non-Tailwind projects
 
 ## Visual Indicators
 
@@ -113,6 +118,44 @@ When active, the visualizer displays a control panel with:
   - **p-gap**: Visualize the padding created by `p-gap`/`px-gap` utilities
   - **p-breakout**: Visualize the padding created by `p-breakout`/`px-breakout` utilities
 - **Selected Column**: Click any column to highlight and view its class name
+
+## Config Editor
+
+The visualizer includes a floating config editor that allows real-time adjustment of grid values:
+
+**Live-editable values:**
+- `popoutWidth` - Popout extension distance
+- `featureWidth` - Feature rail extension
+- `content` - Standard content rail width (wrapped in minmax automatically)
+
+**Requires rebuild:**
+- `gapScale` - Responsive gap scaling values
+- `defaultCol` - Default column for items without col-* class
+
+The editor displays number inputs with unit suffixes (rem, vw, etc.) that support arrow key increment/decrement. Changes are reflected immediately in the visualizer overlay.
+
+To open the editor, click the "Edit Config" button in the control panel. The editor window is draggable and includes:
+- Copy button to export the modified config
+- Unsaved changes warning when closing with uncommitted edits
+
+## CSS Download (Beta)
+
+Generate a standalone CSS file for projects not using Tailwind:
+
+1. Click "Download CSS" in the control panel
+2. A CSS file is generated with all breakout grid utilities
+3. Includes CSS custom properties, grid templates, column utilities, and spacing classes
+
+> **Note:** This feature is in beta. The generated CSS may need adjustment for production use.
+
+## Advanced Spans View
+
+Shows usage examples for:
+- Start/end column utilities (`col-start-*`, `col-end-*`)
+- Left/right span utilities (`col-*-left`, `col-*-right`)
+- CSS subgrid with `grid-cols-breakout-subgrid`
+
+The subgrid demo shows how nested elements can inherit and align to the parent grid's named tracks.
 
 ## Demo
 

@@ -1024,7 +1024,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       }">
                 Edit Config
               </button>
-              <button @click="showDiagram = !showDiagram"
+              <button @click="showDiagram = !showDiagram; if(showDiagram && Object.keys(editValues).length === 0) loadCurrentValues()"
                       :style="{
                         flex: 1,
                         padding: '0.375rem 0.5rem',
@@ -1202,28 +1202,30 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                 <!-- Feature left -->
                 <div style="background: rgba(234, 179, 8, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px dashed #e5e7eb; min-width: 50px;">
                   <div style="color: #b45309; font-weight: 600;">feature</div>
-                  <div style="color: #9ca3af; font-size: 0.5rem;">12vw</div>
+                  <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.featureWidth || configOptions.featureWidth.value"></div>
                 </div>
                 <!-- Popout left -->
                 <div style="background: rgba(34, 197, 94, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px dashed #e5e7eb; min-width: 40px;">
                   <div style="color: #15803d; font-weight: 600;">popout</div>
-                  <div style="color: #9ca3af; font-size: 0.5rem;">4rem</div>
+                  <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.popoutWidth || configOptions.popoutWidth.value"></div>
                 </div>
                 <!-- Content -->
                 <div style="background: rgba(59, 130, 246, 0.2); padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; flex: 1; min-width: 80px;">
                   <div style="color: #1d4ed8; font-weight: 700;">content</div>
-                  <div style="color: #9ca3af; font-size: 0.5rem;">auto</div>
-                  <div style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: rgba(168, 85, 247, 0.3); border-radius: 0.125rem; color: #7c3aed; font-size: 0.5rem;">narrow (clamped)</div>
+                  <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.content || configOptions.content.value"></div>
+                  <div style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: rgba(168, 85, 247, 0.3); border-radius: 0.125rem; color: #7c3aed; font-size: 0.5rem;">
+                    narrow <span x-text="'(' + (editValues.narrowMin || configOptions.narrowMin.value) + ' - ' + (editValues.narrowMax || configOptions.narrowMax.value) + ')'"></span>
+                  </div>
                 </div>
                 <!-- Popout right -->
                 <div style="background: rgba(34, 197, 94, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed #e5e7eb; min-width: 40px;">
                   <div style="color: #15803d; font-weight: 600;">popout</div>
-                  <div style="color: #9ca3af; font-size: 0.5rem;">4rem</div>
+                  <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.popoutWidth || configOptions.popoutWidth.value"></div>
                 </div>
                 <!-- Feature right -->
                 <div style="background: rgba(234, 179, 8, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed #e5e7eb; min-width: 50px;">
                   <div style="color: #b45309; font-weight: 600;">feature</div>
-                  <div style="color: #9ca3af; font-size: 0.5rem;">12vw</div>
+                  <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.featureWidth || configOptions.featureWidth.value"></div>
                 </div>
                 <!-- Full right -->
                 <div style="background: rgba(239, 68, 68, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed #e5e7eb; min-width: 40px;">
@@ -1242,7 +1244,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <!-- Padding explanation -->
               <div style="margin-top: 1rem; padding: 0.75rem; background: #f9fafb; border-radius: 0.25rem; font-size: 0.5625rem; color: #4b5563;">
                 <div style="font-weight: 700; margin-bottom: 0.25rem;">px-breakout aligns full-width content:</div>
-                <div>Uses <span style="color: #3b82f6;">popoutWidth</span> padding so content aligns with .col-content edge</div>
+                <div>Uses <span style="color: #3b82f6;" x-text="editValues.popoutWidth || configOptions.popoutWidth.value"></span> padding so content aligns with .col-content edge</div>
               </div>
             </div>
           </div>

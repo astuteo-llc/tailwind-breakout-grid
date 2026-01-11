@@ -477,6 +477,36 @@ For content that spans from one edge to a specific column:
 - Split-screen layouts
 - Progressive disclosure interfaces
 
+### Advanced: CSS Subgrid
+
+Use `grid-cols-breakout-subgrid` on nested elements to inherit the parent grid's named lines. Children can then align precisely to any grid track.
+
+```html
+<div class="grid-cols-breakout">
+  <!-- Parent spans feature-right, children inherit its grid tracks -->
+  <div class="col-feature-right grid-cols-breakout-subgrid">
+    <div class="col-feature">
+      Aligns to the feature area
+    </div>
+    <div class="col-content">
+      Aligns to the content area
+    </div>
+  </div>
+</div>
+```
+
+**How it works:**
+- `grid-cols-breakout-subgrid` applies `display: grid` and `grid-template-columns: subgrid`
+- The element inherits all named grid lines from its parent
+- Children use standard `col-*` utilities to align to those tracks
+
+**Use cases:**
+- Cards that span multiple columns with internal alignment
+- Complex layouts where nested content needs to align to the main grid
+- Sidebars or panels where internal elements should match the parent grid structure
+
+> **Browser Support:** CSS Subgrid has [~90% browser support](https://caniuse.com/css-subgrid) as of January 2025. Check current support before using in production.
+
 ## Common Patterns
 
 ### Article Layout
@@ -556,6 +586,7 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 
 #### Grid Template Classes
 - `grid-cols-breakout` - Main centered grid template
+- `grid-cols-breakout-subgrid` - Inherit parent grid tracks via CSS subgrid
 - `grid-cols-feature-left` / `grid-cols-feature-right`
 - `grid-cols-popout-left` / `grid-cols-popout-right`
 - `grid-cols-content-left` / `grid-cols-content-right`

@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-01-11
+
+### Added
+
+- **CSS Subgrid Support:**
+  - New `grid-cols-breakout-subgrid` utility for nested elements that inherit parent grid tracks
+  - Enables children to align to the parent breakout grid's named lines
+  - [Browser support at ~90%](https://caniuse.com/css-subgrid) as of January 2025
+
+### Improved
+
+- **Grid Visualizer Enhancements:**
+  - Version number display in control panel
+  - Floating draggable config editor window
+  - Grid structure diagram (show/hide toggle)
+  - Number inputs with unit suffixes and arrow key increment/decrement
+  - Live editing for popoutWidth, featureWidth, and content values
+  - "Requires rebuild" notes for gapScale and defaultCol
+  - Content minimum validation
+  - Unsaved changes warning when closing editor
+  - Subgrid demo in Advanced Spans view
+  - CSS Download feature (beta) - generates standalone CSS for non-Tailwind use
+
 ## [1.1.6] - 2025-10-30
 
 ### Fixed
@@ -105,6 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic default column assignment for child elements
 - Debug mode for template generation logging
 
+[2.1.0]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v2.1.0
 [1.1.6]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.6
 [1.1.5]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.5
 [1.1.2]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.2
