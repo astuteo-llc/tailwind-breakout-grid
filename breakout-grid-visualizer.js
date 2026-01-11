@@ -40,7 +40,7 @@
       showMeasurements: true,
       showGapPadding: false,
       showBreakoutPadding: false,
-      showAdvancedSpan: false,
+      showAdvanced: false,
       viewportWidth: window.innerWidth,
       selectedArea: null,
 
@@ -124,34 +124,142 @@
              class="breakout-grid-visualizer"
              style="position: fixed; inset: 0; pointer-events: none; z-index: 9999;">
 
-          <!-- Advanced Span Example Overlay -->
-          <div x-show="showAdvancedSpan"
+          <!-- Advanced Span Examples Overlay -->
+          <div x-show="showAdvanced"
                class="grid-cols-breakout"
-               style="position: absolute; inset: 0; height: 100%; pointer-events: none; z-index: 5;">
-            <div style="grid-column: full-start / feature-end;
-                        background: linear-gradient(135deg, rgba(236, 72, 153, 0.3) 0%, rgba(139, 92, 246, 0.3) 100%);
-                        border: 3px solid rgb(168, 85, 247);
-                        border-radius: 0.5rem;
-                        margin: 2rem 0;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;">
-              <div style="background: rgb(139, 92, 246);
+               style="position: absolute; inset: 0; height: 100%; pointer-events: auto; z-index: 5;">
+
+            <!-- Left bleed: grid-cols-feature-left with col-content text -->
+            <div class="grid-cols-feature-left"
+                 style="grid-column: full;
+                        margin: 1rem 0;
+                        transition: opacity 0.2s ease;"
+                 onmouseenter="this.style.opacity='0.9'"
+                 onmouseleave="this.style.opacity='1'">
+              <div style="grid-column: feature;
+                          background: linear-gradient(135deg, rgba(236, 72, 153, 0.4) 0%, rgba(139, 92, 246, 0.4) 100%);
+                          padding: 1rem;
+                          font-size: 0.625rem;
+                          font-family: monospace;
+                          color: rgb(109, 40, 217);">
+                .col-feature (image bleeds left)
+              </div>
+              <div style="grid-column: content;
+                          background: rgb(139, 92, 246);
                           color: white;
-                          padding: 1rem 1.5rem;
-                          border-radius: 0.5rem;
-                          font-size: 0.875rem;
+                          padding: 0.75rem 1rem;
+                          font-size: 0.75rem;
                           font-weight: 700;
-                          text-align: center;
                           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-family: monospace; margin-bottom: 0.25rem;">col-start-full col-end-feature</div>
-                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500;">Asymmetric span: left edge to feature boundary</div>
+                <div style="font-family: monospace; margin-bottom: 0.5rem;">.col-content (aligned text)</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">grid-cols-feature-left: color bleeds left, text aligns to content</div>
+                <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="grid-cols-feature-left"&gt;
+  &lt;div class="col-feature"&gt;Image&lt;/div&gt;
+  &lt;p class="col-content"&gt;Text&lt;/p&gt;
+&lt;/div&gt;</pre>
               </div>
             </div>
+
+            <!-- Right bleed: grid-cols-feature-right with col-content text -->
+            <div class="grid-cols-feature-right"
+                 style="grid-column: full;
+                        margin: 1rem 0;
+                        transition: opacity 0.2s ease;"
+                 onmouseenter="this.style.opacity='0.9'"
+                 onmouseleave="this.style.opacity='1'">
+              <div style="grid-column: content;
+                          background: rgb(34, 197, 94);
+                          color: white;
+                          padding: 0.75rem 1rem;
+                          font-size: 0.75rem;
+                          font-weight: 700;
+                          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="font-family: monospace; margin-bottom: 0.5rem;">.col-content (aligned text)</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">grid-cols-feature-right: color bleeds right, text aligns to content</div>
+                <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="grid-cols-feature-right"&gt;
+  &lt;p class="col-content"&gt;Text&lt;/p&gt;
+  &lt;div class="col-feature"&gt;Image&lt;/div&gt;
+&lt;/div&gt;</pre>
+              </div>
+              <div style="grid-column: feature;
+                          background: linear-gradient(135deg, rgba(34, 197, 94, 0.4) 0%, rgba(59, 130, 246, 0.4) 100%);
+                          padding: 1rem;
+                          font-size: 0.625rem;
+                          font-family: monospace;
+                          color: rgb(21, 128, 61);">
+                .col-feature (image bleeds right)
+              </div>
+            </div>
+
+            <!-- To center point: full-start to center -->
+            <div style="grid-column: full-start / center;
+                        background: linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%);
+                        border: 3px solid rgb(234, 179, 8);
+                        margin: 1rem 0;
+                        padding: 1rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                        transition: background 0.2s ease;"
+                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.45) 0%, rgba(234, 179, 8, 0.45) 100%)'"
+                 onmouseleave="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%)'">
+              <div style="background: rgb(234, 179, 8);
+                          color: white;
+                          padding: 0.75rem 1rem;
+                          font-size: 0.75rem;
+                          font-weight: 700;
+                          text-align: right;
+                          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="font-family: monospace; margin-bottom: 0.25rem;">.col-start-full .col-end-center</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500;">Left edge → center point</div>
+              </div>
+            </div>
+
+            <!-- Nested grid example: breakout-to-feature inside col-feature -->
+            <div style="grid-column: feature;
+                        border: 3px dashed rgb(59, 130, 246);
+                        margin: 1rem 0;
+                        background: rgba(59, 130, 246, 0.05);
+                        transition: background 0.2s ease;
+                        padding: 0.5rem;"
+                 onmouseenter="this.style.background='rgba(59, 130, 246, 0.15)'"
+                 onmouseleave="this.style.background='rgba(59, 130, 246, 0.05)'">
+              <div style="font-size: 0.625rem; font-family: monospace; color: rgb(30, 64, 175); margin-bottom: 0.5rem; padding: 0.25rem;">
+                Parent: .col-feature container
+              </div>
+              <div class="grid-cols-breakout breakout-to-feature"
+                   style="background: rgba(59, 130, 246, 0.1);">
+                <div style="grid-column: feature;
+                            background: rgba(59, 130, 246, 0.3);
+                            padding: 0.5rem;
+                            font-size: 0.625rem;
+                            font-family: monospace;
+                            color: rgb(30, 64, 175);">
+                  .col-feature → fills container
+                </div>
+                <div style="grid-column: content;
+                            background: rgb(59, 130, 246);
+                            color: white;
+                            padding: 0.75rem 1rem;
+                            font-size: 0.75rem;
+                            font-weight: 700;
+                            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                  <div style="font-family: monospace; margin-bottom: 0.5rem;">.col-content → has margins</div>
+                  <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">breakout-to-feature collapses outer tracks</div>
+                  <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="col-feature"&gt;
+  &lt;div class="grid-cols-breakout breakout-to-feature"&gt;
+    &lt;div class="col-feature"&gt;Fills container&lt;/div&gt;
+    &lt;p class="col-content"&gt;Has margins&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <!-- Grid Overlay -->
-          <div class="grid-cols-breakout" style="height: 100%; position: relative;">
+          <!-- Grid Overlay (hidden in Advanced mode) -->
+          <div x-show="!showAdvanced" class="grid-cols-breakout" style="height: 100%; position: relative;">
             <template x-for="area in gridAreas" :key="area.name">
               <div :class="'col-' + area.name"
                    @click="selectArea(area.name)"
@@ -316,10 +424,23 @@
                   <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.375rem; cursor: pointer;">
                   p-breakout
                 </label>
+              </div>
+            </div>
+
+            <!-- Advanced Section -->
+            <div style="margin-bottom: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <div style="font-size: 0.75rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                  Advanced
+                </div>
                 <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.75rem; color: #8b5cf6;">
-                  <input type="checkbox" x-model="showAdvancedSpan" style="margin-right: 0.375rem; cursor: pointer;">
-                  Span Example
+                  <input type="checkbox" x-model="showAdvanced" style="margin-right: 0.375rem; cursor: pointer;">
+                  Show Spans
                 </label>
+              </div>
+              <div x-show="showAdvanced" style="font-size: 0.625rem; color: #6b7280; padding: 0.5rem; background: #f3f4f6; border-radius: 0.25rem; line-height: 1.4;">
+                <div style="margin-bottom: 0.25rem;"><code style="background: #e5e7eb; padding: 0.125rem 0.25rem; border-radius: 0.125rem;">.col-*-left</code> anchors to left edge</div>
+                <div><code style="background: #e5e7eb; padding: 0.125rem 0.25rem; border-radius: 0.125rem;">.col-*-right</code> anchors to right edge</div>
               </div>
             </div>
 
