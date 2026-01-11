@@ -706,6 +706,11 @@ const createGridUtilities = (config, templates) => {
     '.grid-cols-breakout': {
       'display': 'grid',
       'grid-template-columns': templates.default
+    },
+    // Subgrid utility for nested elements that need to align to parent's grid lines
+    '.grid-cols-breakout-subgrid': {
+      'display': 'grid',
+      'grid-template-columns': 'subgrid'
     }
   })
 

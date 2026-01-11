@@ -34,7 +34,7 @@
   document.addEventListener('alpine:init', () => {
     Alpine.data('breakoutGridVisualizer', () => ({
       // Constants
-      version: 'v2.1-beta.20',
+      version: 'v2.1-beta.29',
       loremContent: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
 
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.`,
@@ -811,34 +811,36 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                           color: rgb(157, 23, 77);
                           padding: 0.5rem;
                           background: rgba(236, 72, 153, 0.1);">
-                Parent: .col-feature-right + display: grid + grid-template-columns: subgrid
+                Parent: .col-feature-right .grid-cols-breakout-subgrid
               </div>
-              <!-- Child using subgrid to align to content-start -->
-              <div class="col-start-content col-end-popout"
-                   style="background: rgb(236, 72, 153);
+              <!-- Child using subgrid to align to narrow -->
+              <div style="grid-column: narrow;
+                          background: rgb(236, 72, 153);
                           color: white;
                           padding: 0.75rem 1rem;
                           margin: 0.5rem 0;
                           font-size: 0.75rem;
                           font-weight: 700;
                           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-family: monospace; margin-bottom: 0.5rem;">Child: .col-start-content .col-end-popout</div>
-                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">Subgrid lets children align to grandparent's named lines</div>
-                <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="col-feature-right grid grid-cols-subgrid"&gt;
-  &lt;div class="col-start-content col-end-popout"&gt;
-    Aligns to main grid tracks!
-  &lt;/div&gt;
+                <div style="font-family: monospace; margin-bottom: 0.5rem;">Child: .col-narrow</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">Subgrid lets children align to parent's named lines</div>
+                <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="col-feature-right grid-cols-breakout-subgrid"&gt;
+  &lt;div class="col-narrow"&gt;Aligns to narrow!&lt;/div&gt;
+  &lt;div class="col-feature"&gt;Aligns to feature!&lt;/div&gt;
 &lt;/div&gt;</pre>
+                <div style="font-size: 0.5rem; margin-top: 0.5rem; opacity: 0.8;">
+                  <a href="https://caniuse.com/css-subgrid" target="_blank" rel="noopener" style="color: white; text-decoration: underline;">Check browser support</a> (~90% as of Jan 2025)
+                </div>
               </div>
-              <!-- Another child spanning different tracks -->
-              <div class="col-content"
-                   style="background: rgba(236, 72, 153, 0.3);
+              <!-- Another child spanning feature -->
+              <div style="grid-column: feature;
+                          background: rgba(236, 72, 153, 0.3);
                           padding: 0.5rem;
                           margin-bottom: 0.5rem;
                           font-size: 0.625rem;
                           font-family: monospace;
                           color: rgb(157, 23, 77);">
-                Another child: .col-content (aligns perfectly)
+                Another child: .col-feature (aligns to feature area)
               </div>
             </div>
 
