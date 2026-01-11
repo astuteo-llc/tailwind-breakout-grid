@@ -36,13 +36,14 @@
       // State
       isVisible: false,
       showLabels: true,
-      showClassNames: false,
+      showClassNames: true,
       showMeasurements: true,
       showGapPadding: false,
       showBreakoutPadding: false,
       showAdvanced: false,
       viewportWidth: window.innerWidth,
       selectedArea: null,
+      hoveredArea: null,
 
       // Grid areas configuration (matches plugin)
       gridAreas: [
@@ -139,7 +140,7 @@
                         align-items: center;
                         justify-content: flex-start;
                         transition: background 0.2s ease;"
-                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(236, 72, 153, 0.45) 0%, rgba(139, 92, 246, 0.45) 100%)'"
+                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(236, 72, 153, 0.6) 0%, rgba(139, 92, 246, 0.6) 100%)'"
                  onmouseleave="this.style.background='linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%)'">
               <div style="background: rgb(139, 92, 246);
                           color: white;
@@ -163,7 +164,7 @@
                         align-items: center;
                         justify-content: flex-end;
                         transition: background 0.2s ease;"
-                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(34, 197, 94, 0.45) 0%, rgba(59, 130, 246, 0.45) 100%)'"
+                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(34, 197, 94, 0.6) 0%, rgba(59, 130, 246, 0.6) 100%)'"
                  onmouseleave="this.style.background='linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%)'">
               <div style="background: rgb(34, 197, 94);
                           color: white;
@@ -187,7 +188,7 @@
                         align-items: center;
                         justify-content: flex-end;
                         transition: background 0.2s ease;"
-                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.45) 0%, rgba(234, 179, 8, 0.45) 100%)'"
+                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.6) 0%, rgba(234, 179, 8, 0.6) 100%)'"
                  onmouseleave="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%)'">
               <div style="background: rgb(234, 179, 8);
                           color: white;
@@ -208,7 +209,7 @@
                         background: rgba(59, 130, 246, 0.05);
                         transition: background 0.2s ease;
                         padding: 0.5rem;"
-                 onmouseenter="this.style.background='rgba(59, 130, 246, 0.15)'"
+                 onmouseenter="this.style.background='rgba(59, 130, 246, 0.3)'"
                  onmouseleave="this.style.background='rgba(59, 130, 246, 0.05)'">
               <div style="font-size: 0.625rem; font-family: monospace; color: rgb(30, 64, 175); margin-bottom: 0.5rem; padding: 0.25rem;">
                 Parent: .col-feature container
@@ -249,8 +250,10 @@
             <template x-for="area in gridAreas" :key="area.name">
               <div :class="'col-' + area.name"
                    @click="selectArea(area.name)"
+                   @mouseenter="hoveredArea = area.name"
+                   @mouseleave="hoveredArea = null"
                    :style="{
-                     backgroundColor: isSelected(area.name) ? area.color.replace('0.1', '0.3') : area.color,
+                     backgroundColor: (hoveredArea === area.name || isSelected(area.name)) ? area.color.replace('0.1', '0.4') : area.color,
                      borderLeft: '1px solid ' + area.borderColor,
                      borderRight: '1px solid ' + area.borderColor,
                      position: 'relative',
@@ -373,7 +376,7 @@
             </div>
 
             <!-- Toggles -->
-            <div style="display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.5rem;">
               <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #374151;">
                 <input type="checkbox" x-model="showLabels" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
                 Labels
@@ -394,11 +397,24 @@
                 <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
                 p-breakout
               </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #8b5cf6;">
-                <input type="checkbox" x-model="showAdvanced" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
-                Advanced
-              </label>
             </div>
+
+            <!-- Advanced Toggle -->
+            <button @click="showAdvanced = !showAdvanced"
+                    :style="{
+                      width: '100%',
+                      padding: '0.375rem 0.5rem',
+                      marginBottom: '0.5rem',
+                      fontSize: '0.625rem',
+                      fontWeight: '600',
+                      border: showAdvanced ? 'none' : '1px solid #8b5cf6',
+                      borderRadius: '0.25rem',
+                      cursor: 'pointer',
+                      background: showAdvanced ? '#8b5cf6' : 'white',
+                      color: showAdvanced ? 'white' : '#8b5cf6'
+                    }">
+              <span x-text="showAdvanced ? '✓ Advanced Spans' : 'Show Advanced Spans'"></span>
+            </button>
 
             <!-- Keyboard Shortcut -->
             <div style="font-size: 0.5rem; color: #9ca3af; text-align: center;">
