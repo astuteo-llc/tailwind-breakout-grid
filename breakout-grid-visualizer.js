@@ -129,89 +129,51 @@
                class="grid-cols-breakout"
                style="position: absolute; inset: 0; height: 100%; pointer-events: auto; z-index: 5;">
 
-            <!-- Left bleed: grid-cols-feature-left with col-content text -->
-            <div class="grid-cols-feature-left"
-                 style="grid-column: full;
+            <!-- Left-anchored: full-start to feature-end -->
+            <div style="grid-column: full-start / feature-end;
+                        background: linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%);
+                        border: 3px solid rgb(168, 85, 247);
                         margin: 1rem 0;
-                        transition: opacity 0.2s ease;"
-                 onmouseenter="this.style.opacity='0.9'"
-                 onmouseleave="this.style.opacity='1'">
-              <div style="grid-column: feature;
-                          background: linear-gradient(135deg, rgba(236, 72, 153, 0.4) 0%, rgba(139, 92, 246, 0.4) 100%);
-                          padding: 1rem;
-                          font-size: 0.625rem;
-                          font-family: monospace;
-                          color: rgb(109, 40, 217);">
-                .col-feature (image bleeds left)
-              </div>
-              <div style="grid-column: content;
-                          background: rgb(139, 92, 246);
+                        padding: 1rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                        transition: background 0.2s ease;"
+                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(236, 72, 153, 0.45) 0%, rgba(139, 92, 246, 0.45) 100%)'"
+                 onmouseleave="this.style.background='linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%)'">
+              <div style="background: rgb(139, 92, 246);
                           color: white;
                           padding: 0.75rem 1rem;
                           font-size: 0.75rem;
                           font-weight: 700;
+                          text-align: left;
                           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-family: monospace; margin-bottom: 0.5rem;">.col-content (aligned text)</div>
-                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">grid-cols-feature-left: color bleeds left, text aligns to content</div>
-                <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="grid-cols-feature-left"&gt;
-  &lt;div class="col-feature"&gt;Image&lt;/div&gt;
-  &lt;p class="col-content"&gt;Text&lt;/p&gt;
-&lt;/div&gt;</pre>
+                <div style="font-family: monospace; margin-bottom: 0.25rem;">.col-feature-left</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500;">Left edge → feature boundary</div>
               </div>
             </div>
 
-            <!-- Right bleed: grid-cols-feature-right with col-content text -->
-            <div class="grid-cols-feature-right"
-                 style="grid-column: full;
-                        margin: 1rem 0;
-                        transition: opacity 0.2s ease;"
-                 onmouseenter="this.style.opacity='0.9'"
-                 onmouseleave="this.style.opacity='1'">
-              <div style="grid-column: content;
-                          background: rgb(34, 197, 94);
-                          color: white;
-                          padding: 0.75rem 1rem;
-                          font-size: 0.75rem;
-                          font-weight: 700;
-                          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-family: monospace; margin-bottom: 0.5rem;">.col-content (aligned text)</div>
-                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">grid-cols-feature-right: color bleeds right, text aligns to content</div>
-                <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="grid-cols-feature-right"&gt;
-  &lt;p class="col-content"&gt;Text&lt;/p&gt;
-  &lt;div class="col-feature"&gt;Image&lt;/div&gt;
-&lt;/div&gt;</pre>
-              </div>
-              <div style="grid-column: feature;
-                          background: linear-gradient(135deg, rgba(34, 197, 94, 0.4) 0%, rgba(59, 130, 246, 0.4) 100%);
-                          padding: 1rem;
-                          font-size: 0.625rem;
-                          font-family: monospace;
-                          color: rgb(21, 128, 61);">
-                .col-feature (image bleeds right)
-              </div>
-            </div>
-
-            <!-- To center point: full-start to center -->
-            <div style="grid-column: full-start / center;
-                        background: linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%);
-                        border: 3px solid rgb(234, 179, 8);
+            <!-- Right-anchored: feature-start to full-end -->
+            <div style="grid-column: feature-start / full-end;
+                        background: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
+                        border: 3px solid rgb(34, 197, 94);
                         margin: 1rem 0;
                         padding: 1rem;
                         display: flex;
                         align-items: center;
                         justify-content: flex-end;
                         transition: background 0.2s ease;"
-                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.45) 0%, rgba(234, 179, 8, 0.45) 100%)'"
-                 onmouseleave="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%)'">
-              <div style="background: rgb(234, 179, 8);
+                 onmouseenter="this.style.background='linear-gradient(135deg, rgba(34, 197, 94, 0.45) 0%, rgba(59, 130, 246, 0.45) 100%)'"
+                 onmouseleave="this.style.background='linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%)'">
+              <div style="background: rgb(34, 197, 94);
                           color: white;
                           padding: 0.75rem 1rem;
                           font-size: 0.75rem;
                           font-weight: 700;
                           text-align: right;
                           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-family: monospace; margin-bottom: 0.25rem;">.col-start-full .col-end-center</div>
-                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500;">Left edge → center point</div>
+                <div style="font-family: monospace; margin-bottom: 0.25rem;">.col-feature-right</div>
+                <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500;">Feature boundary → right edge</div>
               </div>
             </div>
 
