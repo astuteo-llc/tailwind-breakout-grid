@@ -34,7 +34,7 @@
   document.addEventListener('alpine:init', () => {
     Alpine.data('breakoutGridVisualizer', () => ({
       // Constants
-      version: 'v2.1-beta.29',
+      version: 'v2.1',
       loremContent: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
 
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.`,
@@ -729,8 +729,8 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               </div>
             </div>
 
-            <!-- To center point: full-start to center -->
-            <div style="grid-column: full-start / center;
+            <!-- To center point: full-start to center-end -->
+            <div style="grid-column: full-start / center-end;
                         background: linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%);
                         border: 3px solid rgb(234, 179, 8);
                         margin: 1rem 0;
@@ -748,7 +748,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                           font-weight: 700;
                           text-align: right;
                           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-family: monospace; margin-bottom: 0.25rem;">.col-start-full .col-end-center</div>
+                <div style="font-family: monospace; margin-bottom: 0.25rem;">.col-center-left</div>
                 <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500;">Left edge → center point</div>
               </div>
             </div>
@@ -813,8 +813,18 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                           background: rgba(236, 72, 153, 0.1);">
                 Parent: .col-feature-right .grid-cols-breakout-subgrid
               </div>
-              <!-- Child using subgrid to align to narrow -->
-              <div style="grid-column: narrow;
+              <!-- Child spanning feature (wider, lighter) -->
+              <div style="grid-column: feature;
+                          background: rgba(236, 72, 153, 0.3);
+                          padding: 0.5rem;
+                          margin: 0.5rem 0;
+                          font-size: 0.625rem;
+                          font-family: monospace;
+                          color: rgb(157, 23, 77);">
+                Child: .col-feature (aligns to feature area)
+              </div>
+              <!-- Child using subgrid to align to content (darker) -->
+              <div style="grid-column: content;
                           background: rgb(236, 72, 153);
                           color: white;
                           padding: 0.75rem 1rem;
@@ -822,25 +832,16 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                           font-size: 0.75rem;
                           font-weight: 700;
                           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-family: monospace; margin-bottom: 0.5rem;">Child: .col-narrow</div>
+                <div style="font-family: monospace; margin-bottom: 0.5rem;">Child: .col-content</div>
                 <div style="font-size: 0.625rem; opacity: 0.9; font-weight: 500; margin-bottom: 0.75rem;">Subgrid lets children align to parent's named lines</div>
                 <pre style="font-size: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; margin: 0; white-space: pre-wrap; text-align: left;">&lt;div class="col-feature-right grid-cols-breakout-subgrid"&gt;
-  &lt;div class="col-narrow"&gt;Aligns to narrow!&lt;/div&gt;
   &lt;div class="col-feature"&gt;Aligns to feature!&lt;/div&gt;
+  &lt;div class="col-content"&gt;Aligns to content!&lt;/div&gt;
 &lt;/div&gt;</pre>
-                <div style="font-size: 0.5rem; margin-top: 0.5rem; opacity: 0.8;">
-                  <a href="https://caniuse.com/css-subgrid" target="_blank" rel="noopener" style="color: white; text-decoration: underline;">Check browser support</a> (~90% as of Jan 2025)
+                <div style="margin-top: 0.75rem;">
+                  <a href="https://caniuse.com/css-subgrid" target="_blank" rel="noopener" style="display: inline-block; background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 0.375rem 0.75rem; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.3);">Check browser support</a>
+                  <span style="font-size: 0.5rem; opacity: 0.7; margin-left: 0.5rem;">(~90% as of Jan 2025)</span>
                 </div>
-              </div>
-              <!-- Another child spanning feature -->
-              <div style="grid-column: feature;
-                          background: rgba(236, 72, 153, 0.3);
-                          padding: 0.5rem;
-                          margin-bottom: 0.5rem;
-                          font-size: 0.625rem;
-                          font-family: monospace;
-                          color: rgb(157, 23, 77);">
-                Another child: .col-feature (aligns to feature area)
               </div>
             </div>
 
