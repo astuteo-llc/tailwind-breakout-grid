@@ -22,12 +22,7 @@
           <span class="font-semibold text-lg">Apex Precision</span>
         </a>
       </div>
-      <nav class="flex gap-6 text-sm">
-        <a href="/" class="hover:text-amber-400 transition-colors">Grid Demo</a>
-        <a href="/article.html" class="hover:text-amber-400 transition-colors">Article</a>
-        <a href="/product.html" class="text-amber-400">Product</a>
-        <a href="/sidebar.html" class="hover:text-amber-400 transition-colors">Sidebar</a>
-      </nav>
+      <nav class="flex gap-6 text-sm" data-shared-nav="product"></nav>
     </div>
   </header>
 
@@ -301,6 +296,30 @@
     <div class="col-content mt-6">
       <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold">Download full specifications PDF →</a>
     </div>
+
+  </section>
+
+  <!-- ============================================
+       SHARED BLOCKS DEMO
+       These blocks are imported from shared-blocks.js
+       and also appear on the Docs (sidebar) page.
+       Here they render with breakout widths.
+       ============================================ -->
+  <section class="grid-cols-breakout py-16 bg-slate-50">
+
+    <div class="col-content mb-8">
+      <p class="text-amber-600 font-semibold text-sm uppercase tracking-wide mb-2">Reusable Components</p>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">Shared Blocks Demo</h2>
+      <p class="text-gray-600">These blocks are loaded from <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">shared-blocks.js</code> and rendered identically on the <a href="/sidebar.html" class="text-amber-600 hover:underline">Docs page</a>. Compare how <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">col-*</code> classes work here vs. inside <code class="bg-gray-200 px-1.5 py-0.5 rounded text-sm">breakout-none</code>.</p>
+    </div>
+
+    <!-- Shared blocks injected via JS -->
+    <div data-shared-block="infoCallout"></div>
+    <div data-shared-block="keySpecs"></div>
+    <div data-shared-block="warningCallout"></div>
+    <div data-shared-block="specsTable"></div>
+    <div data-shared-block="testimonial"></div>
+    <div data-shared-block="featureCards"></div>
 
   </section>
 

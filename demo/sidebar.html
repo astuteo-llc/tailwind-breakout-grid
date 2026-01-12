@@ -22,12 +22,7 @@
           <span class="font-semibold text-lg">Apex Precision</span>
         </a>
       </div>
-      <nav class="flex gap-6 text-sm">
-        <a href="/index.html" class="hover:text-amber-400 transition-colors">Grid Demo</a>
-        <a href="/article.html" class="hover:text-amber-400 transition-colors">Article</a>
-        <a href="/product.html" class="hover:text-amber-400 transition-colors">Product</a>
-        <a href="/sidebar.html" class="text-amber-400">Docs</a>
-      </nav>
+      <nav class="flex gap-6 text-sm" data-shared-nav="sidebar"></nav>
     </div>
   </header>
 
@@ -86,192 +81,54 @@
 
         <!-- Page Title -->
         <h1 class="text-3xl font-bold text-gray-900 mb-4">Getting Started with CNC-5000</h1>
-        <p class="text-lg text-gray-600 mb-8">Everything you need to set up and operate your new 5-axis machining center.</p>
+        <p class="text-lg text-gray-600 mb-4">Everything you need to set up and operate your new 5-axis machining center.</p>
 
-        <!-- Info Callout - would be col-popout on full page -->
-        <div class="col-popout bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r mb-8">
-          <p class="font-semibold text-amber-800 mb-2">Before You Begin</p>
-          <p class="text-amber-700 text-sm">Ensure your facility meets all power and environmental requirements. See the Installation Guide for complete site preparation details.</p>
-        </div>
-
-        <!-- Body Content - would be col-content on full page -->
-        <div class="col-content mb-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Overview</h2>
-          <p class="text-gray-600 leading-relaxed mb-4">
-            The CNC-5000 Series represents the pinnacle of 5-axis machining technology. This guide will walk you through initial setup, basic operation, and best practices for achieving optimal results.
-          </p>
-          <p class="text-gray-600 leading-relaxed">
-            Whether you're migrating from a 3-axis system or upgrading from an older 5-axis machine, you'll find the CNC-5000's intuitive interface and advanced automation features significantly reduce your learning curve.
-          </p>
-        </div>
-
-        <!-- Feature Image - would be col-feature on full page -->
-        <div class="col-feature mb-8">
-          <div class="rounded overflow-hidden">
-            <img src="https://picsum.photos/1000/400?random=50" alt="CNC-5000 Overview" class="w-full h-64 object-cover">
+        <!-- KEY CLASSES CALLOUT -->
+        <div class="bg-slate-900 text-white rounded-lg p-6 mb-8">
+          <h2 class="text-lg font-bold mb-4 text-amber-400">Sidebar Layout Pattern</h2>
+          <p class="text-slate-300 text-sm mb-4">This page demonstrates how to use a sidebar within the breakout grid system. The key classes:</p>
+          <div class="bg-slate-800 rounded p-4 font-mono text-sm mb-4 overflow-x-auto">
+            <div class="text-slate-400">&lt;main class="<span class="text-emerald-400">grid-cols-breakout</span>"&gt;</div>
+            <div class="text-slate-400 pl-4">&lt;div class="<span class="text-amber-400">col-feature</span> <span class="text-pink-400">breakout-none-grid</span> <span class="text-blue-400">grid-cols-12 gap-8</span>"&gt;</div>
+            <div class="text-slate-400 pl-8">&lt;aside class="<span class="text-blue-400">col-span-3</span>"&gt;Sidebar&lt;/aside&gt;</div>
+            <div class="text-slate-400 pl-8">&lt;div class="<span class="text-blue-400">col-span-9</span>"&gt;</div>
+            <div class="text-slate-400 pl-12">&lt;!-- Blocks with col-* classes render normally --&gt;</div>
+            <div class="text-slate-400 pl-12">&lt;div class="<span class="text-slate-500 line-through">col-popout</span>"&gt;Ignored!&lt;/div&gt;</div>
+            <div class="text-slate-400 pl-8">&lt;/div&gt;</div>
+            <div class="text-slate-400 pl-4">&lt;/div&gt;</div>
+            <div class="text-slate-400">&lt;/main&gt;</div>
           </div>
-          <p class="text-sm text-gray-500 mt-2">The CNC-5000 control panel and work envelope</p>
-        </div>
-
-        <!-- Key Specs - would be col-content on full page -->
-        <div class="col-content grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div class="text-center p-4 bg-gray-50 rounded">
-            <p class="text-2xl font-bold text-amber-600">5</p>
-            <p class="text-xs text-gray-600 mt-1">Axes</p>
-          </div>
-          <div class="text-center p-4 bg-gray-50 rounded">
-            <p class="text-2xl font-bold text-amber-600">40K</p>
-            <p class="text-xs text-gray-600 mt-1">RPM</p>
-          </div>
-          <div class="text-center p-4 bg-gray-50 rounded">
-            <p class="text-2xl font-bold text-amber-600">±2μm</p>
-            <p class="text-xs text-gray-600 mt-1">Accuracy</p>
-          </div>
-          <div class="text-center p-4 bg-gray-50 rounded">
-            <p class="text-2xl font-bold text-amber-600">60</p>
-            <p class="text-xs text-gray-600 mt-1">Tools</p>
-          </div>
-        </div>
-
-        <!-- Section -->
-        <div class="col-content mb-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Quick Start Checklist</h2>
-          <p class="text-gray-600 leading-relaxed mb-4">
-            Follow these steps to get your machine operational. Each step links to detailed documentation.
-          </p>
-        </div>
-
-        <!-- Checklist Cards - would be col-popout on full page -->
-        <div class="col-popout grid md:grid-cols-2 gap-4 mb-8">
-          <div class="bg-white border border-gray-200 rounded p-4 hover:border-amber-300 transition-colors">
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">1</div>
-              <div>
-                <h4 class="font-semibold text-gray-900">Verify Power Connection</h4>
-                <p class="text-sm text-gray-600 mt-1">Confirm 480V 3-phase supply and proper grounding.</p>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white border border-gray-200 rounded p-4 hover:border-amber-300 transition-colors">
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">2</div>
-              <div>
-                <h4 class="font-semibold text-gray-900">Check Coolant System</h4>
-                <p class="text-sm text-gray-600 mt-1">Fill reservoir and verify pump operation.</p>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white border border-gray-200 rounded p-4 hover:border-amber-300 transition-colors">
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">3</div>
-              <div>
-                <h4 class="font-semibold text-gray-900">Initialize Control System</h4>
-                <p class="text-sm text-gray-600 mt-1">Power on and complete startup sequence.</p>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white border border-gray-200 rounded p-4 hover:border-amber-300 transition-colors">
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">4</div>
-              <div>
-                <h4 class="font-semibold text-gray-900">Home All Axes</h4>
-                <p class="text-sm text-gray-600 mt-1">Establish machine zero position.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Warning Callout - would be col-content on full page -->
-        <div class="col-content bg-red-50 border border-red-200 rounded p-4 mb-8">
-          <div class="flex gap-3">
-            <div class="text-red-500 flex-shrink-0">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          <div class="grid md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <span class="text-emerald-400 font-semibold">grid-cols-breakout</span>
+              <p class="text-slate-400 mt-1">Outer breakout grid (page-level)</p>
             </div>
             <div>
-              <p class="font-semibold text-red-800">Safety Warning</p>
-              <p class="text-sm text-red-700 mt-1">Never operate the machine with safety interlocks bypassed. Always ensure the work area is clear before initiating any axis movement.</p>
+              <span class="text-amber-400 font-semibold">col-feature</span>
+              <p class="text-slate-400 mt-1">Container width for sidebar area</p>
+            </div>
+            <div>
+              <span class="text-pink-400 font-semibold">breakout-none-grid</span>
+              <p class="text-slate-400 mt-1">Disables breakout, enables CSS grid</p>
             </div>
           </div>
         </div>
 
-        <!-- Specs Table - would be col-popout on full page -->
-        <div class="col-popout mb-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Quick Reference</h2>
-          <div class="bg-white rounded border border-gray-200 overflow-hidden">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="bg-gray-50 border-b border-gray-200">
-                  <th class="text-left py-3 px-4 font-semibold text-gray-900">Parameter</th>
-                  <th class="text-left py-3 px-4 font-semibold text-gray-900">Value</th>
-                  <th class="text-left py-3 px-4 font-semibold text-gray-900">Notes</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-100">
-                <tr>
-                  <td class="py-3 px-4 text-gray-600">Work Envelope</td>
-                  <td class="py-3 px-4 font-medium">1000 × 800 × 600 mm</td>
-                  <td class="py-3 px-4 text-gray-500 text-xs">X × Y × Z</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-4 text-gray-600">Max Spindle Speed</td>
-                  <td class="py-3 px-4 font-medium">40,000 RPM</td>
-                  <td class="py-3 px-4 text-gray-500 text-xs">HSK-A63 interface</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-4 text-gray-600">Rapid Traverse</td>
-                  <td class="py-3 px-4 font-medium">60/60/40 m/min</td>
-                  <td class="py-3 px-4 text-gray-500 text-xs">X/Y/Z axes</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-4 text-gray-600">Table Load</td>
-                  <td class="py-3 px-4 font-medium">800 kg max</td>
-                  <td class="py-3 px-4 text-gray-500 text-xs">Centered load</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <!-- Shared blocks intro -->
+        <div class="bg-amber-50 border border-amber-200 rounded p-4 mb-8">
+          <p class="text-sm text-amber-800"><strong>Shared Components:</strong> The blocks below are loaded from <code class="bg-amber-100 px-1 rounded">shared-blocks.js</code> — the exact same source used on the <a href="/product.html" class="text-amber-600 hover:underline font-semibold">Product page</a>. Compare how the <code class="bg-amber-100 px-1 rounded">col-*</code> classes work there vs. here.</p>
         </div>
 
-        <!-- Testimonial/Quote - would be col-narrow on full page -->
-        <blockquote class="col-narrow border-l-4 border-amber-500 pl-6 py-4 mb-8">
-          <p class="text-xl text-gray-700 italic leading-relaxed mb-4">
-            "The CNC-5000's setup wizard had us cutting parts within 4 hours of power-on. Impressive for a 5-axis machine."
-          </p>
-          <footer class="text-sm text-gray-500">
-            — James Morrison, Aerotech Industries
-          </footer>
-        </blockquote>
-
-        <!-- Related Content Cards - would be col-feature on full page -->
-        <div class="col-feature">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Related Documentation</h2>
-          <div class="grid md:grid-cols-3 gap-4">
-            <a href="#" class="bg-gray-50 rounded overflow-hidden hover:shadow-md transition-shadow group">
-              <img src="https://picsum.photos/400/200?random=51" alt="Installation" class="w-full h-32 object-cover">
-              <div class="p-4">
-                <h4 class="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">Installation Guide</h4>
-                <p class="text-sm text-gray-600 mt-1">Site preparation and machine placement</p>
-              </div>
-            </a>
-            <a href="#" class="bg-gray-50 rounded overflow-hidden hover:shadow-md transition-shadow group">
-              <img src="https://picsum.photos/400/200?random=52" alt="Programming" class="w-full h-32 object-cover">
-              <div class="p-4">
-                <h4 class="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">Programming Manual</h4>
-                <p class="text-sm text-gray-600 mt-1">G-code reference and examples</p>
-              </div>
-            </a>
-            <a href="#" class="bg-gray-50 rounded overflow-hidden hover:shadow-md transition-shadow group">
-              <img src="https://picsum.photos/400/200?random=53" alt="Maintenance" class="w-full h-32 object-cover">
-              <div class="p-4">
-                <h4 class="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">Maintenance Schedule</h4>
-                <p class="text-sm text-gray-600 mt-1">Preventive maintenance procedures</p>
-              </div>
-            </a>
-          </div>
-        </div>
+        <!-- Shared blocks injected via JS - same as product page -->
+        <div data-shared-block="infoCallout"></div>
+        <div data-shared-block="keySpecs"></div>
+        <div data-shared-block="warningCallout"></div>
+        <div data-shared-block="specsTable"></div>
+        <div data-shared-block="testimonial"></div>
+        <div data-shared-block="featureCards"></div>
 
         <!-- Pagination -->
-        <div class="col-content flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+        <div class="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
           <span class="text-gray-400 text-sm">Previous: N/A</span>
           <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">Next: Installation →</a>
         </div>
