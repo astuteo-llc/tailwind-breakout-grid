@@ -1147,135 +1147,126 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           </div>
 
 
-          <!-- Control Panel -->
+          <!-- Control Panel - Ubiquiti-style -->
           <div :style="{
                  position: 'fixed',
-                 bottom: '1rem',
-                 right: '1rem',
+                 bottom: '12px',
+                 right: '12px',
                  pointerEvents: 'auto',
-                 background: 'white',
-                 borderRadius: '0.5rem',
-                 boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.2)',
-                 padding: '0.75rem',
-                 maxWidth: editMode ? '380px' : '280px',
+                 background: '#f7f7f7',
+                 borderRadius: '8px',
+                 boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
+                 width: '200px',
                  fontFamily: 'system-ui, -apple-system, sans-serif',
                  zIndex: '10000',
-                 transition: 'max-width 0.2s ease'
+                 overflow: 'hidden'
                }">
 
-            <!-- Header with viewport -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; gap: 1rem;">
-              <div>
-                <span style="font-weight: 700; font-size: 0.75rem; color: #111827;">Grid</span>
-                <span style="font-size: 0.625rem; color: #9ca3af; margin-left: 0.25rem;" x-text="version"></span>
-                <span style="font-size: 0.75rem; color: #6b7280; margin-left: 0.5rem; font-variant-numeric: tabular-nums;" x-text="viewportWidth + 'px'"></span>
+            <!-- Header -->
+            <div style="padding: 8px 12px; background: #1a1a2e; color: white; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-weight: 600; font-size: 12px;">Grid</span>
+                <span style="font-size: 10px; color: rgba(255,255,255,0.5);" x-text="version"></span>
               </div>
-              <button @click="toggle()"
-                      style="background: #ef4444; color: white; border: none; border-radius: 0.25rem; padding: 0.125rem 0.5rem; font-size: 0.625rem; font-weight: 600; cursor: pointer;">
-                Close
-              </button>
-            </div>
-
-            <!-- CSS Variables (read-only when not in edit mode) -->
-            <div x-show="showMeasurements && !editMode" style="margin-bottom: 0.5rem; background: #f9fafb; border-radius: 0.25rem; padding: 0.375rem; font-size: 0.625rem; font-family: 'Monaco', 'Courier New', monospace;">
-              <template x-for="key in Object.keys(configOptions).slice(0, 5)" :key="key">
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.125rem 0;">
-                  <span style="color: #6b7280;" x-text="key"></span>
-                  <span style="color: #111827; font-weight: 600;" x-text="configOptions[key].cssVar ? getCSSVariable(configOptions[key].cssVar) : configOptions[key].value"></span>
-                </div>
-              </template>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 11px; font-variant-numeric: tabular-nums; color: rgba(255,255,255,0.7);" x-text="viewportWidth + 'px'"></span>
+                <button @click="toggle()" style="background: transparent; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 16px; line-height: 1; padding: 0;">&times;</button>
+              </div>
             </div>
 
             <!-- Action Buttons -->
-            <div style="display: flex; gap: 0.25rem; margin-bottom: 0.5rem;">
+            <div style="padding: 8px; background: white; border-bottom: 1px solid #e5e5e5; display: flex; gap: 6px;">
               <button @click="openEditor()"
                       :style="{
                         flex: 1,
-                        padding: '0.375rem 0.5rem',
-                        fontSize: '0.625rem',
+                        padding: '6px 8px',
+                        fontSize: '10px',
                         fontWeight: '600',
-                        border: showEditor ? 'none' : '1px solid #f59e0b',
-                        borderRadius: '0.25rem',
+                        border: 'none',
+                        borderRadius: '4px',
                         cursor: 'pointer',
-                        background: showEditor ? '#f59e0b' : 'white',
-                        color: showEditor ? 'white' : '#f59e0b'
+                        background: showEditor ? '#1a1a2e' : '#e5e5e5',
+                        color: showEditor ? 'white' : '#374151'
                       }">
-                Edit Config
+                Config
               </button>
               <button @click="showDiagram = !showDiagram; if(showDiagram && Object.keys(editValues).length === 0) loadCurrentValues()"
                       :style="{
                         flex: 1,
-                        padding: '0.375rem 0.5rem',
-                        fontSize: '0.625rem',
+                        padding: '6px 8px',
+                        fontSize: '10px',
                         fontWeight: '600',
-                        border: showDiagram ? 'none' : '1px solid #6366f1',
-                        borderRadius: '0.25rem',
+                        border: 'none',
+                        borderRadius: '4px',
                         cursor: 'pointer',
-                        background: showDiagram ? '#6366f1' : 'white',
-                        color: showDiagram ? 'white' : '#6366f1'
+                        background: showDiagram ? '#1a1a2e' : '#e5e5e5',
+                        color: showDiagram ? 'white' : '#374151'
                       }">
                 Diagram
               </button>
             </div>
 
-            <!-- Toggles -->
-            <div style="display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.5rem;">
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #374151;">
-                <input type="checkbox" x-model="showLabels" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
-                Labels
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #374151;">
-                <input type="checkbox" x-model="showClassNames" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
-                Classes
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #374151;">
-                <input type="checkbox" x-model="showMeasurements" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
-                Values
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #10b981;">
-                <input type="checkbox" x-model="showGapPadding" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
-                p-gap
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #3b82f6;">
-                <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
-                p-breakout
-              </label>
-              <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.625rem; color: #6b7280;">
-                <input type="checkbox" x-model="showLoremIpsum" style="margin-right: 0.25rem; cursor: pointer; width: 12px; height: 12px;">
-                Lorem Ipsum
+            <!-- Display Options -->
+            <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
+              <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Display</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px;">
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 11px; color: #374151;">
+                  <input type="checkbox" x-model="showLabels" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
+                  Labels
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 11px; color: #374151;">
+                  <input type="checkbox" x-model="showClassNames" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
+                  Classes
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 11px; color: #374151;">
+                  <input type="checkbox" x-model="showMeasurements" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
+                  Values
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 11px; color: #374151;">
+                  <input type="checkbox" x-model="showLoremIpsum" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
+                  Lorem
+                </label>
+              </div>
+            </div>
+
+            <!-- Padding Options -->
+            <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
+              <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Padding</div>
+              <div style="display: flex; gap: 12px;">
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 11px; color: #374151;">
+                  <input type="checkbox" x-model="showGapPadding" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
+                  p-gap
+                </label>
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 11px; color: #374151;">
+                  <input type="checkbox" x-model="showBreakoutPadding" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
+                  p-breakout
+                </label>
+              </div>
+            </div>
+
+            <!-- Advanced -->
+            <div style="padding: 8px 12px; background: white;">
+              <label style="display: flex; align-items: center; cursor: pointer; font-size: 11px; color: #374151;">
+                <input type="checkbox" x-model="showAdvanced" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
+                Advanced Spans
               </label>
             </div>
 
-            <!-- Advanced Toggle -->
-            <button @click="showAdvanced = !showAdvanced"
-                    :style="{
-                      width: '100%',
-                      padding: '0.375rem 0.5rem',
-                      marginBottom: '0.5rem',
-                      fontSize: '0.625rem',
-                      fontWeight: '600',
-                      border: showAdvanced ? 'none' : '1px solid #8b5cf6',
-                      borderRadius: '0.25rem',
-                      cursor: 'pointer',
-                      background: showAdvanced ? '#8b5cf6' : 'white',
-                      color: showAdvanced ? 'white' : '#8b5cf6'
-                    }">
-              <span x-text="showAdvanced ? '✓ Advanced Spans' : 'Show Advanced Spans'"></span>
-            </button>
-
-            <!-- Keyboard Shortcut -->
-            <div style="font-size: 0.5rem; color: #9ca3af; text-align: center;">
-              <kbd style="background: #f3f4f6; padding: 0.0625rem 0.25rem; border-radius: 0.125rem; font-weight: 600; color: #374151;">⌘G</kbd> toggle
+            <!-- Footer -->
+            <div style="padding: 6px 12px; background: #f7f7f7; border-top: 1px solid #e5e5e5;">
+              <div style="font-size: 9px; color: #9ca3af; text-align: center;">
+                <kbd style="background: #e5e5e5; padding: 1px 4px; border-radius: 2px; font-size: 9px; font-weight: 600; color: #374151;">⌘G</kbd> toggle
+              </div>
             </div>
 
             <!-- Selected Area Info -->
-            <div x-show="selectedArea" style="margin-top: 0.5rem; padding: 0.5rem; background: #eff6ff; border-radius: 0.25rem; border-left: 2px solid #3b82f6;">
-              <div style="font-size: 0.75rem; color: #1e3a8a; font-weight: 700; font-family: monospace;" x-text="gridAreas.find(a => a.name === selectedArea)?.className || ''"></div>
+            <div x-show="selectedArea" style="padding: 8px 12px; background: #f0f9ff; border-top: 1px solid #e5e5e5;">
+              <div style="font-size: 11px; color: #1a1a2e; font-weight: 600; font-family: monospace;" x-text="gridAreas.find(a => a.name === selectedArea)?.className || ''"></div>
             </div>
 
           </div>
 
-          <!-- Floating Editor Window -->
+          <!-- Floating Editor Window - Ubiquiti-style -->
           <div x-show="showEditor"
                @mousedown.self="startDrag($event)"
                @mousemove.window="onDrag($event)"
@@ -1284,83 +1275,99 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                  position: 'fixed',
                  left: editorPos.x + 'px',
                  top: editorPos.y + 'px',
-                 width: '320px',
-                 maxHeight: '80vh',
-                 background: 'white',
-                 borderRadius: '0.5rem',
-                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                 width: '280px',
+                 maxHeight: '85vh',
+                 background: '#f7f7f7',
+                 borderRadius: '8px',
+                 boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
                  pointerEvents: 'auto',
                  zIndex: '10001',
-                 overflow: 'hidden'
+                 overflow: 'hidden',
+                 fontFamily: 'system-ui, -apple-system, sans-serif'
                }">
             <!-- Editor Header (draggable) -->
             <div @mousedown="startDrag($event)"
-                 style="padding: 0.75rem; background: #f59e0b; color: white; cursor: move; display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-weight: 700; font-size: 0.75rem;">Edit Config</span>
-              <button @click="closeEditor()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.625rem; font-weight: 600;">Close</button>
+                 style="padding: 10px 12px; background: #1a1a2e; color: white; cursor: move; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 600; font-size: 12px; letter-spacing: 0.3px;">Grid Config</span>
+              <button @click="closeEditor()" style="background: transparent; border: none; color: rgba(255,255,255,0.6); padding: 2px 6px; cursor: pointer; font-size: 16px; line-height: 1;">&times;</button>
             </div>
             <!-- Editor Content -->
-            <div style="padding: 1rem; max-height: calc(80vh - 3rem); overflow-y: auto;">
+            <div style="max-height: calc(85vh - 40px); overflow-y: auto;">
               <!-- Workflow tip -->
-              <div style="background: #fef3c7; border-left: 3px solid #f59e0b; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; font-size: 0.625rem; color: #92400e; line-height: 1.4;">
-                Start with <strong>narrow</strong> (readable text width), then build outward: content → popout → feature → full.
+              <div style="background: #e8f4f8; padding: 8px 12px; font-size: 10px; color: #1a1a2e; line-height: 1.4; border-bottom: 1px solid #e5e5e5;">
+                Start with <strong>narrow</strong>, then build outward: content → popout → feature → full
               </div>
-              <!-- Base Measurements -->
-              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Base Measurements</div>
-              <template x-for="key in ['baseGap', 'maxGap', 'narrowMin', 'narrowMax', 'narrowBase']" :key="'ed_'+key">
-                <div style="margin-bottom: 0.5rem;">
-                  <label style="display: block; color: #78716c; font-weight: 600; font-size: 0.6875rem; font-family: Monaco, monospace; margin-bottom: 0.125rem;" x-text="key"></label>
-                  <div style="display: flex; align-items: center; gap: 0.25rem;">
-                    <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
-                           style="flex: 1; padding: 0.25rem 0.375rem; font-size: 0.6875rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white;">
-                    <span style="font-size: 0.6875rem; font-family: Monaco, monospace; color: #78716c; min-width: 2rem;" x-text="getUnit(key)"></span>
+
+              <!-- Narrow Section -->
+              <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
+                <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Narrow (Text Width)</div>
+                <template x-for="key in ['narrowMin', 'narrowBase', 'narrowMax']" :key="'ed_'+key">
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="font-size: 11px; color: #374151;" x-text="key.replace('narrow', '').toLowerCase()"></span>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                      <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
+                             style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
+                      <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit(key)"></span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Track Widths Section -->
+              <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
+                <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Track Widths</div>
+                <template x-for="key in ['content', 'popoutWidth', 'featureWidth', 'fullLimit']" :key="'ed_'+key">
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '')"></span>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                      <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
+                             style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
+                      <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit(key)"></span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Gap Section -->
+              <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
+                <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Gap</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
+                  <span style="font-size: 11px; color: #374151;">base</span>
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <input type="number" :value="getNumericValue('baseGap')" @input="updateNumericValue('baseGap', $event.target.value)" step="0.5"
+                           style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
+                    <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit('baseGap')"></span>
                   </div>
                 </div>
-              </template>
-
-              <!-- Track Widths -->
-              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 0.75rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.5rem; border-top: 1px dashed #fde68a;">Track Widths</div>
-              <template x-for="key in ['content', 'popoutWidth', 'featureWidth', 'fullLimit']" :key="'ed_'+key">
-                <div style="margin-bottom: 0.5rem;">
-                  <label style="display: block; color: #78716c; font-weight: 600; font-size: 0.6875rem; font-family: Monaco, monospace; margin-bottom: 0.125rem;" x-text="key"></label>
-                  <div style="display: flex; align-items: center; gap: 0.25rem;">
-                    <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
-                           style="flex: 1; padding: 0.25rem 0.375rem; font-size: 0.6875rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white;">
-                    <span style="font-size: 0.6875rem; font-family: Monaco, monospace; color: #78716c; min-width: 2rem;" x-text="getUnit(key)"></span>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
+                  <span style="font-size: 11px; color: #374151;">max</span>
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <input type="number" :value="getNumericValue('maxGap')" @input="updateNumericValue('maxGap', $event.target.value)" step="1"
+                           style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
+                    <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit('maxGap')"></span>
                   </div>
                 </div>
-              </template>
-
-              <!-- Gap Scale -->
-              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 0.75rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.5rem; border-top: 1px dashed #fde68a;">gapScale <span style="font-size: 0.5rem; color: #dc2626; font-weight: 400; text-transform: none;">(rebuild)</span></div>
-              <template x-for="key in Object.keys(gapScaleOptions)" :key="'ed_gs_'+key">
-                <div style="margin-bottom: 0.375rem; display: flex; gap: 0.5rem; align-items: center;">
-                  <label style="color: #78716c; font-weight: 600; font-size: 0.625rem; font-family: Monaco, monospace; min-width: 2.5rem;" x-text="key + ':'"></label>
-                  <input type="number" :value="getGapScaleNumeric(key)" @input="updateGapScaleNumeric(key, $event.target.value)" step="1"
-                         style="flex: 1; padding: 0.25rem 0.375rem; font-size: 0.625rem; font-family: Monaco, monospace; border: 1px solid #fbbf24; border-radius: 0.25rem; background: white;">
-                  <span style="font-size: 0.625rem; font-family: Monaco, monospace; color: #78716c;" x-text="getGapScaleUnit(key)"></span>
-                </div>
-              </template>
-
-              <!-- Utilities Reference -->
-              <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin: 0.75rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.5rem; border-top: 1px dashed #fde68a;">Padding Utilities</div>
-              <div style="font-size: 0.5625rem; font-family: Monaco, monospace; color: #374151; line-height: 1.5;">
-                <div><span style="color: #3b82f6;">px-breakout</span> = popoutWidth</div>
-                <div><span style="color: #059669;">px-popout-to-content</span></div>
-                <div><span style="color: #059669;">px-feature-to-content</span></div>
+                <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 4px;">Scale <span style="font-size: 8px; color: #ef4444; font-weight: 400; text-transform: none;">(rebuild)</span></div>
+                <template x-for="key in Object.keys(gapScaleOptions)" :key="'ed_gs_'+key">
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="font-size: 11px; color: #374151;" x-text="key"></span>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                      <input type="number" :value="getGapScaleNumeric(key)" @input="updateGapScaleNumeric(key, $event.target.value)" step="1"
+                             style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
+                      <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getGapScaleUnit(key)"></span>
+                    </div>
+                  </div>
+                </template>
               </div>
 
               <!-- Action Buttons -->
-              <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
-                <button @click="copyConfig()" :style="{ flex: 1, padding: '0.5rem', fontSize: '0.6875rem', fontWeight: '700', border: 'none', borderRadius: '0.25rem', cursor: 'pointer', background: copySuccess ? '#10b981' : '#1e40af', color: 'white' }">
-                  <span x-text="copySuccess ? '✓ Copied!' : 'Copy Config'"></span>
+              <div style="padding: 10px 12px; background: #f7f7f7; display: flex; gap: 8px;">
+                <button @click="copyConfig()" :style="{ flex: 1, padding: '8px', fontSize: '11px', fontWeight: '600', border: 'none', borderRadius: '4px', cursor: 'pointer', background: copySuccess ? '#10b981' : '#1a1a2e', color: 'white', transition: 'background 0.2s' }">
+                  <span x-text="copySuccess ? '✓ Copied' : 'Copy Config'"></span>
                 </button>
-                <button @click="downloadCSS()" style="flex: 1; padding: 0.5rem; font-size: 0.6875rem; font-weight: 700; border: none; border-radius: 0.25rem; cursor: pointer; background: #059669; color: white;">
-                  Download CSS
+                <button @click="downloadCSS()" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;">
+                  Export CSS
                 </button>
-              </div>
-              <div style="font-size: 0.5rem; color: #9ca3af; text-align: center; margin-top: 0.375rem;">
-                Config for Tailwind • CSS for standalone use
               </div>
             </div>
           </div>
