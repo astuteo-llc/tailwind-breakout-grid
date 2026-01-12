@@ -1104,7 +1104,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       transform: 'translateX(-50%)',
                       width: editValues.narrowBase || configOptions.narrowBase.value,
                       border: '3px solid rgba(236, 72, 153, 1)',
-                      background: 'rgba(236, 72, 153, 0.25)',
+                      background: 'rgba(236, 72, 153, 0.5)',
                       boxSizing: 'border-box',
                       borderRadius: '4px'
                     }">
