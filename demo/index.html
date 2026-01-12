@@ -34,7 +34,20 @@
   <section class="grid-cols-breakout bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-16">
     <div class="col-content text-center">
       <h1 class="text-4xl md:text-5xl font-bold mb-4">Tailwind Breakout Grid</h1>
-      <p class="text-xl text-blue-100 max-w-2xl mx-auto">A flexible, fluid grid layout system for content that breaks out of its container. Press <kbd class="bg-white/20 px-2 py-0.5 rounded text-sm font-mono">Cmd+G</kbd> to toggle the visualizer.</p>
+      <p class="text-xl text-blue-100 max-w-2xl mx-auto mb-8">A flexible, fluid grid layout system for content that breaks out of its container. Press <kbd class="bg-white/20 px-2 py-0.5 rounded text-sm font-mono">Cmd+G</kbd> to toggle the visualizer.</p>
+
+      <details class="text-left max-w-xl mx-auto bg-white/10 rounded-lg overflow-hidden">
+        <summary class="px-4 py-3 cursor-pointer text-blue-100 text-sm font-medium hover:bg-white/10 transition-colors">View masthead markup</summary>
+        <pre class="p-4 text-sm text-blue-100 overflow-x-auto"><code>&lt;header class="grid-cols-breakout bg-slate-900"&gt;
+  &lt;div class="col-full-limit px-gap py-4 flex justify-between"&gt;
+    &lt;div&gt;Logo&lt;/div&gt;
+    &lt;nav&gt;Links...&lt;/nav&gt;
+  &lt;/div&gt;
+&lt;/header&gt;
+
+&lt;!-- col-full-limit: full width with max-width cap
+     px-gap: responsive padding that matches grid gaps --&gt;</code></pre>
+      </details>
     </div>
   </section>
 
@@ -82,6 +95,28 @@
       <span class="text-purple-600 ml-2">Optimal reading width (40-50rem)</span>
     </div>
 
+    <!-- Code Example -->
+    <div class="col-content mt-6">
+      <details class="bg-slate-800 rounded-lg overflow-hidden">
+        <summary class="px-4 py-3 cursor-pointer text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors">View markup</summary>
+        <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;!-- Container with breakout grid --&gt;
+&lt;div class="grid-cols-breakout"&gt;
+
+  &lt;!-- Column utilities (widest to narrowest) --&gt;
+  &lt;div class="col-full"&gt;Edge to edge&lt;/div&gt;
+  &lt;div class="col-full-limit"&gt;Full with max-width&lt;/div&gt;
+  &lt;div class="col-feature"&gt;Extra wide&lt;/div&gt;
+  &lt;div class="col-popout"&gt;Slightly wider&lt;/div&gt;
+  &lt;div class="col-content"&gt;Standard width&lt;/div&gt;
+  &lt;div class="col-narrow"&gt;Reading width&lt;/div&gt;
+
+  &lt;!-- Default: items without col-* use defaultCol setting --&gt;
+  &lt;p&gt;Uses default column (content by default)&lt;/p&gt;
+
+&lt;/div&gt;</code></pre>
+      </details>
+    </div>
+
   </section>
 
   <!-- ============================================
@@ -112,6 +147,31 @@
     <div class="col-popout bg-emerald-500 text-white mt-4 px-breakout py-6">
       <code class="font-mono text-sm opacity-75">.col-popout .px-breakout</code>
       <p class="mt-2">Popout width with breakout padding for inner alignment.</p>
+    </div>
+
+    <!-- Code Example -->
+    <div class="col-content mt-6">
+      <details class="bg-slate-800 rounded-lg overflow-hidden" open>
+        <summary class="px-4 py-3 cursor-pointer text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors">View markup</summary>
+        <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;!-- Full width with breakout padding --&gt;
+&lt;div class="col-full bg-blue-500"&gt;
+  &lt;div class="px-breakout py-6"&gt;
+    Content aligns with .col-content edges
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Full width with gap padding --&gt;
+&lt;div class="col-full px-gap py-6"&gt;
+  Uses responsive grid gap as padding
+&lt;/div&gt;
+
+&lt;!-- Padding utilities:
+     px-breakout  - Aligns inner content to content column
+     px-gap       - Uses the responsive --gap value
+     p-breakout   - All sides
+     py-breakout  - Top and bottom only
+--&gt;</code></pre>
+      </details>
     </div>
 
   </section>
@@ -148,6 +208,29 @@
       <code class="text-pink-700 font-mono text-sm">.col-center-right</code>
     </div>
 
+    <!-- Code Example -->
+    <div class="col-content mt-6">
+      <details class="bg-slate-800 rounded-lg overflow-hidden">
+        <summary class="px-4 py-3 cursor-pointer text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors">View markup</summary>
+        <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;!-- Left-aligned spans (left edge to boundary) --&gt;
+&lt;div class="col-feature-left"&gt;Left edge to feature boundary&lt;/div&gt;
+&lt;div class="col-popout-left"&gt;Left edge to popout boundary&lt;/div&gt;
+&lt;div class="col-content-left"&gt;Left edge to content boundary&lt;/div&gt;
+&lt;div class="col-center-left"&gt;Left edge to center point&lt;/div&gt;
+
+&lt;!-- Right-aligned spans (boundary to right edge) --&gt;
+&lt;div class="col-feature-right"&gt;Feature boundary to right edge&lt;/div&gt;
+&lt;div class="col-popout-right"&gt;Popout boundary to right edge&lt;/div&gt;
+&lt;div class="col-content-right"&gt;Content boundary to right edge&lt;/div&gt;
+&lt;div class="col-center-right"&gt;Center point to right edge&lt;/div&gt;
+
+&lt;!-- For custom spans, use start/end utilities --&gt;
+&lt;div class="col-start-content col-end-feature"&gt;
+  Content start to feature end
+&lt;/div&gt;</code></pre>
+      </details>
+    </div>
+
   </section>
 
   <!-- ============================================
@@ -171,7 +254,23 @@
       </div>
     </div>
 
-    <p class="col-content text-sm text-gray-500 mt-2 mb-6">Parent: <code class="bg-gray-200 px-1 rounded">.col-feature-right .grid-cols-breakout-subgrid</code></p>
+    <!-- Code Example -->
+    <div class="col-content mt-4 mb-8">
+      <details class="bg-slate-800 rounded-lg overflow-hidden">
+        <summary class="px-4 py-3 cursor-pointer text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors">View markup</summary>
+        <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;div class="col-feature-right grid-cols-breakout-subgrid"&gt;
+  &lt;div class="col-feature"&gt;
+    Spans the feature area
+  &lt;/div&gt;
+  &lt;div class="col-narrow"&gt;
+    Aligns to narrow!
+  &lt;/div&gt;
+  &lt;div class="col-content"&gt;
+    Aligns to content!
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </details>
+    </div>
 
     <!-- Subgrid Example 2 -->
     <div class="col-feature-left grid-cols-breakout-subgrid bg-sky-100 border-2 border-sky-400">
@@ -183,7 +282,20 @@
       </div>
     </div>
 
-    <p class="col-content text-sm text-gray-500 mt-2 mb-6">Parent: <code class="bg-gray-200 px-1 rounded">.col-feature-left .grid-cols-breakout-subgrid</code></p>
+    <!-- Code Example -->
+    <div class="col-content mt-4 mb-6">
+      <details class="bg-slate-800 rounded-lg overflow-hidden">
+        <summary class="px-4 py-3 cursor-pointer text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors">View markup</summary>
+        <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;div class="col-feature-left grid-cols-breakout-subgrid"&gt;
+  &lt;div class="col-popout"&gt;
+    Popout width
+  &lt;/div&gt;
+  &lt;div class="col-content"&gt;
+    Content alignment
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </details>
+    </div>
 
     <!-- Browser Support Note -->
     <div class="col-content bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4">
@@ -220,6 +332,31 @@
       </div>
 
       <p class="text-indigo-500 text-xs mt-3">Nested: <code class="bg-indigo-100 px-1 rounded">.grid-cols-breakout .breakout-to-feature</code></p>
+    </div>
+
+    <!-- Code Example -->
+    <div class="col-content mt-4">
+      <details class="bg-slate-800 rounded-lg overflow-hidden">
+        <summary class="px-4 py-3 cursor-pointer text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors">View markup</summary>
+        <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;!-- Parent container constrains width --&gt;
+&lt;div class="col-feature"&gt;
+
+  &lt;!-- Nested grid collapses outer tracks --&gt;
+  &lt;div class="grid-cols-breakout breakout-to-feature"&gt;
+    &lt;div class="col-feature"&gt;Fills the container&lt;/div&gt;
+    &lt;div class="col-content"&gt;Has proper margins&lt;/div&gt;
+    &lt;div class="col-narrow"&gt;For readable text&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;!-- Available modifiers:
+     breakout-to-narrow   - Collapse all tracks
+     breakout-to-content  - Keep content margins
+     breakout-to-popout   - Keep popout + content
+     breakout-to-feature  - Keep feature + popout + content
+--&gt;</code></pre>
+      </details>
     </div>
 
   </section>
@@ -279,6 +416,43 @@
         <p class="text-slate-300 mb-6">Install the plugin and start building flexible layouts today.</p>
         <code class="bg-slate-800 px-4 py-2 rounded-lg text-green-400 font-mono">npm install @astuteo/tailwind-breakout-grid</code>
       </div>
+    </div>
+
+    <!-- Code Example -->
+    <div class="col-content mt-8">
+      <details class="bg-slate-800 rounded-lg overflow-hidden">
+        <summary class="px-4 py-3 cursor-pointer text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors">View article markup</summary>
+        <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;article class="grid-cols-breakout"&gt;
+
+  &lt;!-- Header at content width --&gt;
+  &lt;header class="col-content"&gt;
+    &lt;h1&gt;Article Title&lt;/h1&gt;
+  &lt;/header&gt;
+
+  &lt;!-- Body text at narrow (reading width) --&gt;
+  &lt;p class="col-narrow"&gt;
+    Readable paragraph text...
+  &lt;/p&gt;
+
+  &lt;!-- Wide image at feature width --&gt;
+  &lt;figure class="col-feature"&gt;
+    &lt;img src="hero.jpg" alt="Hero" /&gt;
+  &lt;/figure&gt;
+
+  &lt;!-- Blockquote pops out slightly --&gt;
+  &lt;blockquote class="col-popout bg-blue-50"&gt;
+    "Pull quote for emphasis..."
+  &lt;/blockquote&gt;
+
+  &lt;!-- Full-width CTA band --&gt;
+  &lt;div class="col-full bg-slate-900"&gt;
+    &lt;div class="px-breakout py-12"&gt;
+      Inner content aligns with col-content
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/article&gt;</code></pre>
+      </details>
     </div>
 
   </article>
