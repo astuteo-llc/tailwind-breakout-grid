@@ -1072,8 +1072,8 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
                 <!-- Narrow Min/Base/Max Visual Guides with integrated handles (edit mode only) -->
                 <template x-if="editMode && area.name === 'narrow'">
-                  <div style="position: absolute; inset: 0; pointer-events: none; z-index: 50;">
-                    <!-- Max boundary (outer, dotted) with drag handle -->
+                  <div style="position: absolute; inset: 0; pointer-events: none; z-index: 50; overflow: visible;">
+                    <!-- Max boundary (outer, dotted) with drag handle - can overflow to show full width -->
                     <div :style="{
                       position: 'absolute',
                       top: '0',
@@ -1081,9 +1081,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       left: '50%',
                       transform: 'translateX(-50%)',
                       width: editValues.narrowMax || configOptions.narrowMax.value,
-                      maxWidth: '100%',
                       border: '3px dotted rgba(139, 92, 246, 0.9)',
-                      boxSizing: 'border-box'
+                      boxSizing: 'border-box',
+                      background: 'rgba(139, 92, 246, 0.05)'
                     }">
                       <div style="position: absolute; top: 8px; right: 8px; background: rgba(139, 92, 246, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">
                         max: <span x-text="editValues.narrowMax || configOptions.narrowMax.value"></span>
@@ -1095,7 +1095,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                         <div style="width: 8px; height: 100%; background: rgb(139, 92, 246); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
                       </div>
                     </div>
-                    <!-- Base boundary (middle, solid) - half height, inset -->
+                    <!-- Base boundary (middle, solid) - half height, inset, can overflow -->
                     <div :style="{
                       position: 'absolute',
                       top: '25%',
@@ -1103,7 +1103,6 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       left: '50%',
                       transform: 'translateX(-50%)',
                       width: editValues.narrowBase || configOptions.narrowBase.value,
-                      maxWidth: '100%',
                       border: '3px solid rgba(236, 72, 153, 1)',
                       background: 'rgba(236, 72, 153, 0.25)',
                       boxSizing: 'border-box',
@@ -1119,7 +1118,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                         <div style="width: 8px; height: 100%; background: rgb(236, 72, 153); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
                       </div>
                     </div>
-                    <!-- Min boundary (inner, dashed) with drag handle -->
+                    <!-- Min boundary (inner, dashed) with drag handle - can overflow to show full width -->
                     <div :style="{
                       position: 'absolute',
                       top: '0',
@@ -1127,7 +1126,6 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       left: '50%',
                       transform: 'translateX(-50%)',
                       width: editValues.narrowMin || configOptions.narrowMin.value,
-                      maxWidth: '100%',
                       border: '3px dashed rgba(168, 85, 247, 0.9)',
                       background: 'rgba(168, 85, 247, 0.15)',
                       boxSizing: 'border-box'
