@@ -1301,6 +1301,10 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             </div>
             <!-- Editor Content -->
             <div style="padding: 1rem; max-height: calc(80vh - 3rem); overflow-y: auto;">
+              <!-- Workflow tip -->
+              <div style="background: #fef3c7; border-left: 3px solid #f59e0b; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; font-size: 0.625rem; color: #92400e; line-height: 1.4;">
+                Start with <strong>narrow</strong> (readable text width), then build outward: content → popout → feature → full.
+              </div>
               <!-- Base Measurements -->
               <div style="font-size: 0.6875rem; font-weight: 700; color: #92400e; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Base Measurements</div>
               <template x-for="key in ['baseGap', 'maxGap', 'narrowMin', 'narrowMax', 'narrowBase']" :key="'ed_'+key">
