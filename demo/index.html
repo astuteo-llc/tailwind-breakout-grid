@@ -125,28 +125,51 @@
   <section class="grid-cols-breakout py-12 bg-gray-100">
 
     <h2 class="col-content text-2xl font-bold mb-2">Padding Utilities</h2>
-    <p class="col-narrow text-gray-600 mb-8">Use px-breakout on full-width sections to align inner content with the content column.</p>
+    <p class="col-narrow text-gray-600 mb-8">Responsive padding that scales with the grid. Use on full-width sections to maintain consistent spacing.</p>
 
-    <!-- Full with px-breakout -->
-    <div class="col-full bg-blue-500 text-white">
-      <div class="px-breakout py-6">
-        <code class="font-mono text-sm opacity-75">.col-full .px-breakout</code>
-        <p class="mt-2">This content aligns with .col-content edges thanks to px-breakout padding.</p>
+    <!-- p-gap example -->
+    <div class="col-full bg-blue-600 text-white p-gap mt-4">
+      <div class="border-2 border-dashed border-blue-300 p-4">
+        <code class="font-mono text-sm bg-blue-500 px-2 py-1 rounded">.col-full .p-gap</code>
+        <p class="text-blue-100 mt-2">Padding matches the responsive grid gap on all sides.</p>
       </div>
     </div>
 
-    <!-- Full with px-gap -->
-    <div class="col-full bg-blue-400 text-white mt-4">
-      <div class="px-gap py-6">
-        <code class="font-mono text-sm opacity-75">.col-full .px-gap</code>
-        <p class="mt-2">Uses the responsive grid gap as padding.</p>
+    <!-- p-breakout example -->
+    <div class="col-full bg-sky-600 text-white p-breakout mt-4">
+      <div class="border-2 border-dashed border-sky-300 p-4">
+        <code class="font-mono text-sm bg-sky-500 px-2 py-1 rounded">.col-full .p-breakout</code>
+        <p class="text-sky-100 mt-2">Larger padding that aligns inner content with .col-content edges.</p>
       </div>
     </div>
 
-    <!-- Popout with px-breakout -->
-    <div class="col-popout bg-emerald-500 text-white mt-4 px-breakout py-6">
-      <code class="font-mono text-sm opacity-75">.col-popout .px-breakout</code>
-      <p class="mt-2">Popout width with breakout padding for inner alignment.</p>
+    <!-- Feature with p-gap -->
+    <div class="col-feature bg-emerald-600 text-white p-gap mt-4">
+      <div class="border-2 border-dashed border-emerald-300 p-4">
+        <code class="font-mono text-sm bg-emerald-500 px-2 py-1 rounded">.col-feature .p-gap</code>
+        <p class="text-emerald-100 mt-2">Works on any column width, not just full.</p>
+      </div>
+    </div>
+
+    <!-- Comparison -->
+    <div class="col-content mt-8 mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Comparison: No padding vs p-gap vs p-breakout</h3>
+    </div>
+
+    <div class="col-full bg-amber-500 text-white text-center py-4">
+      <code class="font-mono text-sm">.col-full</code> — no padding
+    </div>
+
+    <div class="col-full bg-amber-500 text-white text-center p-gap mt-2">
+      <div class="border-2 border-dashed border-amber-300 py-2">
+        <code class="font-mono text-sm">.col-full .p-gap</code>
+      </div>
+    </div>
+
+    <div class="col-full bg-amber-500 text-white text-center p-breakout mt-2">
+      <div class="border-2 border-dashed border-amber-300 py-2">
+        <code class="font-mono text-sm">.col-full .p-breakout</code>
+      </div>
     </div>
 
     <!-- Code Example -->

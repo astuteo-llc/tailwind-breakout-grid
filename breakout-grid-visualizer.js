@@ -84,7 +84,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         content: { value: '4vw', desc: 'Content rail width. Min 1 (grid needs it).', cssVar: '--config-content', liveVar: null },
         popoutWidth: { value: '4rem', desc: 'Popout extends beyond content. Use rem.', cssVar: '--config-popout', liveVar: null },
         featureWidth: { value: '12vw', desc: 'Feature extends for images/heroes. Use vw.', cssVar: '--config-feature', liveVar: null },
-        fullLimit: { value: '90rem', desc: 'Max width for col-full-limit. Use rem.', cssVar: '--config-full-limit', liveVar: '--full-limit' },
+        fullLimit: { value: '115rem', desc: 'Max width for col-full-limit. Use rem.', cssVar: '--config-full-limit', liveVar: '--full-limit' },
         // Default column
         defaultCol: { value: 'content', desc: 'Default column when no col-* class', type: 'select', options: ['narrow', 'content', 'popout', 'feature', 'full'], cssVar: '--config-default-col' },
       },

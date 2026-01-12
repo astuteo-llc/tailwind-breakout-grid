@@ -77,7 +77,7 @@ breakoutGrid({
 
   // Layout behavior
   defaultCol: 'content',  // Default column for items without col-* class
-  fullLimit: '90rem',     // Maximum width for col-full-limit
+  fullLimit: '115rem',     // Maximum width for col-full-limit
 
   // Responsive gap scaling
   gapScale: {
@@ -192,7 +192,7 @@ Viewport edges
 
   <!-- Full Limit: Full width with max-width constraint -->
   <div class="col-full-limit">
-    Content that spans full but never exceeds fullLimit (90rem default)
+    Content that spans full but never exceeds fullLimit (115rem default)
   </div>
 
   <!-- Center: Single point (rarely used directly) -->
