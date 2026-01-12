@@ -161,8 +161,19 @@ export function injectSharedBlocks() {
   // Inject content blocks
   document.querySelectorAll('[data-shared-block]').forEach(el => {
     const blockName = el.dataset.sharedBlock;
-    if (sharedBlocks[blockName]) {
-      el.outerHTML = sharedBlocks[blockName];
+    const blockContent = blockName ? sharedBlocks[blockName] : undefined;
+
+    if (blockContent) {
+      el.outerHTML = blockContent;
+    } else {
+      // Warn and remove invalid or missing shared block placeholders
+      console.warn(
+        '[injectSharedBlocks] No shared block found for name:',
+        blockName,
+        'on element:',
+        el
+      );
+      el.remove();
     }
   });
 
