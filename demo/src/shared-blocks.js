@@ -4,14 +4,6 @@
  * grid but are ignored inside breakout-none containers.
  */
 
-// Page names for consistent labeling
-export const pageNames = {
-  index: 'Grid Demo',
-  article: 'Article',
-  product: 'Product',
-  sidebar: 'Sidebar'
-};
-
 // Navigation component - injected into all pages
 export const sharedNav = (activePage) => `
   <a href="/index.html" class="${activePage === 'index' ? 'text-amber-400' : 'hover:text-amber-400 transition-colors'}">Grid Demo</a>
@@ -158,28 +150,14 @@ export const sharedBlocks = {
  * Usage: <div data-shared-block="infoCallout"></div>
  */
 export function injectSharedBlocks() {
-  // Inject content blocks
   document.querySelectorAll('[data-shared-block]').forEach(el => {
     const blockName = el.dataset.sharedBlock;
-    const blockContent = blockName ? sharedBlocks[blockName] : undefined;
-
-    if (blockContent) {
-      el.outerHTML = blockContent;
-    } else {
-      // Warn and remove invalid or missing shared block placeholders
-      console.warn(
-        '[injectSharedBlocks] No shared block found for name:',
-        blockName,
-        'on element:',
-        el
-      );
-      el.remove();
+    if (sharedBlocks[blockName]) {
+      el.outerHTML = sharedBlocks[blockName];
     }
   });
 
-  // Inject navigation
   document.querySelectorAll('[data-shared-nav]').forEach(el => {
-    const activePage = el.dataset.sharedNav;
-    el.innerHTML = sharedNav(activePage);
+    el.innerHTML = sharedNav(el.dataset.sharedNav);
   });
 }
