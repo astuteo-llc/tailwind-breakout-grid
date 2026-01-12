@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sidebar Layout - Breakout Grid Demo</title>
+  <title>Documentation - Breakout Grid Demo</title>
   <script type="module" src="/src/main.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-white text-gray-900">
 
   <!-- Visualizer Component -->
   <div x-data="breakoutGridVisualizer" x-html="template"></div>
@@ -17,220 +17,264 @@
   <header class="grid-cols-breakout bg-slate-900 text-white">
     <div class="col-full-limit px-gap py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg">BG</div>
-        <span class="font-semibold text-lg">Breakout Grid</span>
+        <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div class="w-10 h-10 bg-amber-500 rounded flex items-center justify-center font-bold text-lg text-slate-900">AP</div>
+          <span class="font-semibold text-lg">Apex Precision</span>
+        </a>
       </div>
       <nav class="flex gap-6 text-sm">
-        <a href="/index.html" class="hover:text-blue-400 transition-colors">Basics</a>
-        <a href="/article.html" class="hover:text-blue-400 transition-colors">Article</a>
-        <a href="/product.html" class="hover:text-blue-400 transition-colors">Product</a>
-        <a href="/sidebar.html" class="text-blue-400">Sidebar</a>
+        <a href="/index.html" class="hover:text-amber-400 transition-colors">Grid Demo</a>
+        <a href="/article.html" class="hover:text-amber-400 transition-colors">Article</a>
+        <a href="/product.html" class="hover:text-amber-400 transition-colors">Product</a>
+        <a href="/sidebar.html" class="text-amber-400">Docs</a>
       </nav>
     </div>
   </header>
 
   <!-- ============================================
-       PAGE HEADER - Full width, uses breakout grid
+       BREADCRUMB
        ============================================ -->
-  <section class="grid-cols-breakout bg-gradient-to-br from-emerald-600 to-teal-700 text-white py-12">
-    <div class="col-content">
-      <h1 class="text-3xl md:text-4xl font-bold mb-3">Sidebar Layouts</h1>
-      <p class="text-lg text-emerald-100">When you need a sidebar, breakout grid isn't always the right tool. Here's a practical pattern.</p>
+  <nav class="grid-cols-breakout bg-gray-100 border-b border-gray-200">
+    <div class="col-content py-3 text-sm text-gray-500">
+      <a href="#" class="hover:text-gray-700">Documentation</a>
+      <span class="mx-2">/</span>
+      <a href="#" class="hover:text-gray-700">CNC-5000 Series</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-900">Getting Started</span>
     </div>
-  </section>
+  </nav>
 
   <!-- ============================================
-       MAIN LAYOUT: Breakout grid with sidebar inside col-feature
+       MAIN LAYOUT: Feature-width with 12-col grid
        ============================================ -->
   <main class="grid-cols-breakout py-12">
 
-    <!-- Feature-width container with breakout-none-flex for sidebar layout -->
-    <div class="col-feature breakout-none-flex gap-8">
+    <!-- Feature-width container with 12-column grid -->
+    <div class="col-feature breakout-none-grid grid-cols-12 gap-8">
 
-      <!-- Sidebar: fixed width -->
-      <aside class="w-64 flex-shrink-0 hidden lg:block">
+      <!-- Sidebar: 3 columns on large screens -->
+      <aside class="col-span-12 lg:col-span-3">
         <div class="sticky top-4">
           <div class="bg-slate-800 text-white px-4 py-3 rounded-t font-semibold text-sm">
-            Navigation
+            Documentation
           </div>
-          <nav class="border border-t-0 border-gray-200 rounded-b bg-white p-2">
-            <a href="#overview" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors">Overview</a>
-            <a href="#pattern" class="block px-3 py-2 rounded text-sm bg-emerald-50 text-emerald-700 font-medium">The Pattern</a>
-            <a href="#when-to-use" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors">When to Use</a>
-            <a href="#code" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors">Code Example</a>
-            <a href="#comparison" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors">Comparison</a>
-          </nav>
-          <div class="mt-4 p-4 border border-gray-200 rounded bg-white">
-            <p class="text-xs text-gray-500 mb-2">This Layout</p>
-            <div class="space-y-2">
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-600">Sidebar</span>
-                <span class="font-semibold">16rem</span>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-600">Container</span>
-                <span class="font-semibold">col-feature</span>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-600">Mode</span>
-                <span class="font-semibold text-emerald-600">breakout-none-flex</span>
-              </div>
+          <nav class="border border-t-0 border-gray-200 rounded-b bg-white">
+            <div class="p-2 border-b border-gray-100">
+              <span class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">Getting Started</span>
+              <a href="#" class="block px-3 py-2 rounded text-sm bg-amber-50 text-amber-700 font-medium mt-1">Introduction</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Installation</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">First Setup</a>
             </div>
-          </div>
+            <div class="p-2 border-b border-gray-100">
+              <span class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">Operation</span>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Control Panel</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Tool Management</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Workholding</a>
+            </div>
+            <div class="p-2">
+              <span class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">Reference</span>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Specifications</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Error Codes</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Maintenance</a>
+            </div>
+          </nav>
         </div>
       </aside>
 
-      <!-- Content area: flex-1 -->
-      <div class="flex-1">
+      <!-- Content area: 9 columns on large screens -->
+      <div class="col-span-12 lg:col-span-9">
 
-        <!-- Section: Overview -->
-        <section id="overview" class="mb-12">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Overview</h2>
-          <p class="text-gray-600 leading-relaxed mb-4">
-            The breakout grid works great for centered, editorial layouts. But when you need a sidebar, you can use <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">breakout-none</code> to opt out of the grid within a specific area.
-          </p>
-          <p class="text-gray-600 leading-relaxed">
-            This page uses <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">col-feature breakout-none-flex</code> to create a sidebar layout within the feature-width area, while the outer page still benefits from the breakout grid for headers/footers.
-          </p>
-        </section>
+        <!-- Page Title -->
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Getting Started with CNC-5000</h1>
+        <p class="text-lg text-gray-600 mb-8">Everything you need to set up and operate your new 5-axis machining center.</p>
 
-        <!-- Section: The Pattern -->
-        <section id="pattern" class="mb-12">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">The Pattern</h2>
-          <div class="bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r mb-6">
-            <p class="font-semibold text-emerald-800 mb-2">Matrix blocks just work</p>
-            <p class="text-emerald-700 text-sm">When you use <code class="bg-emerald-100 px-1 rounded">breakout-none</code>, any embedded <code class="bg-emerald-100 px-1 rounded">col-*</code> classes in reusable blocks are ignored. The grid is disabled, so grid-column properties have no effect.</p>
-          </div>
-
-          <div class="bg-white border border-gray-200 rounded p-6 mb-6">
-            <div class="flex gap-4 mb-4">
-              <div class="w-16 bg-slate-200 rounded flex items-center justify-center text-xs text-slate-600 py-8">sidebar<br>fixed</div>
-              <div class="flex-1 bg-blue-100 rounded p-4 text-xs text-blue-700">
-                <div class="bg-blue-200 rounded p-2 mb-2 text-center">
-                  <span class="line-through opacity-50">col-content</span> → ignored
-                </div>
-                <div class="bg-blue-200 rounded p-2 mb-2 text-center">
-                  <span class="line-through opacity-50">col-popout</span> → ignored
-                </div>
-                <div class="text-blue-500">blocks flow as normal block elements</div>
-              </div>
-            </div>
-            <p class="text-sm text-gray-600">Reusable matrix blocks with <code class="bg-gray-100 px-1 rounded">col-popout</code>, <code class="bg-gray-100 px-1 rounded">col-content</code>, etc. render as normal block elements - their grid-column properties have no effect outside a grid context.</p>
-          </div>
-        </section>
-
-        <!-- Section: When to use -->
-        <section id="when-to-use" class="mb-12">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">When to Use Each</h2>
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="bg-white border border-gray-200 rounded p-5">
-              <h3 class="font-semibold text-emerald-600 mb-3">Breakout Grid</h3>
-              <ul class="text-sm text-gray-600 space-y-2">
-                <li>• Article/blog layouts</li>
-                <li>• Marketing pages</li>
-                <li>• Product detail pages</li>
-                <li>• Full-width sections that need breakouts</li>
-                <li>• When content is vertically stacked</li>
-              </ul>
-            </div>
-            <div class="bg-white border border-emerald-200 rounded p-5 ring-2 ring-emerald-500">
-              <h3 class="font-semibold text-emerald-600 mb-3">Flex + Max-Width</h3>
-              <ul class="text-sm text-gray-600 space-y-2">
-                <li>• Documentation sites</li>
-                <li>• Admin dashboards</li>
-                <li>• Settings pages</li>
-                <li>• Any persistent sidebar layout</li>
-                <li>• <strong>This page!</strong></li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <!-- Callout -->
-        <div class="bg-amber-50 border border-amber-200 rounded p-6 mb-12">
-          <p class="font-semibold text-amber-800 mb-2">Why not nest breakout grid in a sidebar layout?</p>
-          <p class="text-amber-700 text-sm mb-3">The breakout grid calculates widths based on viewport. When nested in a constrained container, <code class="bg-amber-100 px-1 rounded">col-content</code> becomes narrower than on a full-width page, breaking reusable components.</p>
-          <p class="text-amber-700 text-sm">Keep it simple: use breakout for full-width pages, flex+max-width for sidebar layouts.</p>
+        <!-- Info Callout - would be col-popout on full page -->
+        <div class="col-popout bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r mb-8">
+          <p class="font-semibold text-amber-800 mb-2">Before You Begin</p>
+          <p class="text-amber-700 text-sm">Ensure your facility meets all power and environmental requirements. See the Installation Guide for complete site preparation details.</p>
         </div>
 
-        <!-- Section: Code example -->
-        <section id="code" class="mb-12">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Code Example</h2>
-          <div class="bg-slate-900 rounded overflow-hidden">
-            <div class="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
-              <span class="text-xs text-slate-400 font-mono">sidebar-layout.html</span>
-            </div>
-            <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;!-- Page uses breakout grid --&gt;
-&lt;main class="grid-cols-breakout"&gt;
+        <!-- Body Content - would be col-content on full page -->
+        <div class="col-content mb-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Overview</h2>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            The CNC-5000 Series represents the pinnacle of 5-axis machining technology. This guide will walk you through initial setup, basic operation, and best practices for achieving optimal results.
+          </p>
+          <p class="text-gray-600 leading-relaxed">
+            Whether you're migrating from a 3-axis system or upgrading from an older 5-axis machine, you'll find the CNC-5000's intuitive interface and advanced automation features significantly reduce your learning curve.
+          </p>
+        </div>
 
-  &lt;!-- Sidebar area: col-feature + breakout-none-flex --&gt;
-  &lt;div class="col-feature breakout-none-flex gap-8"&gt;
-
-    &lt;aside class="w-64 flex-shrink-0"&gt;
-      &lt;nav class="sticky top-4"&gt;...&lt;/nav&gt;
-    &lt;/aside&gt;
-
-    &lt;div class="flex-1"&gt;
-      &lt;!-- Matrix blocks with col-* classes work here --&gt;
-      &lt;!-- Their col-* classes are simply ignored --&gt;
-      &lt;div class="col-content"&gt;This renders as a normal block&lt;/div&gt;
-      &lt;div class="col-popout"&gt;So does this&lt;/div&gt;
-    &lt;/div&gt;
-
-  &lt;/div&gt;
-
-&lt;/main&gt;</code></pre>
+        <!-- Feature Image - would be col-feature on full page -->
+        <div class="col-feature mb-8">
+          <div class="rounded overflow-hidden">
+            <img src="https://picsum.photos/1000/400?random=50" alt="CNC-5000 Overview" class="w-full h-64 object-cover">
           </div>
-        </section>
+          <p class="text-sm text-gray-500 mt-2">The CNC-5000 control panel and work envelope</p>
+        </div>
 
-        <!-- Section: Comparison -->
-        <section id="comparison" class="mb-12">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Comparison</h2>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm border border-gray-200 rounded">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="text-left p-3 border-b">Approach</th>
-                  <th class="text-left p-3 border-b">Pros</th>
-                  <th class="text-left p-3 border-b">Cons</th>
+        <!-- Key Specs - would be col-content on full page -->
+        <div class="col-content grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="text-center p-4 bg-gray-50 rounded">
+            <p class="text-2xl font-bold text-amber-600">5</p>
+            <p class="text-xs text-gray-600 mt-1">Axes</p>
+          </div>
+          <div class="text-center p-4 bg-gray-50 rounded">
+            <p class="text-2xl font-bold text-amber-600">40K</p>
+            <p class="text-xs text-gray-600 mt-1">RPM</p>
+          </div>
+          <div class="text-center p-4 bg-gray-50 rounded">
+            <p class="text-2xl font-bold text-amber-600">±2μm</p>
+            <p class="text-xs text-gray-600 mt-1">Accuracy</p>
+          </div>
+          <div class="text-center p-4 bg-gray-50 rounded">
+            <p class="text-2xl font-bold text-amber-600">60</p>
+            <p class="text-xs text-gray-600 mt-1">Tools</p>
+          </div>
+        </div>
+
+        <!-- Section -->
+        <div class="col-content mb-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Quick Start Checklist</h2>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Follow these steps to get your machine operational. Each step links to detailed documentation.
+          </p>
+        </div>
+
+        <!-- Checklist Cards - would be col-popout on full page -->
+        <div class="col-popout grid md:grid-cols-2 gap-4 mb-8">
+          <div class="bg-white border border-gray-200 rounded p-4 hover:border-amber-300 transition-colors">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">1</div>
+              <div>
+                <h4 class="font-semibold text-gray-900">Verify Power Connection</h4>
+                <p class="text-sm text-gray-600 mt-1">Confirm 480V 3-phase supply and proper grounding.</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded p-4 hover:border-amber-300 transition-colors">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">2</div>
+              <div>
+                <h4 class="font-semibold text-gray-900">Check Coolant System</h4>
+                <p class="text-sm text-gray-600 mt-1">Fill reservoir and verify pump operation.</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded p-4 hover:border-amber-300 transition-colors">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">3</div>
+              <div>
+                <h4 class="font-semibold text-gray-900">Initialize Control System</h4>
+                <p class="text-sm text-gray-600 mt-1">Power on and complete startup sequence.</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded p-4 hover:border-amber-300 transition-colors">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">4</div>
+              <div>
+                <h4 class="font-semibold text-gray-900">Home All Axes</h4>
+                <p class="text-sm text-gray-600 mt-1">Establish machine zero position.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning Callout - would be col-content on full page -->
+        <div class="col-content bg-red-50 border border-red-200 rounded p-4 mb-8">
+          <div class="flex gap-3">
+            <div class="text-red-500 flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <div>
+              <p class="font-semibold text-red-800">Safety Warning</p>
+              <p class="text-sm text-red-700 mt-1">Never operate the machine with safety interlocks bypassed. Always ensure the work area is clear before initiating any axis movement.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Specs Table - would be col-popout on full page -->
+        <div class="col-popout mb-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Quick Reference</h2>
+          <div class="bg-white rounded border border-gray-200 overflow-hidden">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                  <th class="text-left py-3 px-4 font-semibold text-gray-900">Parameter</th>
+                  <th class="text-left py-3 px-4 font-semibold text-gray-900">Value</th>
+                  <th class="text-left py-3 px-4 font-semibold text-gray-900">Notes</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="divide-y divide-gray-100">
                 <tr>
-                  <td class="p-3 border-b font-medium">Nested breakout grid</td>
-                  <td class="p-3 border-b text-gray-600">Uses familiar col-* classes</td>
-                  <td class="p-3 border-b text-gray-600">Widths don't match full-page layouts</td>
+                  <td class="py-3 px-4 text-gray-600">Work Envelope</td>
+                  <td class="py-3 px-4 font-medium">1000 × 800 × 600 mm</td>
+                  <td class="py-3 px-4 text-gray-500 text-xs">X × Y × Z</td>
                 </tr>
                 <tr>
-                  <td class="p-3 border-b font-medium">grid-cols-feature-left</td>
-                  <td class="p-3 border-b text-gray-600">Stays in grid system</td>
-                  <td class="p-3 border-b text-gray-600">Content is off-center, looks unbalanced</td>
+                  <td class="py-3 px-4 text-gray-600">Max Spindle Speed</td>
+                  <td class="py-3 px-4 font-medium">40,000 RPM</td>
+                  <td class="py-3 px-4 text-gray-500 text-xs">HSK-A63 interface</td>
                 </tr>
-                <tr class="bg-emerald-50">
-                  <td class="p-3 font-medium text-emerald-700">Flex + max-width</td>
-                  <td class="p-3 text-emerald-600">Simple, predictable, industry standard</td>
-                  <td class="p-3 text-emerald-600">No breakout capability (but you don't need it)</td>
+                <tr>
+                  <td class="py-3 px-4 text-gray-600">Rapid Traverse</td>
+                  <td class="py-3 px-4 font-medium">60/60/40 m/min</td>
+                  <td class="py-3 px-4 text-gray-500 text-xs">X/Y/Z axes</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 text-gray-600">Table Load</td>
+                  <td class="py-3 px-4 font-medium">800 kg max</td>
+                  <td class="py-3 px-4 text-gray-500 text-xs">Centered load</td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </section>
+        </div>
 
-        <!-- Section: Hybrid approach -->
-        <section class="mb-12">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Hybrid Approach</h2>
-          <p class="text-gray-600 leading-relaxed mb-4">
-            You can mix both patterns on the same site:
+        <!-- Testimonial/Quote - would be col-narrow on full page -->
+        <blockquote class="col-narrow border-l-4 border-amber-500 pl-6 py-4 mb-8">
+          <p class="text-xl text-gray-700 italic leading-relaxed mb-4">
+            "The CNC-5000's setup wizard had us cutting parts within 4 hours of power-on. Impressive for a 5-axis machine."
           </p>
-          <ul class="space-y-2 text-gray-600 mb-4">
-            <li>• <strong>Marketing pages:</strong> Full breakout grid (like article.html)</li>
-            <li>• <strong>Documentation:</strong> Flex sidebar (like this page)</li>
-            <li>• <strong>Headers/footers:</strong> Breakout grid works everywhere</li>
-          </ul>
-          <p class="text-gray-600 leading-relaxed">
-            The header on this page still uses <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">grid-cols-breakout</code> for consistent site-wide navigation, while the main content uses the flex pattern.
-          </p>
-        </section>
+          <footer class="text-sm text-gray-500">
+            — James Morrison, Aerotech Industries
+          </footer>
+        </blockquote>
+
+        <!-- Related Content Cards - would be col-feature on full page -->
+        <div class="col-feature">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Related Documentation</h2>
+          <div class="grid md:grid-cols-3 gap-4">
+            <a href="#" class="bg-gray-50 rounded overflow-hidden hover:shadow-md transition-shadow group">
+              <img src="https://picsum.photos/400/200?random=51" alt="Installation" class="w-full h-32 object-cover">
+              <div class="p-4">
+                <h4 class="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">Installation Guide</h4>
+                <p class="text-sm text-gray-600 mt-1">Site preparation and machine placement</p>
+              </div>
+            </a>
+            <a href="#" class="bg-gray-50 rounded overflow-hidden hover:shadow-md transition-shadow group">
+              <img src="https://picsum.photos/400/200?random=52" alt="Programming" class="w-full h-32 object-cover">
+              <div class="p-4">
+                <h4 class="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">Programming Manual</h4>
+                <p class="text-sm text-gray-600 mt-1">G-code reference and examples</p>
+              </div>
+            </a>
+            <a href="#" class="bg-gray-50 rounded overflow-hidden hover:shadow-md transition-shadow group">
+              <img src="https://picsum.photos/400/200?random=53" alt="Maintenance" class="w-full h-32 object-cover">
+              <div class="p-4">
+                <h4 class="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors">Maintenance Schedule</h4>
+                <p class="text-sm text-gray-600 mt-1">Preventive maintenance procedures</p>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="col-content flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+          <span class="text-gray-400 text-sm">Previous: N/A</span>
+          <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">Next: Installation →</a>
+        </div>
 
       </div>
 
@@ -243,7 +287,7 @@
        ============================================ -->
   <footer class="grid-cols-breakout bg-slate-900 text-white py-8">
     <div class="col-content text-center text-sm text-slate-400">
-      <p>Tailwind Breakout Grid &mdash; Use the right tool for the job.</p>
+      <p>Apex Precision Documentation &mdash; Demo for Tailwind Breakout Grid</p>
     </div>
   </footer>
 
