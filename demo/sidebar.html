@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation - Breakout Grid Demo</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body class="bg-white text-gray-900">
+
+  <!-- Visualizer Component -->
+  <div x-data="breakoutGridVisualizer" x-html="template"></div>
+
+  <!-- ============================================
+       MASTHEAD - Uses standard breakout grid
+       ============================================ -->
+  <header class="grid-cols-breakout bg-slate-900 text-white">
+    <div class="col-full-limit px-gap py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div class="w-10 h-10 bg-amber-500 rounded flex items-center justify-center font-bold text-lg text-slate-900">AP</div>
+          <span class="font-semibold text-lg">Apex Precision</span>
+        </a>
+      </div>
+      <nav class="flex gap-6 text-sm" data-shared-nav="sidebar"></nav>
+    </div>
+  </header>
+
+  <!-- ============================================
+       BREADCRUMB
+       ============================================ -->
+  <nav class="grid-cols-breakout bg-gray-100 border-b border-gray-200">
+    <div class="col-content py-3 text-sm text-gray-500">
+      <a href="#" class="hover:text-gray-700">Documentation</a>
+      <span class="mx-2">/</span>
+      <a href="#" class="hover:text-gray-700">CNC-5000 Series</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-900">Getting Started</span>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       MAIN LAYOUT: Feature-width with 12-col grid
+       ============================================ -->
+  <main class="grid-cols-breakout py-12">
+
+    <!-- Feature-width container with 12-column grid -->
+    <div class="col-feature breakout-none-grid grid-cols-12 gap-8">
+
+      <!-- Sidebar: 3 columns on large screens -->
+      <aside class="col-span-12 lg:col-span-3">
+        <div class="sticky top-4">
+          <div class="bg-slate-800 text-white px-4 py-3 rounded-t font-semibold text-sm">
+            Documentation
+          </div>
+          <nav class="border border-t-0 border-gray-200 rounded-b bg-white">
+            <div class="p-2 border-b border-gray-100">
+              <span class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">Getting Started</span>
+              <a href="#" class="block px-3 py-2 rounded text-sm bg-amber-50 text-amber-700 font-medium mt-1">Introduction</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Installation</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">First Setup</a>
+            </div>
+            <div class="p-2 border-b border-gray-100">
+              <span class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">Operation</span>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Control Panel</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Tool Management</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Workholding</a>
+            </div>
+            <div class="p-2">
+              <span class="px-3 py-1 text-xs font-semibold text-gray-400 uppercase">Reference</span>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Specifications</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Error Codes</a>
+              <a href="#" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100">Maintenance</a>
+            </div>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Content area: 9 columns on large screens -->
+      <div class="col-span-12 lg:col-span-9">
+
+        <!-- Page Title -->
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Getting Started with CNC-5000</h1>
+        <p class="text-lg text-gray-600 mb-4">Everything you need to set up and operate your new 5-axis machining center.</p>
+
+        <!-- KEY CLASSES CALLOUT -->
+        <div class="bg-slate-900 text-white rounded-lg p-6 mb-8">
+          <h2 class="text-lg font-bold mb-4 text-amber-400">Sidebar Layout Pattern</h2>
+          <p class="text-slate-300 text-sm mb-4">This page demonstrates how to use a sidebar within the breakout grid system. The key classes:</p>
+          <div class="bg-slate-800 rounded p-4 font-mono text-sm mb-4 overflow-x-auto">
+            <div class="text-slate-400">&lt;main class="<span class="text-emerald-400">grid-cols-breakout</span>"&gt;</div>
+            <div class="text-slate-400 pl-4">&lt;div class="<span class="text-amber-400">col-feature</span> <span class="text-pink-400">breakout-none-grid</span> <span class="text-blue-400">grid-cols-12 gap-8</span>"&gt;</div>
+            <div class="text-slate-400 pl-8">&lt;aside class="<span class="text-blue-400">col-span-3</span>"&gt;Sidebar&lt;/aside&gt;</div>
+            <div class="text-slate-400 pl-8">&lt;div class="<span class="text-blue-400">col-span-9</span>"&gt;</div>
+            <div class="text-slate-400 pl-12">&lt;!-- Blocks with col-* classes render normally --&gt;</div>
+            <div class="text-slate-400 pl-12">&lt;div class="<span class="text-slate-500 line-through">col-popout</span>"&gt;Ignored!&lt;/div&gt;</div>
+            <div class="text-slate-400 pl-8">&lt;/div&gt;</div>
+            <div class="text-slate-400 pl-4">&lt;/div&gt;</div>
+            <div class="text-slate-400">&lt;/main&gt;</div>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <span class="text-emerald-400 font-semibold">grid-cols-breakout</span>
+              <p class="text-slate-400 mt-1">Outer breakout grid (page-level)</p>
+            </div>
+            <div>
+              <span class="text-amber-400 font-semibold">col-feature</span>
+              <p class="text-slate-400 mt-1">Container width for sidebar area</p>
+            </div>
+            <div>
+              <span class="text-pink-400 font-semibold">breakout-none-grid</span>
+              <p class="text-slate-400 mt-1">Disables breakout, enables CSS grid</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shared blocks intro -->
+        <div class="bg-amber-50 border border-amber-200 rounded p-4 mb-8">
+          <p class="text-sm text-amber-800"><strong>Shared Components:</strong> The blocks below are loaded from <code class="bg-amber-100 px-1 rounded">shared-blocks.js</code> — the exact same source used on the <a href="/product.html" class="text-amber-600 hover:underline font-semibold">Product page</a>. Compare how the <code class="bg-amber-100 px-1 rounded">col-*</code> classes work there vs. here.</p>
+        </div>
+
+        <!-- Shared blocks injected via JS - same as product page -->
+        <div data-shared-block="infoCallout"></div>
+        <div data-shared-block="keySpecs"></div>
+        <div data-shared-block="warningCallout"></div>
+        <div data-shared-block="specsTable"></div>
+        <div data-shared-block="testimonial"></div>
+        <div data-shared-block="featureCards"></div>
+
+        <!-- Pagination -->
+        <div class="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+          <span class="text-gray-400 text-sm">Previous: N/A</span>
+          <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">Next: Installation →</a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="grid-cols-breakout bg-slate-900 text-white py-8">
+    <div class="col-content text-center text-sm text-slate-400">
+      <p>Apex Precision Documentation &mdash; Demo for Tailwind Breakout Grid</p>
+    </div>
+  </footer>
+
+</body>
+</html>

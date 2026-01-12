@@ -358,6 +358,11 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   grid-template-columns: [full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end];
 }
 
+/* None - disables grid for sidebar layouts; nested content blocks/components with col-* classes are ignored */
+.breakout-none { display: block; }
+.breakout-none-flex { display: flex; }
+.breakout-none-grid { display: grid; }
+
 /* ========================================
    Column Utilities - Basic
    ======================================== */
