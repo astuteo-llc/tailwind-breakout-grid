@@ -701,8 +701,10 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           pxPerUnit = 1;
         }
 
-        // Invert delta - dragging left (negative) should INCREASE width
-        const delta = -deltaX / pxPerUnit;
+        // For right-edge handles (narrowMax), dragging right increases value
+        // For left-edge handles, dragging left increases value (inverted)
+        const isRightHandle = col === 'narrowMax';
+        const delta = isRightHandle ? (deltaX / pxPerUnit) : (-deltaX / pxPerUnit);
         let newValue = this.resizeStartValue + delta;
 
         // Enforce minimums
@@ -726,6 +728,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           'feature': 'featureWidth',
           'popout': 'popoutWidth',
           'content': 'content'
+          // narrow has its own integrated handles for min/max
         };
         return map[colName] || null;
       },
@@ -1029,14 +1032,14 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                   }">p-breakout</div>
                 </div>
 
-                <!-- Drag Handle (edit mode only, for resizable columns) -->
+                <!-- Drag Handle - Left (edit mode only, for resizable columns) -->
                 <div x-show="editMode && hoveredArea === area.name && getResizeConfig(area.name)"
                      @mousedown.stop="startColumnResize($event, getResizeConfig(area.name))"
                      :style="{
                        position: 'absolute',
                        left: '-4px',
                        top: '0',
-                       width: '12px',
+                       width: '16px',
                        height: '100%',
                        cursor: 'ew-resize',
                        pointerEvents: 'auto',
@@ -1047,25 +1050,82 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                      }">
                   <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
                     <div :style="{
-                      width: '8px',
-                      height: '80px',
+                      width: '10px',
+                      height: '100px',
                       background: area.borderColor,
-                      borderRadius: '4px',
+                      borderRadius: '5px',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
                       border: '2px solid white'
                     }"></div>
                     <div :style="{
                       background: area.borderColor,
                       color: 'white',
-                      padding: '3px 6px',
-                      borderRadius: '3px',
-                      fontSize: '9px',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '10px',
                       fontWeight: '700',
                       whiteSpace: 'nowrap',
                       boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    }">↔ drag</div>
+                    }" x-text="area.name === 'narrow' ? '← min' : '↔'"></div>
                   </div>
                 </div>
+
+                <!-- Narrow Min/Max Visual Guides with integrated handles (edit mode only) -->
+                <template x-if="editMode && area.name === 'narrow'">
+                  <div style="position: absolute; inset: 0; pointer-events: none; z-index: 50;">
+                    <!-- Min boundary (inner, dashed) with drag handle -->
+                    <div :style="{
+                      position: 'absolute',
+                      top: '0',
+                      bottom: '0',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: editValues.narrowMin || configOptions.narrowMin.value,
+                      maxWidth: '100%',
+                      border: '3px dashed rgba(168, 85, 247, 0.9)',
+                      background: 'rgba(168, 85, 247, 0.1)',
+                      boxSizing: 'border-box'
+                    }">
+                      <div style="position: absolute; top: 8px; left: 8px; background: rgba(168, 85, 247, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">
+                        min: <span x-text="editValues.narrowMin || configOptions.narrowMin.value"></span>
+                      </div>
+                      <!-- Min drag handle on left edge -->
+                      <div x-show="hoveredArea === 'narrow'"
+                           @mousedown.stop="startColumnResize($event, 'narrowMin')"
+                           style="position: absolute; left: -10px; top: 0; width: 20px; height: 100%; cursor: ew-resize; pointer-events: auto; display: flex; align-items: center; justify-content: center;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                          <div style="width: 10px; height: 100px; background: rgb(168, 85, 247); border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
+                          <div style="background: rgb(168, 85, 247); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">← min</div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Max boundary (outer, dotted) with drag handle -->
+                    <div :style="{
+                      position: 'absolute',
+                      top: '0',
+                      bottom: '0',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: editValues.narrowMax || configOptions.narrowMax.value,
+                      maxWidth: '100%',
+                      border: '3px dotted rgba(139, 92, 246, 0.9)',
+                      boxSizing: 'border-box'
+                    }">
+                      <div style="position: absolute; top: 8px; right: 8px; background: rgba(139, 92, 246, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">
+                        max: <span x-text="editValues.narrowMax || configOptions.narrowMax.value"></span>
+                      </div>
+                      <!-- Max drag handle on right edge -->
+                      <div x-show="hoveredArea === 'narrow'"
+                           @mousedown.stop="startColumnResize($event, 'narrowMax')"
+                           style="position: absolute; right: -10px; top: 0; width: 20px; height: 100%; cursor: ew-resize; pointer-events: auto; display: flex; align-items: center; justify-content: center;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                          <div style="width: 10px; height: 100px; background: rgb(139, 92, 246); border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
+                          <div style="background: rgb(139, 92, 246); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">max →</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
               </div>
             </template>
           </div>
