@@ -816,6 +816,18 @@ Works in all browsers that support:
 
 This includes all modern browsers and IE11 with appropriate fallbacks.
 
+## Demo
+
+Run the interactive demo locally:
+
+```bash
+cd demo
+npm install
+npm run dev
+```
+
+Open http://localhost:5173 to see the grid in action. Press `Cmd+G` to toggle the visualizer overlay.
+
 ## Additional Documentation
 
 - [CraftCMS Integration](docs/craftcms-integration.md) - Complete guide for CraftCMS projects with Vite

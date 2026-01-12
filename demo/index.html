@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breakout Grid Demo</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- Visualizer Component -->
+  <div x-data="breakoutGridVisualizer" x-html="template"></div>
+
+  <!-- ============================================
+       MASTHEAD
+       ============================================ -->
+  <header class="grid-cols-breakout bg-slate-900 text-white">
+    <div class="col-full-limit px-gap py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg">BG</div>
+        <span class="font-semibold text-lg">Breakout Grid</span>
+      </div>
+      <nav class="flex gap-6 text-sm">
+        <a href="#basics" class="hover:text-blue-400 transition-colors">Basics</a>
+        <a href="#advanced" class="hover:text-blue-400 transition-colors">Advanced</a>
+        <a href="#subgrid" class="hover:text-blue-400 transition-colors">Subgrid</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================
+       HERO
+       ============================================ -->
+  <section class="grid-cols-breakout bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-16">
+    <div class="col-content text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">Tailwind Breakout Grid</h1>
+      <p class="text-xl text-blue-100 max-w-2xl mx-auto">A flexible, fluid grid layout system for content that breaks out of its container. Press <kbd class="bg-white/20 px-2 py-0.5 rounded text-sm font-mono">Cmd+G</kbd> to toggle the visualizer.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       BASIC EXAMPLES
+       ============================================ -->
+  <section id="basics" class="grid-cols-breakout py-12">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Basic Column Widths</h2>
+    <p class="col-narrow text-gray-600 mb-8">Each column width serves a different purpose. Narrow is for readable text, content for general layout, and wider columns for emphasis.</p>
+
+    <!-- Full Width -->
+    <div class="col-full bg-red-100 border-2 border-red-300 py-4 text-center">
+      <code class="text-red-700 font-mono text-sm">.col-full</code>
+      <span class="text-red-600 ml-2">Edge to edge</span>
+    </div>
+
+    <!-- Full Limit -->
+    <div class="col-full-limit bg-red-50 border-2 border-red-200 py-4 px-gap text-center mt-2">
+      <code class="text-red-600 font-mono text-sm">.col-full-limit</code>
+      <span class="text-red-500 ml-2">Full width with max-width constraint</span>
+    </div>
+
+    <!-- Feature -->
+    <div class="col-feature bg-amber-100 border-2 border-amber-300 py-4 text-center mt-2">
+      <code class="text-amber-700 font-mono text-sm">.col-feature</code>
+      <span class="text-amber-600 ml-2">Extra wide for heroes & images</span>
+    </div>
+
+    <!-- Popout -->
+    <div class="col-popout bg-green-100 border-2 border-green-300 py-4 text-center mt-2">
+      <code class="text-green-700 font-mono text-sm">.col-popout</code>
+      <span class="text-green-600 ml-2">Slightly wider than content</span>
+    </div>
+
+    <!-- Content -->
+    <div class="col-content bg-blue-100 border-2 border-blue-300 py-4 text-center mt-2">
+      <code class="text-blue-700 font-mono text-sm">.col-content</code>
+      <span class="text-blue-600 ml-2">Standard content width (default)</span>
+    </div>
+
+    <!-- Narrow -->
+    <div class="col-narrow bg-purple-100 border-2 border-purple-300 py-4 text-center mt-2">
+      <code class="text-purple-700 font-mono text-sm">.col-narrow</code>
+      <span class="text-purple-600 ml-2">Optimal reading width (40-50rem)</span>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       PADDING UTILITIES
+       ============================================ -->
+  <section class="grid-cols-breakout py-12 bg-gray-100">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Padding Utilities</h2>
+    <p class="col-narrow text-gray-600 mb-8">Use px-breakout on full-width sections to align inner content with the content column.</p>
+
+    <!-- Full with px-breakout -->
+    <div class="col-full bg-blue-500 text-white">
+      <div class="px-breakout py-6">
+        <code class="font-mono text-sm opacity-75">.col-full .px-breakout</code>
+        <p class="mt-2">This content aligns with .col-content edges thanks to px-breakout padding.</p>
+      </div>
+    </div>
+
+    <!-- Full with px-gap -->
+    <div class="col-full bg-blue-400 text-white mt-4">
+      <div class="px-gap py-6">
+        <code class="font-mono text-sm opacity-75">.col-full .px-gap</code>
+        <p class="mt-2">Uses the responsive grid gap as padding.</p>
+      </div>
+    </div>
+
+    <!-- Popout with px-breakout -->
+    <div class="col-popout bg-emerald-500 text-white mt-4 px-breakout py-6">
+      <code class="font-mono text-sm opacity-75">.col-popout .px-breakout</code>
+      <p class="mt-2">Popout width with breakout padding for inner alignment.</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       LEFT/RIGHT ALIGNMENT
+       ============================================ -->
+  <section id="advanced" class="grid-cols-breakout py-12">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Left &amp; Right Alignment</h2>
+    <p class="col-narrow text-gray-600 mb-8">Span from one edge to a specific column boundary for asymmetric layouts.</p>
+
+    <!-- Feature Left -->
+    <div class="col-feature-left bg-gradient-to-r from-violet-200 to-violet-100 border-2 border-violet-300 py-4 pl-4 mt-2">
+      <code class="text-violet-700 font-mono text-sm">.col-feature-left</code>
+      <span class="text-violet-600 ml-2">Left edge to feature boundary</span>
+    </div>
+
+    <!-- Feature Right -->
+    <div class="col-feature-right bg-gradient-to-l from-teal-200 to-teal-100 border-2 border-teal-300 py-4 pr-4 text-right mt-2">
+      <span class="text-teal-600 mr-2">Feature boundary to right edge</span>
+      <code class="text-teal-700 font-mono text-sm">.col-feature-right</code>
+    </div>
+
+    <!-- Center Left -->
+    <div class="col-center-left bg-gradient-to-r from-orange-200 to-orange-100 border-2 border-orange-300 py-4 pl-4 mt-2">
+      <code class="text-orange-700 font-mono text-sm">.col-center-left</code>
+      <span class="text-orange-600 ml-2">Left edge to center point</span>
+    </div>
+
+    <!-- Center Right -->
+    <div class="col-center-right bg-gradient-to-l from-pink-200 to-pink-100 border-2 border-pink-300 py-4 pr-4 text-right mt-2">
+      <span class="text-pink-600 mr-2">Center point to right edge</span>
+      <code class="text-pink-700 font-mono text-sm">.col-center-right</code>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       SUBGRID EXAMPLES
+       ============================================ -->
+  <section id="subgrid" class="grid-cols-breakout py-12 bg-gray-100">
+
+    <h2 class="col-content text-2xl font-bold mb-2">CSS Subgrid</h2>
+    <p class="col-narrow text-gray-600 mb-8">Use .grid-cols-breakout-subgrid on nested elements to inherit the parent grid's tracks. Children can align to any named line.</p>
+
+    <!-- Subgrid Example 1 -->
+    <div class="col-feature-right grid-cols-breakout-subgrid bg-amber-100 border-2 border-amber-400">
+      <div class="col-feature py-3 px-4 bg-amber-200 border-b border-amber-300">
+        <code class="font-mono text-sm text-amber-800">.col-feature</code> - spans the feature area
+      </div>
+      <div class="col-narrow py-3 px-4 bg-amber-300">
+        <code class="font-mono text-sm text-amber-900">.col-narrow</code> - aligns to narrow!
+      </div>
+      <div class="col-content py-3 px-4 bg-amber-400">
+        <code class="font-mono text-sm text-amber-900">.col-content</code> - aligns to content!
+      </div>
+    </div>
+
+    <p class="col-content text-sm text-gray-500 mt-2 mb-6">Parent: <code class="bg-gray-200 px-1 rounded">.col-feature-right .grid-cols-breakout-subgrid</code></p>
+
+    <!-- Subgrid Example 2 -->
+    <div class="col-feature-left grid-cols-breakout-subgrid bg-sky-100 border-2 border-sky-400">
+      <div class="col-popout py-3 px-4 bg-sky-200 border-b border-sky-300">
+        <code class="font-mono text-sm text-sky-800">.col-popout</code> - popout width
+      </div>
+      <div class="col-content py-3 px-4 bg-sky-300">
+        <code class="font-mono text-sm text-sky-900">.col-content</code> - content alignment
+      </div>
+    </div>
+
+    <p class="col-content text-sm text-gray-500 mt-2 mb-6">Parent: <code class="bg-gray-200 px-1 rounded">.col-feature-left .grid-cols-breakout-subgrid</code></p>
+
+    <!-- Browser Support Note -->
+    <div class="col-content bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4">
+      <p class="text-amber-800 text-sm">
+        <strong>Browser Support:</strong> CSS Subgrid has ~90% browser support as of January 2025.
+        <a href="https://caniuse.com/css-subgrid" target="_blank" rel="noopener" class="underline hover:text-amber-600">Check current support</a>
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       NESTED GRIDS
+       ============================================ -->
+  <section class="grid-cols-breakout py-12">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Nested Grids</h2>
+    <p class="col-narrow text-gray-600 mb-8">Use breakout-to-* modifiers when nesting grids inside constrained containers.</p>
+
+    <!-- Feature container with nested grid -->
+    <div class="col-feature bg-indigo-50 border-2 border-indigo-200 p-4">
+      <p class="text-indigo-600 text-sm mb-3">Parent: <code class="bg-indigo-100 px-1 rounded">.col-feature</code></p>
+
+      <div class="grid-cols-breakout breakout-to-feature bg-white border border-indigo-200 rounded">
+        <div class="col-feature bg-indigo-100 py-2 px-3 text-sm text-indigo-700 border-b border-indigo-200">
+          .col-feature fills the container
+        </div>
+        <div class="col-content bg-indigo-200 py-2 px-3 text-sm text-indigo-800">
+          .col-content has proper margins
+        </div>
+        <div class="col-narrow bg-indigo-300 py-2 px-3 text-sm text-indigo-900">
+          .col-narrow for readable text
+        </div>
+      </div>
+
+      <p class="text-indigo-500 text-xs mt-3">Nested: <code class="bg-indigo-100 px-1 rounded">.grid-cols-breakout .breakout-to-feature</code></p>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       REAL WORLD EXAMPLE
+       ============================================ -->
+  <section class="grid-cols-breakout py-12 bg-gray-100">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Real World: Article Layout</h2>
+    <p class="col-narrow text-gray-600 mb-8">Combining different column widths for an editorial layout.</p>
+
+  </section>
+
+  <article class="grid-cols-breakout pb-16 bg-gray-100">
+
+    <!-- Article Header -->
+    <header class="col-content mb-8">
+      <p class="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">Tutorial</p>
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Building Flexible Layouts with CSS Grid</h1>
+      <p class="text-gray-500">Published January 2025 &bull; 5 min read</p>
+    </header>
+
+    <!-- Intro paragraph -->
+    <p class="col-narrow text-lg text-gray-700 leading-relaxed mb-6">
+      Modern CSS Grid provides powerful tools for creating responsive layouts that adapt to any screen size. The breakout grid pattern takes this further by allowing content to "break out" of its container.
+    </p>
+
+    <!-- Feature image -->
+    <figure class="col-feature mb-8">
+      <div class="bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl h-64 flex items-center justify-center">
+        <span class="text-white/80 text-lg">Feature Image Placeholder</span>
+      </div>
+      <figcaption class="text-center text-gray-500 text-sm mt-3">A wide feature image that extends beyond the content width</figcaption>
+    </figure>
+
+    <!-- Body text -->
+    <p class="col-narrow text-gray-700 leading-relaxed mb-6">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+    </p>
+
+    <!-- Blockquote -->
+    <blockquote class="col-popout bg-blue-50 border-l-4 border-blue-500 p-6 my-8 rounded-r-lg">
+      <p class="text-blue-900 text-lg italic">"The grid is not just about structure, it's about creating a rhythm that guides the reader through your content."</p>
+      <cite class="text-blue-600 text-sm mt-2 block">- Design Principles</cite>
+    </blockquote>
+
+    <!-- More text -->
+    <p class="col-narrow text-gray-700 leading-relaxed mb-6">
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.
+    </p>
+
+    <!-- Full-width CTA -->
+    <div class="col-full bg-slate-900 text-white">
+      <div class="px-breakout py-12 text-center">
+        <h3 class="text-2xl font-bold mb-3">Ready to try the breakout grid?</h3>
+        <p class="text-slate-300 mb-6">Install the plugin and start building flexible layouts today.</p>
+        <code class="bg-slate-800 px-4 py-2 rounded-lg text-green-400 font-mono">npm install @astuteo/tailwind-breakout-grid</code>
+      </div>
+    </div>
+
+  </article>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="grid-cols-breakout bg-slate-900 text-white py-8">
+    <div class="col-content flex items-center justify-between text-sm text-slate-400">
+      <span>Tailwind Breakout Grid Plugin</span>
+      <a href="https://github.com/astuteo-llc/tailwind-breakout-grid" class="hover:text-white transition-colors">GitHub</a>
+    </div>
+  </footer>
+
+</body>
+</html>
