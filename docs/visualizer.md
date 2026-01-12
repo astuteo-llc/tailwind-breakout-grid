@@ -35,6 +35,7 @@ The visualizer uses a consistent color scheme to identify different grid areas:
 - **Labels Toggle** - Show/hide column name labels
 - **Class Names Toggle** - Display CSS class names (e.g., `.col-feature`)
 - **Values Toggle** - Show/hide live CSS variable measurements
+- **Lorem Toggle** - Fill columns with lorem ipsum to visualize text flow
 - **p-gap Visualization** - Overlay showing `p-gap` padding areas
 - **p-breakout Visualization** - Overlay showing `p-breakout` padding areas
 - **Column Selection** - Click any column to highlight and view details
@@ -134,9 +135,19 @@ The visualizer includes a floating config editor that allows real-time adjustmen
 
 The editor displays number inputs with unit suffixes (rem, vw, etc.) that support arrow key increment/decrement. Changes are reflected immediately in the visualizer overlay.
 
-To open the editor, click the "Edit Config" button in the control panel. The editor window is draggable and includes:
+To open the editor, click the "Config" button in the control panel. The editor window is draggable and includes:
 - Copy button to export the modified config
 - Unsaved changes warning when closing with uncommitted edits
+
+### Visual Drag Handles
+
+When the config editor is open, column boundaries become interactive:
+
+- **Hover over columns** to reveal drag handles on the edges
+- **Drag left/right** to adjust track widths visually
+- **Narrow column** shows three nested boundaries (min/base/max) with individual drag handles
+
+This provides an intuitive way to experiment with grid proportions before copying the config.
 
 ## CSS Download (Beta)
 

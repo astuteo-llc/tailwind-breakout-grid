@@ -259,6 +259,54 @@ A docs-style layout with navigation sidebar.
 </div>
 ```
 
+## Sidebar with Reusable Components
+
+A sidebar layout using `breakout-none-grid` to disable breakout behavior. Components with `col-*` classes are reused but their widths are ignored.
+
+```html
+<main class="grid-cols-breakout py-12">
+  <div class="col-feature breakout-none-grid grid-cols-12 gap-8">
+
+    <!-- Sidebar -->
+    <aside class="col-span-12 lg:col-span-3">
+      <div class="sticky top-4 bg-gray-100 rounded-lg p-4">
+        <h3 class="font-bold mb-4">Navigation</h3>
+        <nav class="space-y-2">
+          <a href="#" class="block text-blue-600 hover:underline">Getting Started</a>
+          <a href="#" class="block text-gray-600 hover:text-blue-600">Installation</a>
+          <a href="#" class="block text-gray-600 hover:text-blue-600">Configuration</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="col-span-12 lg:col-span-9 space-y-8">
+
+      <h1 class="text-3xl font-bold">Page Title</h1>
+
+      <!-- Reusable component: col-popout ignored here -->
+      <div class="col-popout bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r">
+        <p class="font-semibold text-amber-800">Info Callout</p>
+        <p class="text-amber-700 text-sm">This component uses col-popout, which works in breakout grids but is ignored here.</p>
+      </div>
+
+      <p>Body content flows normally without breakout widths...</p>
+
+      <!-- Reusable component: col-feature ignored here -->
+      <div class="col-feature grid md:grid-cols-3 gap-4">
+        <div class="bg-gray-50 p-4 rounded">Card 1</div>
+        <div class="bg-gray-50 p-4 rounded">Card 2</div>
+        <div class="bg-gray-50 p-4 rounded">Card 3</div>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+```
+
+This pattern is useful when you have a component library designed for breakout grids but need to reuse those components in constrained layouts like sidebars or dashboards.
+
 ## Image Gallery
 
 A gallery layout with mixed image sizes.

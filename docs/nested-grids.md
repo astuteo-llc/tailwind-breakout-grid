@@ -190,6 +190,77 @@ Key points:
 </div>
 ```
 
+## Disabling Breakout Grid Entirely
+
+Sometimes you need to completely disable breakout behavior rather than just collapse tracks. The `breakout-none` utilities remove the grid display entirely, causing any `col-*` classes on child elements to be ignored.
+
+### Use Case: Reusable Components
+
+When you have components designed for breakout grids (with embedded `col-*` classes) but want to reuse them in sidebar layouts where those widths shouldn't apply:
+
+```html
+<!-- Main layout: breakout grid active, col-* classes work -->
+<main class="grid-cols-breakout">
+  <div data-component="info-card" class="col-popout bg-amber-50 p-6">
+    Info callout breaks out
+  </div>
+</main>
+
+<!-- Sidebar layout: breakout disabled, col-* classes ignored -->
+<main class="grid-cols-breakout">
+  <div class="col-feature breakout-none-grid grid-cols-12 gap-8">
+    <aside class="col-span-3">Sidebar</aside>
+    <div class="col-span-9">
+      <!-- Same component, but col-popout is now ignored -->
+      <div data-component="info-card" class="col-popout bg-amber-50 p-6">
+        Renders as normal block (col-popout ignored)
+      </div>
+    </div>
+  </div>
+</main>
+```
+
+### Available Classes
+
+| Class | Effect |
+|-------|--------|
+| `breakout-none` | Sets `display: block` — standard block flow |
+| `breakout-none-flex` | Sets `display: flex` — use with flex utilities |
+| `breakout-none-grid` | Sets `display: grid` — use with CSS grid (e.g., `grid-cols-12`) |
+
+### Sidebar Layout Pattern
+
+The most common pattern combines `breakout-none-grid` with a 12-column grid:
+
+```html
+<main class="grid-cols-breakout py-12">
+  <div class="col-feature breakout-none-grid grid-cols-12 gap-8">
+
+    <!-- Sidebar: 3 columns -->
+    <aside class="col-span-12 lg:col-span-3">
+      <nav>Sidebar navigation</nav>
+    </aside>
+
+    <!-- Content: 9 columns -->
+    <div class="col-span-12 lg:col-span-9">
+      <!-- Components with col-* classes render normally here -->
+      <div class="col-content">This col-content is ignored</div>
+      <div class="col-popout">This col-popout is ignored</div>
+    </div>
+
+  </div>
+</main>
+```
+
+### When to Use Each Approach
+
+| Scenario | Solution |
+|----------|----------|
+| Nested grid needs narrower breakout widths | `breakout-to-content`, `breakout-to-popout`, etc. |
+| Want to preserve grid lines but fit container | `breakout-to-*` modifiers |
+| Need to completely disable breakout behavior | `breakout-none`, `breakout-none-grid`, etc. |
+| Reusing components with col-* in non-grid context | `breakout-none` variants |
+
 ## Browser Support
 
 The `breakout-to-*` modifiers use the same CSS Grid features as the base plugin and work in all modern browsers.
