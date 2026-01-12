@@ -736,7 +736,7 @@ const createGridUtilities = (config, templates) => {
       'grid-template-columns': `[full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end]`
     },
     // None - removes grid entirely for sections that opt out of breakout behavior
-    // Useful for sidebar layouts where matrix blocks with col-* classes should be ignored
+    // Useful for sidebar layouts where content blocks or components with col-* classes should be ignored
     // Use alone for block flow, or combine with `flex` or `grid` classes
     '.breakout-none': {
       'display': 'block'
