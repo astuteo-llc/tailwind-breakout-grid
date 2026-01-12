@@ -55,12 +55,11 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       selectedArea: null,
       hoveredArea: null,
       editValues: {},
-      originalValues: {},
       copySuccess: false,
+      configCopied: false,
       editorPos: { x: 20, y: 100 },
       isDragging: false,
       dragOffset: { x: 0, y: 0 },
-      configCopied: false,
       // Column resize drag state
       resizingColumn: null,
       resizeStartX: 0,
@@ -597,20 +596,31 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         return this.selectedArea === areaName;
       },
 
+      // Restore all CSS variable overrides to original values
+      restoreCSSVariables() {
+        Object.keys(this.configOptions).forEach(key => {
+          const opt = this.configOptions[key];
+          if (opt.liveVar) {
+            document.documentElement.style.removeProperty(opt.liveVar);
+          }
+        });
+        // Also restore track widths (set via minmax wrapper)
+        document.documentElement.style.removeProperty('--popout');
+        document.documentElement.style.removeProperty('--feature');
+        document.documentElement.style.removeProperty('--content');
+        document.documentElement.style.removeProperty('--breakout-padding');
+        document.documentElement.style.removeProperty('--popout-to-content');
+        this.editValues = {};
+        this.configCopied = false;
+      },
+
       // Toggle edit mode
       toggleEditMode() {
         this.editMode = !this.editMode;
         if (this.editMode) {
           this.loadCurrentValues();
         } else {
-          // Restore original CSS vars (remove overrides)
-          Object.keys(this.configOptions).forEach(key => {
-            const opt = this.configOptions[key];
-            if (opt.liveVar) {
-              document.documentElement.style.removeProperty(opt.liveVar);
-            }
-          });
-          this.editValues = {};
+          this.restoreCSSVariables();
         }
       },
 
@@ -635,20 +645,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         }
         this.showEditor = false;
         this.editMode = false;
-        // Restore original CSS vars
-        Object.keys(this.configOptions).forEach(key => {
-          const opt = this.configOptions[key];
-          if (opt.liveVar) {
-            document.documentElement.style.removeProperty(opt.liveVar);
-          }
-        });
-        // Also restore track widths
-        document.documentElement.style.removeProperty('--popout');
-        document.documentElement.style.removeProperty('--feature');
-        document.documentElement.style.removeProperty('--content');
-        document.documentElement.style.removeProperty('--breakout-padding');
-        document.documentElement.style.removeProperty('--popout-to-content');
-        this.editValues = {};
+        this.restoreCSSVariables();
       },
 
       // Drag handling for editor window
