@@ -61,6 +61,10 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       isDragging: false,
       dragOffset: { x: 0, y: 0 },
       configCopied: false,
+      // Column resize drag state
+      resizingColumn: null,
+      resizeStartX: 0,
+      resizeStartValue: 0,
 
       // Grid areas configuration (matches plugin)
       gridAreas: [
@@ -669,11 +673,69 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         this.isDragging = false;
       },
 
+      // Column resize drag handling
+      startColumnResize(e, columnType) {
+        if (!this.editMode) return;
+        e.preventDefault();
+        e.stopPropagation();
+        this.resizingColumn = columnType;
+        this.resizeStartX = e.clientX;
+        // Get current value
+        const currentVal = this.editValues[columnType] || this.configOptions[columnType].value;
+        this.resizeStartValue = this.parseValue(currentVal).num;
+      },
+
+      onColumnResize(e) {
+        if (!this.resizingColumn) return;
+        const deltaX = e.clientX - this.resizeStartX;
+        const col = this.resizingColumn;
+        const unit = this.getUnit(col);
+
+        // Calculate pixels per unit
+        let pxPerUnit;
+        if (unit === 'vw') {
+          pxPerUnit = window.innerWidth / 100;
+        } else if (unit === 'rem') {
+          pxPerUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        } else {
+          pxPerUnit = 1;
+        }
+
+        // Invert delta - dragging left (negative) should INCREASE width
+        const delta = -deltaX / pxPerUnit;
+        let newValue = this.resizeStartValue + delta;
+
+        // Enforce minimums
+        if (col === 'content' && newValue < 1) newValue = 1;
+        if (newValue < 0) newValue = 0;
+
+        // Round to 1 decimal
+        newValue = Math.round(newValue * 10) / 10;
+
+        this.updateConfigValue(col, newValue + unit);
+      },
+
+      stopColumnResize() {
+        this.resizingColumn = null;
+      },
+
+      // Map column names to their config keys for resizing
+      getResizeConfig(colName) {
+        const map = {
+          'feature': 'featureWidth',
+          'popout': 'popoutWidth',
+          'content': 'content'
+        };
+        return map[colName] || null;
+      },
+
       // Template for the visualizer UI
       template: `
         <div x-show="isVisible"
              x-transition
              class="breakout-grid-visualizer"
+             @mousemove.window="onColumnResize($event)"
+             @mouseup.window="stopColumnResize()"
              style="position: fixed; inset: 0; pointer-events: none; z-index: 9999;">
 
           <!-- Advanced Span Examples Overlay -->
@@ -965,9 +1027,48 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                     boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                   }">p-breakout</div>
                 </div>
+
+                <!-- Drag Handle (edit mode only, for resizable columns) -->
+                <div x-show="editMode && hoveredArea === area.name && getResizeConfig(area.name)"
+                     @mousedown.stop="startColumnResize($event, getResizeConfig(area.name))"
+                     :style="{
+                       position: 'absolute',
+                       left: '-4px',
+                       top: '0',
+                       width: '12px',
+                       height: '100%',
+                       cursor: 'ew-resize',
+                       pointerEvents: 'auto',
+                       zIndex: '100',
+                       display: 'flex',
+                       alignItems: 'center',
+                       justifyContent: 'center'
+                     }">
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                    <div :style="{
+                      width: '8px',
+                      height: '80px',
+                      background: area.borderColor,
+                      borderRadius: '4px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                      border: '2px solid white'
+                    }"></div>
+                    <div :style="{
+                      background: area.borderColor,
+                      color: 'white',
+                      padding: '3px 6px',
+                      borderRadius: '3px',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }">↔ drag</div>
+                  </div>
+                </div>
               </div>
             </template>
           </div>
+
 
           <!-- Control Panel -->
           <div :style="{
