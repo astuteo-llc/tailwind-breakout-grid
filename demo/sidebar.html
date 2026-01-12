@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidebar Layout - Breakout Grid Demo</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- Visualizer Component -->
+  <div x-data="breakoutGridVisualizer" x-html="template"></div>
+
+  <!-- ============================================
+       MASTHEAD - Uses standard breakout grid
+       ============================================ -->
+  <header class="grid-cols-breakout bg-slate-900 text-white">
+    <div class="col-full-limit px-gap py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg">BG</div>
+        <span class="font-semibold text-lg">Breakout Grid</span>
+      </div>
+      <nav class="flex gap-6 text-sm">
+        <a href="/index.html" class="hover:text-blue-400 transition-colors">Basics</a>
+        <a href="/article.html" class="hover:text-blue-400 transition-colors">Article</a>
+        <a href="/product.html" class="hover:text-blue-400 transition-colors">Product</a>
+        <a href="/sidebar.html" class="text-blue-400">Sidebar</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================
+       PAGE HEADER - Full width, uses breakout grid
+       ============================================ -->
+  <section class="grid-cols-breakout bg-gradient-to-br from-emerald-600 to-teal-700 text-white py-12">
+    <div class="col-content">
+      <h1 class="text-3xl md:text-4xl font-bold mb-3">Sidebar Layouts</h1>
+      <p class="text-lg text-emerald-100">When you need a sidebar, breakout grid isn't always the right tool. Here's a practical pattern.</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       MAIN LAYOUT: Breakout grid with sidebar inside col-feature
+       ============================================ -->
+  <main class="grid-cols-breakout py-12">
+
+    <!-- Feature-width container with breakout-none-flex for sidebar layout -->
+    <div class="col-feature breakout-none-flex gap-8">
+
+      <!-- Sidebar: fixed width -->
+      <aside class="w-64 flex-shrink-0 hidden lg:block">
+        <div class="sticky top-4">
+          <div class="bg-slate-800 text-white px-4 py-3 rounded-t font-semibold text-sm">
+            Navigation
+          </div>
+          <nav class="border border-t-0 border-gray-200 rounded-b bg-white p-2">
+            <a href="#overview" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors">Overview</a>
+            <a href="#pattern" class="block px-3 py-2 rounded text-sm bg-emerald-50 text-emerald-700 font-medium">The Pattern</a>
+            <a href="#when-to-use" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors">When to Use</a>
+            <a href="#code" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors">Code Example</a>
+            <a href="#comparison" class="block px-3 py-2 rounded text-sm text-gray-700 hover:bg-gray-100 transition-colors">Comparison</a>
+          </nav>
+          <div class="mt-4 p-4 border border-gray-200 rounded bg-white">
+            <p class="text-xs text-gray-500 mb-2">This Layout</p>
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Sidebar</span>
+                <span class="font-semibold">16rem</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Container</span>
+                <span class="font-semibold">col-feature</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Mode</span>
+                <span class="font-semibold text-emerald-600">breakout-none-flex</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content area: flex-1 -->
+      <div class="flex-1">
+
+        <!-- Section: Overview -->
+        <section id="overview" class="mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Overview</h2>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            The breakout grid works great for centered, editorial layouts. But when you need a sidebar, you can use <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">breakout-none</code> to opt out of the grid within a specific area.
+          </p>
+          <p class="text-gray-600 leading-relaxed">
+            This page uses <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">col-feature breakout-none-flex</code> to create a sidebar layout within the feature-width area, while the outer page still benefits from the breakout grid for headers/footers.
+          </p>
+        </section>
+
+        <!-- Section: The Pattern -->
+        <section id="pattern" class="mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">The Pattern</h2>
+          <div class="bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r mb-6">
+            <p class="font-semibold text-emerald-800 mb-2">Matrix blocks just work</p>
+            <p class="text-emerald-700 text-sm">When you use <code class="bg-emerald-100 px-1 rounded">breakout-none</code>, any embedded <code class="bg-emerald-100 px-1 rounded">col-*</code> classes in reusable blocks are ignored. The grid is disabled, so grid-column properties have no effect.</p>
+          </div>
+
+          <div class="bg-white border border-gray-200 rounded p-6 mb-6">
+            <div class="flex gap-4 mb-4">
+              <div class="w-16 bg-slate-200 rounded flex items-center justify-center text-xs text-slate-600 py-8">sidebar<br>fixed</div>
+              <div class="flex-1 bg-blue-100 rounded p-4 text-xs text-blue-700">
+                <div class="bg-blue-200 rounded p-2 mb-2 text-center">
+                  <span class="line-through opacity-50">col-content</span> → ignored
+                </div>
+                <div class="bg-blue-200 rounded p-2 mb-2 text-center">
+                  <span class="line-through opacity-50">col-popout</span> → ignored
+                </div>
+                <div class="text-blue-500">blocks flow as normal block elements</div>
+              </div>
+            </div>
+            <p class="text-sm text-gray-600">Reusable matrix blocks with <code class="bg-gray-100 px-1 rounded">col-popout</code>, <code class="bg-gray-100 px-1 rounded">col-content</code>, etc. render as normal block elements - their grid-column properties have no effect outside a grid context.</p>
+          </div>
+        </section>
+
+        <!-- Section: When to use -->
+        <section id="when-to-use" class="mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">When to Use Each</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white border border-gray-200 rounded p-5">
+              <h3 class="font-semibold text-emerald-600 mb-3">Breakout Grid</h3>
+              <ul class="text-sm text-gray-600 space-y-2">
+                <li>• Article/blog layouts</li>
+                <li>• Marketing pages</li>
+                <li>• Product detail pages</li>
+                <li>• Full-width sections that need breakouts</li>
+                <li>• When content is vertically stacked</li>
+              </ul>
+            </div>
+            <div class="bg-white border border-emerald-200 rounded p-5 ring-2 ring-emerald-500">
+              <h3 class="font-semibold text-emerald-600 mb-3">Flex + Max-Width</h3>
+              <ul class="text-sm text-gray-600 space-y-2">
+                <li>• Documentation sites</li>
+                <li>• Admin dashboards</li>
+                <li>• Settings pages</li>
+                <li>• Any persistent sidebar layout</li>
+                <li>• <strong>This page!</strong></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Callout -->
+        <div class="bg-amber-50 border border-amber-200 rounded p-6 mb-12">
+          <p class="font-semibold text-amber-800 mb-2">Why not nest breakout grid in a sidebar layout?</p>
+          <p class="text-amber-700 text-sm mb-3">The breakout grid calculates widths based on viewport. When nested in a constrained container, <code class="bg-amber-100 px-1 rounded">col-content</code> becomes narrower than on a full-width page, breaking reusable components.</p>
+          <p class="text-amber-700 text-sm">Keep it simple: use breakout for full-width pages, flex+max-width for sidebar layouts.</p>
+        </div>
+
+        <!-- Section: Code example -->
+        <section id="code" class="mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Code Example</h2>
+          <div class="bg-slate-900 rounded overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
+              <span class="text-xs text-slate-400 font-mono">sidebar-layout.html</span>
+            </div>
+            <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;!-- Page uses breakout grid --&gt;
+&lt;main class="grid-cols-breakout"&gt;
+
+  &lt;!-- Sidebar area: col-feature + breakout-none-flex --&gt;
+  &lt;div class="col-feature breakout-none-flex gap-8"&gt;
+
+    &lt;aside class="w-64 flex-shrink-0"&gt;
+      &lt;nav class="sticky top-4"&gt;...&lt;/nav&gt;
+    &lt;/aside&gt;
+
+    &lt;div class="flex-1"&gt;
+      &lt;!-- Matrix blocks with col-* classes work here --&gt;
+      &lt;!-- Their col-* classes are simply ignored --&gt;
+      &lt;div class="col-content"&gt;This renders as a normal block&lt;/div&gt;
+      &lt;div class="col-popout"&gt;So does this&lt;/div&gt;
+    &lt;/div&gt;
+
+  &lt;/div&gt;
+
+&lt;/main&gt;</code></pre>
+          </div>
+        </section>
+
+        <!-- Section: Comparison -->
+        <section id="comparison" class="mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Comparison</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm border border-gray-200 rounded">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="text-left p-3 border-b">Approach</th>
+                  <th class="text-left p-3 border-b">Pros</th>
+                  <th class="text-left p-3 border-b">Cons</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-3 border-b font-medium">Nested breakout grid</td>
+                  <td class="p-3 border-b text-gray-600">Uses familiar col-* classes</td>
+                  <td class="p-3 border-b text-gray-600">Widths don't match full-page layouts</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-b font-medium">grid-cols-feature-left</td>
+                  <td class="p-3 border-b text-gray-600">Stays in grid system</td>
+                  <td class="p-3 border-b text-gray-600">Content is off-center, looks unbalanced</td>
+                </tr>
+                <tr class="bg-emerald-50">
+                  <td class="p-3 font-medium text-emerald-700">Flex + max-width</td>
+                  <td class="p-3 text-emerald-600">Simple, predictable, industry standard</td>
+                  <td class="p-3 text-emerald-600">No breakout capability (but you don't need it)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section: Hybrid approach -->
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Hybrid Approach</h2>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            You can mix both patterns on the same site:
+          </p>
+          <ul class="space-y-2 text-gray-600 mb-4">
+            <li>• <strong>Marketing pages:</strong> Full breakout grid (like article.html)</li>
+            <li>• <strong>Documentation:</strong> Flex sidebar (like this page)</li>
+            <li>• <strong>Headers/footers:</strong> Breakout grid works everywhere</li>
+          </ul>
+          <p class="text-gray-600 leading-relaxed">
+            The header on this page still uses <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">grid-cols-breakout</code> for consistent site-wide navigation, while the main content uses the flex pattern.
+          </p>
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="grid-cols-breakout bg-slate-900 text-white py-8">
+    <div class="col-content text-center text-sm text-slate-400">
+      <p>Tailwind Breakout Grid &mdash; Use the right tool for the job.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
