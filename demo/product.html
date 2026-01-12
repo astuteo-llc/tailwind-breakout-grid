@@ -102,16 +102,16 @@
   </section>
 
   <!-- ============================================
-       IMAGE CAROUSEL - BREAKS RIGHT
+       IMAGE CAROUSEL - FULL BLEED
        ============================================ -->
   <section class="grid-cols-breakout py-12 bg-gray-50">
 
     <h2 class="col-content text-2xl font-bold mb-2">Gallery</h2>
     <p class="col-content text-gray-600 mb-8">Explore the CNC-5000 from every angle.</p>
 
-    <!-- Carousel that breaks to the right edge -->
-    <div class="col-feature-right">
-      <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory" style="-webkit-overflow-scrolling: touch;">
+    <!-- Full-bleed carousel with content-aligned padding -->
+    <div class="col-full">
+      <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory px-breakout" style="-webkit-overflow-scrolling: touch;">
         <div class="flex-none w-80 snap-start">
           <img src="https://picsum.photos/400/300?random=21" alt="Machine overview" class="w-full h-60 object-cover rounded">
           <p class="text-sm text-gray-600 mt-2">Full machine overview</p>
@@ -132,9 +132,29 @@
           <img src="https://picsum.photos/400/300?random=25" alt="Work envelope" class="w-full h-60 object-cover rounded">
           <p class="text-sm text-gray-600 mt-2">Large work envelope</p>
         </div>
-        <div class="flex-none w-80 snap-start pr-8">
+        <div class="flex-none w-80 snap-start">
           <img src="https://picsum.photos/400/300?random=26" alt="Chip management" class="w-full h-60 object-cover rounded">
           <p class="text-sm text-gray-600 mt-2">Integrated chip management</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=42" alt="Coolant system" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">High-pressure coolant system</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=43" alt="Probing system" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Touch probe measurement</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=44" alt="Safety enclosure" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Full safety enclosure</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=45" alt="Rotary table" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Direct-drive rotary table</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=46" alt="Automation ready" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Automation-ready design</p>
         </div>
       </div>
     </div>
@@ -309,9 +329,9 @@
     <h2 class="col-content text-2xl font-bold mb-2">Applications</h2>
     <p class="col-content text-slate-400 mb-8">Trusted across demanding industries worldwide.</p>
 
-    <!-- Carousel that starts at content and breaks to right edge -->
+    <!-- Carousel: starts at content, breaks to right edge -->
     <div class="col-content-right">
-      <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory" style="-webkit-overflow-scrolling: touch;">
+      <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory pr-8" style="-webkit-overflow-scrolling: touch;">
         <div class="flex-none w-72 snap-start">
           <div class="bg-slate-800 rounded overflow-hidden">
             <img src="https://picsum.photos/350/250?random=30" alt="Aerospace" class="w-full h-44 object-cover">
@@ -384,7 +404,7 @@
             </div>
           </div>
         </div>
-        <div class="flex-none w-72 snap-start pr-8">
+        <div class="flex-none w-72 snap-start">
           <div class="bg-slate-800 rounded overflow-hidden">
             <img src="https://picsum.photos/350/250?random=41" alt="Research" class="w-full h-44 object-cover">
             <div class="p-4">
