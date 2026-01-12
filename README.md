@@ -77,7 +77,7 @@ breakoutGrid({
 
   // Layout behavior
   defaultCol: 'content',  // Default column for items without col-* class
-  fullLimit: '90rem',     // Maximum width for col-full-limit
+  fullLimit: '115rem',     // Maximum width for col-full-limit
 
   // Responsive gap scaling
   gapScale: {
@@ -192,7 +192,7 @@ Viewport edges
 
   <!-- Full Limit: Full width with max-width constraint -->
   <div class="col-full-limit">
-    Content that spans full but never exceeds fullLimit (90rem default)
+    Content that spans full but never exceeds fullLimit (115rem default)
   </div>
 
   <!-- Center: Single point (rarely used directly) -->
@@ -815,6 +815,18 @@ Works in all browsers that support:
 - CSS `clamp()`
 
 This includes all modern browsers and IE11 with appropriate fallbacks.
+
+## Demo
+
+Run the interactive demo locally:
+
+```bash
+cd demo
+npm install
+npm run dev
+```
+
+Open http://localhost:5173 to see the grid in action. Press `Cmd+G` to toggle the visualizer overlay.
 
 ## Additional Documentation
 

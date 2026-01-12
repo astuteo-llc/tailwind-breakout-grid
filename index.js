@@ -148,7 +148,7 @@ const defaultConfig = {
   narrowBase: '52vw',  // Preferred/default width for narrow sections
   featureWidth: '12vw', // How far "feature" sections stick out
   defaultCol: 'content',  // Default column for elements without a col-* class
-  fullLimit: '90rem',  // Maximum width for full-limit sections
+  fullLimit: '115rem',  // Maximum width for full-limit sections
   popoutWidth: '5rem', // How far "popout" sections stick out
   content: '4vw',      // Width for content sections
   debug: false,        // Enable debug logging
@@ -755,7 +755,7 @@ const createGridUtilities = (config, templates) => {
  * @param {string} [config.popoutWidth='5rem'] - Popout extension distance
  * @param {string} [config.featureWidth='12vw'] - Feature rail extension
  * @param {string} [config.defaultCol='content'] - Default column for items without col-* class
- * @param {string} [config.fullLimit='90rem'] - Maximum width for col-full-limit
+ * @param {string} [config.fullLimit='115rem'] - Maximum width for col-full-limit
  * @param {Object|string} [config.gapScale] - Responsive gap scaling
  * @param {string} [config.gapScale.default='4vw'] - Mobile/default gap
  * @param {string} [config.gapScale.lg='5vw'] - Large screens (1024px+)

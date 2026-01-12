@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article Example - Breakout Grid Demo</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body class="bg-white text-gray-900">
+
+  <!-- Visualizer Component -->
+  <div x-data="breakoutGridVisualizer" x-html="template"></div>
+
+  <!-- ============================================
+       MASTHEAD
+       ============================================ -->
+  <header class="grid-cols-breakout bg-slate-900 text-white">
+    <div class="col-full-limit px-gap py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg">BG</div>
+          <span class="font-semibold text-lg">Breakout Grid</span>
+        </a>
+      </div>
+      <nav class="flex gap-6 text-sm">
+        <a href="/" class="hover:text-blue-400 transition-colors">Components</a>
+        <a href="/article.html" class="text-blue-400">Article</a>
+        <a href="/product.html" class="hover:text-blue-400 transition-colors">Product</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================
+       HERO
+       ============================================ -->
+  <section class="grid-cols-breakout">
+    <div class="col-feature relative">
+      <div class="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 h-[60vh] min-h-[400px] flex items-center justify-center">
+        <img src="https://picsum.photos/1600/900?random=1" alt="Hero" class="absolute inset-0 w-full h-full object-cover opacity-60">
+        <div class="relative z-10 text-center text-white px-6">
+          <p class="text-blue-400 font-semibold text-sm uppercase tracking-widest mb-4">Case Study</p>
+          <h1 class="text-4xl md:text-6xl font-bold mb-4 max-w-3xl">Designing Systems That Scale</h1>
+          <p class="text-xl text-slate-300 max-w-xl mx-auto">How modern CSS Grid transforms the way we build responsive layouts</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       ARTICLE META
+       ============================================ -->
+  <article class="grid-cols-breakout py-12">
+
+    <header class="col-content mb-12 flex flex-col md:flex-row md:items-center gap-6">
+      <img src="https://picsum.photos/80/80?random=2" alt="Author" class="w-16 h-16 rounded-full object-cover">
+      <div>
+        <p class="font-semibold text-lg">Sarah Mitchell</p>
+        <p class="text-gray-500">Senior Design Engineer at Acme Corp</p>
+        <p class="text-gray-400 text-sm mt-1">January 12, 2025 &bull; 8 min read</p>
+      </div>
+    </header>
+
+    <!-- ============================================
+         INTRO
+         ============================================ -->
+    <p class="col-content text-xl text-gray-700 leading-relaxed mb-8">
+      The evolution of web layout has been nothing short of revolutionary. From table-based designs to floats, flexbox, and now CSS Grid, each iteration has brought us closer to the layouts we've always imagined but couldn't build.
+    </p>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-8">
+      In this deep dive, we'll explore how the breakout grid pattern changes everything. It's not just about making content wider or narrower—it's about creating a visual rhythm that guides readers through your content with purpose and intention.
+    </p>
+
+    <!-- ============================================
+         FEATURE IMAGE
+         ============================================ -->
+    <figure class="col-feature my-12">
+      <img src="https://picsum.photos/1400/600?random=3" alt="Design system overview" class="w-full h-auto rounded-xl shadow-2xl">
+      <figcaption class="text-center text-gray-500 text-sm mt-4">A comprehensive view of the grid system in action across multiple breakpoints</figcaption>
+    </figure>
+
+    <!-- ============================================
+         SECTION: THE PROBLEM
+         ============================================ -->
+    <h2 class="col-content text-3xl font-bold mt-12 mb-6">The Problem With Traditional Layouts</h2>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      For years, we've been constrained by container-based thinking. Everything lives inside a box, and that box has a maximum width. Want something wider? Break out of the container entirely and create a new context. It's messy, it's fragile, and it doesn't scale.
+    </p>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      Consider the typical article layout: paragraphs at a readable width, images that span wider, pull quotes that demand attention, and full-width sections that create visual breaks. Each of these traditionally required different approaches, different containers, different hacks.
+    </p>
+
+    <!-- ============================================
+         PULLQUOTE
+         ============================================ -->
+    <blockquote class="col-narrow bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-8 my-12 rounded-r-2xl">
+      <p class="text-2xl text-blue-900 font-medium italic leading-relaxed">"The best layouts don't just organize content—they create a conversation between the reader and the page."</p>
+      <footer class="mt-4">
+        <cite class="text-blue-600 font-semibold not-italic">Rachel Andrew</cite>
+        <span class="text-blue-400"> — CSS Working Group</span>
+      </footer>
+    </blockquote>
+
+    <!-- ============================================
+         SECTION: THE SOLUTION
+         ============================================ -->
+    <h2 class="col-content text-3xl font-bold mt-12 mb-6">Enter the Breakout Grid</h2>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      The breakout grid pattern flips this on its head. Instead of breaking out of containers, we define all possible widths upfront using CSS Grid's named lines. Every piece of content simply declares which width it wants, and the grid handles the rest.
+    </p>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      This approach is declarative, predictable, and incredibly flexible. Need a full-width hero? Use <code class="bg-gray-100 px-2 py-0.5 rounded text-sm">.col-full</code>. Want text at optimal reading width? That's <code class="bg-gray-100 px-2 py-0.5 rounded text-sm">.col-narrow</code>. Every width has a name, and every name has a purpose.
+    </p>
+
+    <!-- ============================================
+         SIDE BY SIDE IMAGES
+         ============================================ -->
+    <div class="col-feature my-12 grid md:grid-cols-2 gap-6">
+      <figure>
+        <img src="https://picsum.photos/700/500?random=4" alt="Before" class="w-full h-64 object-cover rounded-xl">
+        <figcaption class="text-gray-500 text-sm mt-3 text-center">Traditional container-based layout</figcaption>
+      </figure>
+      <figure>
+        <img src="https://picsum.photos/700/500?random=5" alt="After" class="w-full h-64 object-cover rounded-xl">
+        <figcaption class="text-gray-500 text-sm mt-3 text-center">Breakout grid with named columns</figcaption>
+      </figure>
+    </div>
+
+    <!-- ============================================
+         SECTION: REAL WORLD
+         ============================================ -->
+    <h2 class="col-content text-3xl font-bold mt-12 mb-6">Real-World Applications</h2>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      We've deployed this system across dozens of projects, from editorial sites to e-commerce platforms to documentation hubs. The results speak for themselves: faster development, more consistent designs, and happier teams.
+    </p>
+
+    <h3 class="col-content text-xl font-bold mt-8 mb-4">Editorial & Publishing</h3>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      News organizations love the breakout grid because it mirrors how they think about content. Headlines at one width, body text at another, feature images spanning wide, ads in the margins. It's a natural fit that requires almost no explanation.
+    </p>
+
+    <!-- ============================================
+         TESTIMONIAL
+         ============================================ -->
+    <div class="col-popout bg-slate-900 text-white p-8 md:p-12 rounded-2xl my-12">
+      <div class="flex flex-col md:flex-row gap-8 items-start">
+        <img src="https://picsum.photos/120/120?random=6" alt="Testimonial" class="w-20 h-20 rounded-full object-cover flex-shrink-0">
+        <div>
+          <p class="text-lg md:text-xl leading-relaxed text-slate-200 mb-4">
+            "We rebuilt our entire article template system in a single sprint. What used to require custom CSS for every layout variation now just works. The team can focus on content, not fighting with containers."
+          </p>
+          <p class="font-semibold">Michael Torres</p>
+          <p class="text-slate-400 text-sm">Engineering Lead, Digital Media Group</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="col-content text-xl font-bold mt-8 mb-4">E-Commerce & Product Pages</h3>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      Product pages benefit enormously from variable-width content. Product images can span wide for impact, while descriptions stay at readable widths. Comparison tables can pop out slightly, and full-width promotional banners slot right in without breaking the flow.
+    </p>
+
+    <!-- ============================================
+         FULL WIDTH IMAGE BAND
+         ============================================ -->
+    <figure class="col-full my-12">
+      <img src="https://picsum.photos/1920/600?random=7" alt="Full width showcase" class="w-full h-80 object-cover">
+    </figure>
+
+    <!-- ============================================
+         SECTION: IMPLEMENTATION
+         ============================================ -->
+    <h2 class="col-content text-3xl font-bold mt-12 mb-6">Getting Started</h2>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      Implementation is straightforward. Install the plugin, configure your column widths, and start using the utility classes. The defaults work for most projects, but every value is customizable to match your design system.
+    </p>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      The key insight is that you're defining a vocabulary for your layout. Once that vocabulary exists, everyone on the team speaks the same language. Designers specify "feature width" in their comps. Developers use <code class="bg-gray-100 px-2 py-0.5 rounded text-sm">.col-feature</code> in their markup. The translation is instant and unambiguous.
+    </p>
+
+    <!-- ============================================
+         INFO BOX - using nested grid-cols-breakout
+         ============================================ -->
+    <div class="col-full bg-amber-50 border-y border-amber-200 my-8">
+      <div class="grid-cols-breakout py-6">
+        <div class="col-content">
+          <h4 class="font-bold text-amber-900 mb-2">Pro Tip</h4>
+          <p class="text-amber-800">
+            Start with the narrow width. This is your optimal reading line length (usually 40-50rem). Everything else builds outward from there: content adds margins for UI elements, popout adds emphasis, feature adds drama.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      The visualizer tool (press <kbd class="bg-gray-100 px-2 py-0.5 rounded text-sm font-mono">Cmd+G</kbd>) makes it easy to see exactly what's happening. You can see each column, adjust values in real-time, and export your configuration when you're happy with the results.
+    </p>
+
+    <!-- ============================================
+         THREE COLUMN FEATURE
+         ============================================ -->
+    <div class="col-feature my-12 grid md:grid-cols-3 gap-8">
+      <div class="bg-gray-50 rounded-xl p-6">
+        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+        </div>
+        <h4 class="font-bold text-lg mb-2">Semantic Naming</h4>
+        <p class="text-gray-600 text-sm">Column names describe purpose, not pixels. Your markup stays meaningful as designs evolve.</p>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-6">
+        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        </div>
+        <h4 class="font-bold text-lg mb-2">Zero Runtime</h4>
+        <p class="text-gray-600 text-sm">Pure CSS solution. No JavaScript required for layout. Works everywhere CSS Grid works.</p>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-6">
+        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+        </div>
+        <h4 class="font-bold text-lg mb-2">Tailwind Native</h4>
+        <p class="text-gray-600 text-sm">Integrates seamlessly with Tailwind CSS. Uses the plugin API for full customization.</p>
+      </div>
+    </div>
+
+    <!-- ============================================
+         CONCLUSION
+         ============================================ -->
+    <h2 class="col-content text-3xl font-bold mt-12 mb-6">Conclusion</h2>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-6">
+      The breakout grid isn't just a technical solution—it's a new way of thinking about layout. By defining a clear vocabulary of widths, we create a shared language between design and development. The result is faster iteration, more consistent output, and layouts that actually match the vision.
+    </p>
+
+    <p class="col-content text-gray-600 leading-relaxed mb-8">
+      Whether you're building a blog, a marketing site, or a complex application, the breakout grid pattern provides a foundation that scales with your needs. Give it a try—your future self will thank you.
+    </p>
+
+    <!-- ============================================
+         AUTHOR BIO
+         ============================================ -->
+    <div class="col-content border-t border-gray-200 pt-8 mt-12">
+      <div class="flex flex-col md:flex-row gap-6">
+        <img src="https://picsum.photos/100/100?random=8" alt="Author" class="w-20 h-20 rounded-full object-cover">
+        <div>
+          <p class="font-bold text-lg">Sarah Mitchell</p>
+          <p class="text-gray-600 mb-3">Sarah is a Senior Design Engineer focused on design systems and CSS architecture. She writes about the intersection of design and development.</p>
+          <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">Follow on Twitter &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+  </article>
+
+  <!-- ============================================
+       RELATED ARTICLES
+       ============================================ -->
+  <section class="grid-cols-breakout bg-gray-100 py-16">
+    <h2 class="col-content text-2xl font-bold mb-8">Related Articles</h2>
+
+    <div class="col-feature grid md:grid-cols-3 gap-8">
+      <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+        <img src="https://picsum.photos/400/250?random=9" alt="Article" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <p class="text-blue-600 text-sm font-semibold mb-2">Tutorial</p>
+          <h3 class="font-bold text-lg mb-2">CSS Grid Fundamentals</h3>
+          <p class="text-gray-600 text-sm">Master the basics of CSS Grid layout with practical examples.</p>
+        </div>
+      </article>
+      <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+        <img src="https://picsum.photos/400/250?random=10" alt="Article" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <p class="text-green-600 text-sm font-semibold mb-2">Guide</p>
+          <h3 class="font-bold text-lg mb-2">Responsive Design Patterns</h3>
+          <p class="text-gray-600 text-sm">Modern approaches to building layouts that work everywhere.</p>
+        </div>
+      </article>
+      <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+        <img src="https://picsum.photos/400/250?random=11" alt="Article" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <p class="text-purple-600 text-sm font-semibold mb-2">Deep Dive</p>
+          <h3 class="font-bold text-lg mb-2">Subgrid Explained</h3>
+          <p class="text-gray-600 text-sm">Understanding CSS Subgrid and when to use it.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================================
+       CTA
+       ============================================ -->
+  <section class="grid-cols-breakout">
+    <div class="col-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+      <div class="px-breakout py-16 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to build better layouts?</h2>
+        <p class="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">Install the Tailwind Breakout Grid plugin and start creating flexible, responsive layouts in minutes.</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="https://github.com/astuteo-llc/tailwind-breakout-grid" class="bg-white text-blue-600 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors">View on GitHub</a>
+          <code class="bg-blue-800/50 px-6 py-3 rounded-lg font-mono text-sm text-blue-100">npm i @astuteo/tailwind-breakout-grid</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="grid-cols-breakout bg-slate-900 text-white py-8">
+    <div class="col-content flex items-center justify-between text-sm text-slate-400">
+      <span>Tailwind Breakout Grid Plugin</span>
+      <a href="https://github.com/astuteo-llc/tailwind-breakout-grid" class="hover:text-white transition-colors">GitHub</a>
+    </div>
+  </footer>
+
+</body>
+</html>

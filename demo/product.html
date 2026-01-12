@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CNC-5000 Series - Industrial Demo</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body class="bg-white text-gray-900">
+
+  <!-- Visualizer Component -->
+  <div x-data="breakoutGridVisualizer" x-html="template"></div>
+
+  <!-- ============================================
+       MASTHEAD
+       ============================================ -->
+  <header class="grid-cols-breakout bg-slate-900 text-white">
+    <div class="col-full-limit px-gap py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div class="w-10 h-10 bg-amber-500 rounded flex items-center justify-center font-bold text-lg text-slate-900">AP</div>
+          <span class="font-semibold text-lg">Apex Precision</span>
+        </a>
+      </div>
+      <nav class="flex gap-6 text-sm">
+        <a href="/" class="hover:text-amber-400 transition-colors">Grid Demo</a>
+        <a href="/article.html" class="hover:text-amber-400 transition-colors">Article</a>
+        <a href="/product.html" class="text-amber-400">Product</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================
+       BREADCRUMB
+       ============================================ -->
+  <nav class="grid-cols-breakout bg-gray-100 border-b border-gray-200">
+    <div class="col-content py-3 text-sm text-gray-500">
+      <a href="#" class="hover:text-gray-700">Products</a>
+      <span class="mx-2">/</span>
+      <a href="#" class="hover:text-gray-700">CNC Machining Centers</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-900">CNC-5000 Series</span>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       PRODUCT HERO
+       ============================================ -->
+  <section class="grid-cols-breakout py-12">
+
+    <!-- Product Title -->
+    <div class="col-content mb-8">
+      <p class="text-amber-600 font-semibold text-sm uppercase tracking-wide mb-2">5-Axis Machining Center</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">CNC-5000 Series</h1>
+      <p class="text-xl text-gray-600">High-performance vertical machining center for precision aerospace and automotive components.</p>
+    </div>
+
+    <!-- Hero Image - Feature Right (breaks out right) -->
+    <div class="col-feature-right mb-12">
+      <div class="bg-gradient-to-br from-slate-100 to-slate-200 rounded-l overflow-hidden">
+        <img src="https://picsum.photos/1200/700?random=20" alt="CNC-5000 Machining Center" class="w-full h-[500px] object-cover">
+      </div>
+    </div>
+
+    <!-- Key Specs Row -->
+    <div class="col-content grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+      <div class="text-center p-4 bg-gray-50 rounded">
+        <p class="text-3xl font-bold text-amber-600">5</p>
+        <p class="text-sm text-gray-600 mt-1">Axes</p>
+      </div>
+      <div class="text-center p-4 bg-gray-50 rounded">
+        <p class="text-3xl font-bold text-amber-600">40K</p>
+        <p class="text-sm text-gray-600 mt-1">RPM Spindle</p>
+      </div>
+      <div class="text-center p-4 bg-gray-50 rounded">
+        <p class="text-3xl font-bold text-amber-600">±2μm</p>
+        <p class="text-sm text-gray-600 mt-1">Positioning</p>
+      </div>
+      <div class="text-center p-4 bg-gray-50 rounded">
+        <p class="text-3xl font-bold text-amber-600">60</p>
+        <p class="text-sm text-gray-600 mt-1">Tool Capacity</p>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="col-content">
+      <p class="text-gray-600 leading-relaxed mb-6">
+        The CNC-5000 Series represents the pinnacle of 5-axis machining technology. Engineered for demanding aerospace, medical, and automotive applications, this machining center delivers uncompromising precision with exceptional throughput.
+      </p>
+      <p class="text-gray-600 leading-relaxed mb-8">
+        Featuring our proprietary ThermoLock temperature compensation system and advanced direct-drive motors, the CNC-5000 maintains micron-level accuracy even during extended production runs.
+      </p>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="col-content flex flex-wrap gap-4">
+      <a href="#" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-8 py-3 rounded transition-colors">Request Quote</a>
+      <a href="#" class="border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-semibold px-8 py-3 rounded transition-colors">Download Specs</a>
+      <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold px-4 py-3 transition-colors">Watch Demo →</a>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       IMAGE CAROUSEL - FULL BLEED
+       ============================================ -->
+  <section class="grid-cols-breakout py-12 bg-gray-50">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Gallery</h2>
+    <p class="col-content text-gray-600 mb-8">Explore the CNC-5000 from every angle.</p>
+
+    <!-- Full-bleed carousel with content-aligned padding -->
+    <div class="col-full">
+      <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory px-breakout" style="-webkit-overflow-scrolling: touch;">
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=21" alt="Machine overview" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Full machine overview</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=22" alt="Spindle detail" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">40,000 RPM spindle</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=23" alt="Tool changer" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">60-tool automatic changer</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=24" alt="Control panel" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Intuitive control interface</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=25" alt="Work envelope" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Large work envelope</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=26" alt="Chip management" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Integrated chip management</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=42" alt="Coolant system" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">High-pressure coolant system</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=43" alt="Probing system" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Touch probe measurement</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=44" alt="Safety enclosure" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Full safety enclosure</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=45" alt="Rotary table" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Direct-drive rotary table</p>
+        </div>
+        <div class="flex-none w-80 snap-start">
+          <img src="https://picsum.photos/400/300?random=46" alt="Automation ready" class="w-full h-60 object-cover rounded">
+          <p class="text-sm text-gray-600 mt-2">Automation-ready design</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       FEATURES SECTION
+       ============================================ -->
+  <section class="grid-cols-breakout py-16">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Key Features</h2>
+    <p class="col-content text-gray-600 mb-12">Built for precision, designed for productivity.</p>
+
+    <!-- Feature 1 - Image Left -->
+    <div class="col-feature-left mb-6">
+      <div class="bg-slate-900 rounded-r overflow-hidden">
+        <img src="https://picsum.photos/800/500?random=27" alt="ThermoLock System" class="w-full h-80 object-cover opacity-80">
+      </div>
+    </div>
+    <div class="col-content mb-16">
+      <h3 class="text-xl font-bold mb-3">ThermoLock Temperature Compensation</h3>
+      <p class="text-gray-600 leading-relaxed">
+        Our proprietary thermal management system continuously monitors and compensates for temperature variations across all axes. Real-time adjustments ensure consistent accuracy regardless of ambient conditions or machine warm-up state.
+      </p>
+    </div>
+
+    <!-- Feature 2 - Image Right -->
+    <div class="col-content mb-6">
+      <h3 class="text-xl font-bold mb-3">Direct-Drive Rotary Axes</h3>
+      <p class="text-gray-600 leading-relaxed">
+        Eliminate backlash and maximize responsiveness with our direct-drive A and C axes. Achieve superior surface finishes on complex contours while reducing cycle times by up to 30% compared to traditional worm-gear designs.
+      </p>
+    </div>
+    <div class="col-feature-right mb-16">
+      <div class="bg-slate-900 rounded-l overflow-hidden">
+        <img src="https://picsum.photos/800/500?random=28" alt="Direct Drive System" class="w-full h-80 object-cover opacity-80">
+      </div>
+    </div>
+
+    <!-- Feature 3 - Full Width -->
+    <div class="col-full bg-slate-900 text-white">
+      <div class="grid-cols-breakout py-16">
+        <div class="col-content">
+          <h3 class="text-2xl font-bold mb-4">Intelligent Tool Management</h3>
+          <p class="text-slate-300 leading-relaxed mb-6">
+            The 60-tool automatic changer with tool life monitoring ensures uninterrupted production. Predictive algorithms schedule tool changes during non-cutting moves, maximizing spindle utilization.
+          </p>
+          <div class="grid md:grid-cols-3 gap-8 mt-8">
+            <div>
+              <p class="text-4xl font-bold text-amber-500">1.8s</p>
+              <p class="text-slate-400 mt-1">Tool-to-tool time</p>
+            </div>
+            <div>
+              <p class="text-4xl font-bold text-amber-500">99.7%</p>
+              <p class="text-slate-400 mt-1">Spindle uptime</p>
+            </div>
+            <div>
+              <p class="text-4xl font-bold text-amber-500">24/7</p>
+              <p class="text-slate-400 mt-1">Unattended operation</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       SPECIFICATIONS TABLE
+       ============================================ -->
+  <section class="grid-cols-breakout py-16 bg-gray-50">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Technical Specifications</h2>
+    <p class="col-content text-gray-600 mb-8">Complete specifications for the CNC-5000 Series.</p>
+
+    <div class="col-popout">
+      <div class="bg-white rounded border border-gray-200 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200">
+              <th class="text-left py-4 px-6 font-semibold text-gray-900">Specification</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-900">CNC-5000</th>
+              <th class="text-left py-4 px-6 font-semibold text-gray-900">CNC-5000 Pro</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Work Envelope (X/Y/Z)</td>
+              <td class="py-4 px-6 font-medium">800 × 600 × 500 mm</td>
+              <td class="py-4 px-6 font-medium">1000 × 800 × 600 mm</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Spindle Speed</td>
+              <td class="py-4 px-6 font-medium">20,000 RPM</td>
+              <td class="py-4 px-6 font-medium">40,000 RPM</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Spindle Power</td>
+              <td class="py-4 px-6 font-medium">25 kW</td>
+              <td class="py-4 px-6 font-medium">35 kW</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Rapid Traverse (X/Y/Z)</td>
+              <td class="py-4 px-6 font-medium">40/40/30 m/min</td>
+              <td class="py-4 px-6 font-medium">60/60/40 m/min</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Positioning Accuracy</td>
+              <td class="py-4 px-6 font-medium">±3 μm</td>
+              <td class="py-4 px-6 font-medium">±2 μm</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Repeatability</td>
+              <td class="py-4 px-6 font-medium">±1.5 μm</td>
+              <td class="py-4 px-6 font-medium">±1 μm</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Tool Capacity</td>
+              <td class="py-4 px-6 font-medium">40 tools</td>
+              <td class="py-4 px-6 font-medium">60 tools</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Max Tool Weight</td>
+              <td class="py-4 px-6 font-medium">8 kg</td>
+              <td class="py-4 px-6 font-medium">10 kg</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Table Load Capacity</td>
+              <td class="py-4 px-6 font-medium">500 kg</td>
+              <td class="py-4 px-6 font-medium">800 kg</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 text-gray-600">Machine Weight</td>
+              <td class="py-4 px-6 font-medium">12,000 kg</td>
+              <td class="py-4 px-6 font-medium">16,000 kg</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-content mt-6">
+      <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold">Download full specifications PDF →</a>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       TESTIMONIAL
+       ============================================ -->
+  <section class="grid-cols-breakout">
+    <blockquote class="col-narrow text-center py-16">
+      <p class="text-2xl md:text-3xl text-gray-900 font-medium italic leading-relaxed mb-6">
+        "The CNC-5000 Pro has transformed our aerospace division. We've reduced setup times by 40% and achieved tolerances we couldn't hit before."
+      </p>
+      <footer>
+        <img src="https://picsum.photos/80/80?random=29" alt="Customer" class="w-16 h-16 rounded-full mx-auto mb-3 object-cover">
+        <cite class="not-italic">
+          <span class="font-semibold text-gray-900 block">James Morrison</span>
+          <span class="text-gray-500 text-sm">VP Manufacturing, Aerotech Industries</span>
+        </cite>
+      </footer>
+    </blockquote>
+  </section>
+
+  <!-- ============================================
+       APPLICATIONS CAROUSEL - BREAKS LEFT
+       ============================================ -->
+  <section class="grid-cols-breakout py-16 bg-slate-900 text-white">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Applications</h2>
+    <p class="col-content text-slate-400 mb-8">Trusted across demanding industries worldwide.</p>
+
+    <!-- Carousel: starts at content, breaks to right edge -->
+    <div class="col-content-right">
+      <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory pr-8" style="-webkit-overflow-scrolling: touch;">
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=30" alt="Aerospace" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Aerospace</h4>
+              <p class="text-slate-400 text-sm">Turbine blades, structural components, landing gear</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=31" alt="Medical" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Medical</h4>
+              <p class="text-slate-400 text-sm">Implants, surgical instruments, prosthetics</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=32" alt="Automotive" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Automotive</h4>
+              <p class="text-slate-400 text-sm">Engine components, transmission parts, molds</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=33" alt="Energy" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Energy</h4>
+              <p class="text-slate-400 text-sm">Turbine components, valve bodies, pump housings</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=34" alt="Defense" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Defense</h4>
+              <p class="text-slate-400 text-sm">Precision optics, guidance systems, armor</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=38" alt="Semiconductor" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Semiconductor</h4>
+              <p class="text-slate-400 text-sm">Wafer handling, vacuum chambers, fixtures</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=39" alt="Marine" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Marine</h4>
+              <p class="text-slate-400 text-sm">Propellers, shafts, hull components</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=40" alt="Tooling" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Tooling</h4>
+              <p class="text-slate-400 text-sm">Dies, molds, jigs, fixtures</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-none w-72 snap-start">
+          <div class="bg-slate-800 rounded overflow-hidden">
+            <img src="https://picsum.photos/350/250?random=41" alt="Research" class="w-full h-44 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold mb-1">Research</h4>
+              <p class="text-slate-400 text-sm">Prototypes, test fixtures, lab equipment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       RELATED PRODUCTS
+       ============================================ -->
+  <section class="grid-cols-breakout py-16">
+
+    <h2 class="col-content text-2xl font-bold mb-2">Related Products</h2>
+    <p class="col-content text-gray-600 mb-8">Complete your production line with these complementary systems.</p>
+
+    <div class="col-feature grid md:grid-cols-3 gap-8">
+      <div class="bg-gray-50 rounded overflow-hidden hover:shadow-lg transition-shadow">
+        <img src="https://picsum.photos/400/280?random=35" alt="CNC-3000" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <p class="text-amber-600 text-sm font-semibold mb-1">3-Axis VMC</p>
+          <h3 class="font-bold text-lg mb-2">CNC-3000 Series</h3>
+          <p class="text-gray-600 text-sm mb-4">High-speed vertical machining for production environments.</p>
+          <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">Learn more →</a>
+        </div>
+      </div>
+      <div class="bg-gray-50 rounded overflow-hidden hover:shadow-lg transition-shadow">
+        <img src="https://picsum.photos/400/280?random=36" alt="Turn-Mill" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <p class="text-amber-600 text-sm font-semibold mb-1">Turn-Mill Center</p>
+          <h3 class="font-bold text-lg mb-2">TM-800 Series</h3>
+          <p class="text-gray-600 text-sm mb-4">Complete parts in a single setup with turning and milling.</p>
+          <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">Learn more →</a>
+        </div>
+      </div>
+      <div class="bg-gray-50 rounded overflow-hidden hover:shadow-lg transition-shadow">
+        <img src="https://picsum.photos/400/280?random=37" alt="Automation" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <p class="text-amber-600 text-sm font-semibold mb-1">Automation</p>
+          <h3 class="font-bold text-lg mb-2">RoboCell 500</h3>
+          <p class="text-gray-600 text-sm mb-4">Modular robotic loading system for lights-out manufacturing.</p>
+          <a href="#" class="text-amber-600 hover:text-amber-700 font-semibold text-sm">Learn more →</a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       CTA
+       ============================================ -->
+  <section class="grid-cols-breakout">
+    <div class="col-full bg-gradient-to-r from-amber-500 to-amber-600 text-white">
+      <div class="grid-cols-breakout py-16">
+        <div class="col-content text-center">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to transform your production?</h2>
+          <p class="text-amber-100 text-lg mb-8 max-w-2xl mx-auto">Our application engineers are ready to help you find the perfect solution for your manufacturing challenges.</p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#" class="bg-white text-amber-600 font-semibold px-8 py-3 rounded hover:bg-amber-50 transition-colors">Request Quote</a>
+            <a href="#" class="border-2 border-white text-white font-semibold px-8 py-3 rounded hover:bg-white/10 transition-colors">Schedule Demo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="grid-cols-breakout bg-slate-900 text-white py-12">
+    <div class="col-content">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-amber-500 rounded flex items-center justify-center font-bold text-sm text-slate-900">AP</div>
+            <span class="font-semibold">Apex Precision</span>
+          </div>
+          <p class="text-slate-400 text-sm">Leading manufacturer of precision CNC machining centers since 1985.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Products</h4>
+          <ul class="space-y-2 text-sm text-slate-400">
+            <li><a href="#" class="hover:text-white transition-colors">5-Axis VMC</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">3-Axis VMC</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Turn-Mill</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Automation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Support</h4>
+          <ul class="space-y-2 text-sm text-slate-400">
+            <li><a href="#" class="hover:text-white transition-colors">Documentation</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Training</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Service</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Parts</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">Contact</h4>
+          <ul class="space-y-2 text-sm text-slate-400">
+            <li>1-800-555-0123</li>
+            <li>sales@apexprecision.com</li>
+            <li>Detroit, MI USA</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
+        <span>&copy; 2025 Apex Precision. All rights reserved.</span>
+        <span class="mt-2 md:mt-0">Demo for Tailwind Breakout Grid</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
