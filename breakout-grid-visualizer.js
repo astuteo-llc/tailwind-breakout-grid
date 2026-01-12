@@ -722,6 +722,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       // Map column names to their config keys for resizing
       getResizeConfig(colName) {
         const map = {
+          'full-limit': 'fullLimit',
           'feature': 'featureWidth',
           'popout': 'popoutWidth',
           'content': 'content'
