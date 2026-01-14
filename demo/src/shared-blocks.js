@@ -59,16 +59,16 @@ export const sharedBlocks = {
     </div>
   `,
 
-  // Testimonial quote - uses col-narrow
+  // Testimonial quote - uses col-content
   testimonial: `
-    <blockquote class="col-narrow border-l-4 border-amber-500 pl-6 py-4 mb-8">
+    <blockquote class="col-content border-l-4 border-amber-500 pl-6 py-4 mb-8">
       <p class="text-xl text-gray-700 italic leading-relaxed mb-4">
         "The CNC-5000's setup wizard had us cutting parts within 4 hours of power-on. Impressive for a 5-axis machine."
       </p>
       <footer class="text-sm text-gray-500">
         — James Morrison, Aerotech Industries
       </footer>
-      <p class="text-xs text-amber-600 mt-3 font-medium">Shared component using col-narrow</p>
+      <p class="text-xs text-amber-600 mt-3 font-medium">Shared component using col-content</p>
     </blockquote>
   `,
 

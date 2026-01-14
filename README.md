@@ -6,7 +6,7 @@ Inspired by [Viget's Fluid Breakout Layout](https://www.viget.com/articles/fluid
 
 ## Features
 
-- **6 content width levels** - From narrow reading columns to full viewport width
+- **5 content width levels** - From optimal reading width to full viewport
 - **Responsive spacing** - Automatic gap scaling based on viewport size
 - **Left/right alignment** - Nested grids for asymmetric layouts
 - **Fluid by default** - Uses CSS clamp() for smooth viewport adaptation
@@ -34,8 +34,8 @@ export default {
       // Optional: customize the defaults
       baseGap: '1.5rem',
       maxGap: '15rem',
-      narrowMin: '40rem',
-      narrowMax: '50rem',
+      contentMin: '53rem',
+      contentMax: '61rem',
       // ... see Configuration section for all options
     })
   ]
@@ -49,7 +49,7 @@ Apply the base grid class to a container, then use column utilities on children:
 ```html
 <div class="grid-cols-breakout">
   <p>Standard content width (uses defaultCol setting)</p>
-  <p class="col-narrow">Optimal reading width (40-50rem)</p>
+  <p class="col-content">Comfortable content width (53-61rem fluid)</p>
   <img class="col-feature" src="hero.jpg" alt="Wide feature image" />
   <div class="col-full bg-gray-100">Full viewport width</div>
 </div>
@@ -65,13 +65,12 @@ breakoutGrid({
   baseGap: '1rem',        // Minimum gap on mobile
   maxGap: '15rem',        // Maximum gap on ultra-wide screens
 
-  // Reading width constraints
-  narrowMin: '40rem',     // Minimum width for narrow columns
-  narrowMax: '50rem',     // Maximum width for narrow columns
-  narrowBase: '52vw',     // Preferred width (viewport-based)
+  // Content width constraints (fluid)
+  contentMin: '53rem',    // Minimum width for content column (~848px)
+  contentMax: '61rem',    // Maximum width for content column (~976px)
+  contentBase: '75vw',    // Preferred width (viewport-based)
 
   // Breakout distances
-  content: '4vw',         // Standard content rail width
   popoutWidth: '5rem',    // Popout extension distance
   featureWidth: '12vw',   // Feature rail extension
 
@@ -106,7 +105,7 @@ The plugin automatically validates your configuration and provides helpful warni
 // ❌ Invalid CSS units will generate warnings
 breakoutGrid({
   baseGap: 'invalid-unit',     // Warning: Invalid CSS unit
-  narrowMax: '50',             // Warning: Missing unit (should be '50rem')
+  contentMax: '50',            // Warning: Missing unit (should be '50rem')
   gapScale: {
     lg: 'bad-value'            // Warning: Invalid CSS unit for gapScale.lg
   }
@@ -115,7 +114,7 @@ breakoutGrid({
 // ✅ Valid configuration
 breakoutGrid({
   baseGap: '1.5rem',           // Valid CSS unit
-  narrowMax: '50rem',          // Valid CSS unit with rem
+  contentMax: '50rem',         // Valid CSS unit with rem
   gapScale: {
     lg: '5vw'                  // Valid CSS unit with vw
   }
@@ -138,12 +137,9 @@ Viewport edges
 │       ╔═══col-popout══════╗             │ Slightly wider
 │       ║   ~popoutWidth    ║             │
 │       ╚═══════════════════╝             │
-│         ╔═col-content════╗              │ Standard width (default)
-│         ║   ~content     ║              │
+│         ╔══col-content═══╗              │ Content width (53-61rem fluid)
+│         ║  text content  ║              │
 │         ╚════════════════╝              │
-│           ╔col-narrow══╗                │ Reading width (40-50rem)
-│           ║   text     ║                │
-│           ╚════════════╝                │
 │             [center]                    │ Single point (rarely used)
 └─────────────────────────────────────────┘
 ```
@@ -165,14 +161,9 @@ Viewport edges
 
 ```html
 <div class="grid-cols-breakout">
-  <!-- Narrow: Optimal reading width (40-50rem) -->
-  <p class="col-narrow">
-    Long-form text content for comfortable reading.
-  </p>
-
-  <!-- Content: Standard width (default if no class specified) -->
+  <!-- Content: Comfortable content width (53-61rem fluid, default if no class specified) -->
   <p class="col-content">
-    Regular content at the main content rail width.
+    Long-form text content at a comfortable width.
   </p>
 
   <!-- Popout: Breaks into side margins slightly -->
@@ -213,13 +204,11 @@ The plugin provides several grid template classes for different layout contexts:
 - `grid-cols-feature-left` - Feature width container, left-aligned
 - `grid-cols-popout-left` - Popout width container, left-aligned
 - `grid-cols-content-left` - Content width container, left-aligned
-- `grid-cols-narrow-left` - Narrow width container, left-aligned
 
 **Right-Aligned Templates:**
 - `grid-cols-feature-right` - Feature width container, right-aligned
 - `grid-cols-popout-right` - Popout width container, right-aligned
 - `grid-cols-content-right` - Content width container, right-aligned
-- `grid-cols-narrow-right` - Narrow width container, right-aligned
 
 ### Spacing Utilities
 
@@ -376,10 +365,10 @@ For asymmetric layouts, use left/right aligned nested grids.
 
 ```html
 <div class="grid-cols-breakout">
-  <!-- Feature content on the left, narrow reading column on right -->
+  <!-- Feature content on the left, reading column on right -->
   <section class="col-feature grid-cols-feature-left">
     <img class="col-feature" src="image.jpg" alt="Feature" />
-    <div class="col-narrow">
+    <div class="col-content">
       <h2>Title</h2>
       <p>Reading content aligns to the right side</p>
     </div>
@@ -387,8 +376,8 @@ For asymmetric layouts, use left/right aligned nested grids.
 
   <!-- Content grid aligned to the right -->
   <section class="col-content grid-cols-content-right">
-    <p class="col-narrow">Text appears on the right side</p>
-    <img class="col-content" src="small.jpg" alt="Detail" />
+    <p class="col-content">Text appears on the right side</p>
+    <img class="col-popout" src="small.jpg" alt="Detail" />
   </section>
 </div>
 ```
@@ -399,15 +388,13 @@ For asymmetric layouts, use left/right aligned nested grids.
 - `grid-cols-feature-left` - Feature width, left-aligned
 - `grid-cols-popout-left` - Popout width, left-aligned
 - `grid-cols-content-left` - Content width, left-aligned
-- `grid-cols-narrow-left` - Narrow width, left-aligned
 
 **Right-Aligned Grids** (content flows from right edge):
 - `grid-cols-feature-right` - Feature width, right-aligned
 - `grid-cols-popout-right` - Popout width, right-aligned
 - `grid-cols-content-right` - Content width, right-aligned
-- `grid-cols-narrow-right` - Narrow width, right-aligned
 
-**Key Difference**: Left/right grids use `--narrow-inset` instead of `--narrow` for proper text width in nested contexts.
+**Key Difference**: Left/right grids use `--content-inset` instead of `--content` for proper text width in nested contexts.
 
 ### Advanced: Fine-Grained Control
 
@@ -420,9 +407,9 @@ Use start/end utilities for custom spans and precise positioning:
     Custom width spanning multiple grid tracks
   </div>
 
-  <!-- Span from narrow-start to popout-end -->
-  <div class="col-start-narrow col-end-popout">
-    Spans from narrow column start to popout column end
+  <!-- Span from content-start to popout-end -->
+  <div class="col-start-content col-end-popout">
+    Spans from content column start to popout column end
   </div>
 
   <!-- Start at feature-start, end at center -->
@@ -439,12 +426,10 @@ Use start/end utilities for custom spans and precise positioning:
 - `col-start-feature` - Start at feature boundary
 - `col-start-popout` - Start at popout boundary
 - `col-start-content` - Start at content boundary
-- `col-start-narrow` - Start at narrow column boundary
 - `col-start-center` - Start at center point
 
 **Column End Utilities:**
 - `col-end-center` - End at center point
-- `col-end-narrow` - End at narrow column boundary
 - `col-end-content` - End at content boundary
 - `col-end-popout` - End at popout boundary
 - `col-end-feature` - End at feature boundary
@@ -461,10 +446,8 @@ For content that spans from one edge to a specific column:
   <div class="col-feature-left">From left edge to feature-end</div>
   <div class="col-popout-left">From left edge to popout-end</div>
   <div class="col-content-left">From left edge to content-end</div>
-  <div class="col-narrow-left">From left edge to narrow-end</div>
 
   <!-- Right-aligned: spans from specified column start to right edge -->
-  <div class="col-narrow-right">From narrow-start to right edge</div>
   <div class="col-content-right">From content-start to right edge</div>
   <div class="col-popout-right">From popout-start to right edge</div>
   <div class="col-feature-right">From feature-start to right edge</div>
@@ -515,14 +498,14 @@ Use `grid-cols-breakout-subgrid` on nested elements to inherit the parent grid's
 <article class="grid-cols-breakout">
   <h1 class="col-content text-4xl font-bold">Article Title</h1>
 
-  <p class="col-narrow">
-    Body paragraphs use the narrow column for optimal reading.
+  <p class="col-content">
+    Body paragraphs use the content column for optimal reading.
   </p>
 
   <img class="col-feature" src="header.jpg" alt="Header" />
 
-  <p class="col-narrow">
-    More readable content in the narrow column.
+  <p class="col-content">
+    More readable content in the content column.
   </p>
 
   <blockquote class="col-popout bg-blue-50 p-gap italic">
@@ -590,10 +573,8 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 - `grid-cols-feature-left` / `grid-cols-feature-right`
 - `grid-cols-popout-left` / `grid-cols-popout-right`
 - `grid-cols-content-left` / `grid-cols-content-right`
-- `grid-cols-narrow-left` / `grid-cols-narrow-right`
 
 #### Nested Grid Modifiers
-- `breakout-to-narrow` - Collapse all outer tracks (full container width)
 - `breakout-to-content` - Keep content margins, collapse outer tracks
 - `breakout-to-popout` - Keep popout and content margins
 - `breakout-to-feature` - Keep feature, popout, and content margins
@@ -602,8 +583,7 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 - `col-full` - Full viewport width
 - `col-feature` - Extra wide content
 - `col-popout` - Slightly wider content
-- `col-content` - Standard content width (default)
-- `col-narrow` - Optimal reading width
+- `col-content` - Optimal reading width (default)
 - `col-center` - Center point
 - `col-full-limit` - Full width with max-width constraint
 
@@ -612,12 +592,10 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 - `col-start-feature` - Start at feature boundary
 - `col-start-popout` - Start at popout boundary
 - `col-start-content` - Start at content boundary
-- `col-start-narrow` - Start at narrow boundary
 - `col-start-center` - Start at center point
 
 #### Column End Classes
 - `col-end-center` - End at center point
-- `col-end-narrow` - End at narrow boundary
 - `col-end-content` - End at content boundary
 - `col-end-popout` - End at popout boundary
 - `col-end-feature` - End at feature boundary
@@ -627,7 +605,6 @@ If your project uses traditional Tailwind max-width containers (like `max-w-7xl`
 - `col-feature-left` / `col-feature-right`
 - `col-popout-left` / `col-popout-right`
 - `col-content-left` / `col-content-right`
-- `col-narrow-left` / `col-narrow-right`
 
 #### Spacing Classes
 
@@ -657,9 +634,8 @@ The plugin generates these CSS variables that you can use in custom CSS:
 
 - `--gap` - Current responsive gap value
 - `--computed-gap` - Computed gap for larger spacing
-- `--narrow` - Narrow column width (centered layouts)
-- `--narrow-inset` - Narrow column width (nested layouts)
-- `--content` - Content column extension
+- `--content` - Content column width (centered layouts, fluid clamp)
+- `--content-inset` - Content column width (nested layouts)
 - `--popout` - Popout column extension
 - `--feature` - Feature column extension
 - `--full` - Full column definition
@@ -668,7 +644,7 @@ The plugin generates these CSS variables that you can use in custom CSS:
 ## Best Practices
 
 1. **Use semantic HTML** - The grid system works with any HTML elements
-2. **Start with col-narrow for text** - Optimal reading width improves readability
+2. **Start with col-content for text** - Optimal reading width improves readability
 3. **Combine with Tailwind utilities** - Use `p-gap` with background colors on breakout sections
 4. **Test responsively** - The gaps scale automatically, but test your content at different viewports
 5. **Don't nest breakout grids deeply** - Use left/right aligned grids instead
@@ -753,15 +729,15 @@ The most effective way to debug layouts is using the built-in Grid Visualizer:
 
 #### Text Too Wide or Narrow
 
-**Problem**: Text in `col-narrow` doesn't look right at certain viewport sizes.
+**Problem**: Text in `col-content` doesn't look right at certain viewport sizes.
 
-**Solution**: Adjust the narrow column configuration:
+**Solution**: Adjust the content column configuration:
 
 ```js
 breakoutGrid({
-  narrowMin: '35rem',    // Smaller minimum for mobile
-  narrowMax: '45rem',    // Smaller maximum for tighter text
-  narrowBase: '48vw'     // Adjust viewport-based width
+  contentMin: '50rem',   // Smaller minimum for narrower content
+  contentMax: '60rem',   // Smaller maximum for tighter text
+  contentBase: '65vw'    // Adjust viewport-based width
 })
 ```
 
@@ -793,7 +769,7 @@ breakoutGrid({
 <!-- ✅ Correct nested grid usage -->
 <div class="col-feature grid-cols-feature-left">
   <img class="col-feature" src="image.jpg" />
-  <div class="col-narrow">Text content</div>
+  <div class="col-content">Text content</div>
 </div>
 ```
 

@@ -70,8 +70,8 @@ export default {
       // Optional: customize the defaults
       baseGap: '1.5rem',
       maxGap: '15rem',
-      narrowMin: '40rem',
-      narrowMax: '50rem',
+      contentMin: '53rem',
+      contentMax: '61rem',
     })
   ]
 }
@@ -123,7 +123,7 @@ export default {
 <article class="grid-cols-breakout">
   <h1 class="col-content">{{ entry.title }}</h1>
 
-  <div class="col-narrow">
+  <div class="col-content">
     {{ entry.body }}
   </div>
 

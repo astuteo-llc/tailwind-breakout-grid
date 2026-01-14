@@ -5,6 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2025-01-14
+
+### Breaking Changes
+
+- **Removed `narrow` column level** - Grid now has 5 levels instead of 6: `full → feature → popout → content → center`
+- **Removed classes:** `col-narrow`, `col-narrow-left`, `col-narrow-right`, `col-start-narrow`, `col-end-narrow`, `grid-cols-narrow-left`, `grid-cols-narrow-right`, `breakout-to-narrow`
+- **Renamed config options:** `narrowMin` → `contentMin`, `narrowMax` → `contentMax`, `narrowBase` → `contentBase`
+- **Removed config option:** `content` (the old fixed 4vw rail width)
+- **New default values:** `contentMin: '53rem'`, `contentMax: '61rem'`, `contentBase: '75vw'`
+
+### Migration Guide
+
+1. **Find and replace** in your codebase:
+   - `col-narrow` → `col-content`
+   - `col-narrow-left` → `col-content-left`
+   - `col-narrow-right` → `col-content-right`
+   - `col-start-narrow` → `col-start-content`
+   - `col-end-narrow` → `col-end-content`
+   - `grid-cols-narrow-left` → `grid-cols-content-left`
+   - `grid-cols-narrow-right` → `grid-cols-content-right`
+   - `breakout-to-narrow` → `breakout-to-content`
+
+2. **Update config** if customizing:
+   - `narrowMin` → `contentMin`
+   - `narrowMax` → `contentMax`
+   - `narrowBase` → `contentBase`
+   - Remove `content` if present
+
+3. **Backward compatibility:** `col-narrow` classes still work as aliases to `col-content`, but updating is recommended.
+
+### Added
+
+- **Pixel width readout** in visualizer - each column label now shows computed width in pixels
+- **Fluid content column** - `col-content` now uses CSS clamp() like the old narrow column for optimal responsive behavior
+
+### Changed
+
+- Content column is now the innermost column with fluid width (previously was a fixed 4vw rail)
+- Simplified grid template structure with fewer named lines
+- Updated visualizer to reflect 5-column structure
+
+## [2.2.0] - 2025-01-14
+
+### Improved
+
+- **Documentation** - Process for removal of narrow column documented
+
 ## [2.1.0] - 2025-01-11
 
 ### Added
@@ -128,6 +175,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic default column assignment for child elements
 - Debug mode for template generation logging
 
+[3.0.0]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v3.0.0
+[2.2.0]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v2.2.0
 [2.1.0]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v2.1.0
 [1.1.6]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.6
 [1.1.5]: https://github.com/astuteo-llc/tailwind-breakout-grid/releases/tag/v1.1.5

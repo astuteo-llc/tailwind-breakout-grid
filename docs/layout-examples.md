@@ -22,13 +22,13 @@ A full-featured article layout with hero images, pull quotes, image galleries, a
   </p>
 
   <!-- Body text -->
-  <p class="col-narrow">
+  <p class="col-content">
     Main body text at optimal reading width...
   </p>
 
-  <!-- Pull quote spanning from narrow to popout -->
-  <blockquote class="col-start-narrow col-end-popout bg-blue-50 p-gap border-l-4 border-blue-500">
-    <p class="text-2xl italic">"This quote spans from narrow-start to popout-end for visual impact."</p>
+  <!-- Pull quote spanning from content to popout -->
+  <blockquote class="col-start-content col-end-popout bg-blue-50 p-gap border-l-4 border-blue-500">
+    <p class="text-2xl italic">"This quote spans from content-start to popout-end for visual impact."</p>
   </blockquote>
 
   <!-- Image gallery -->
@@ -42,7 +42,7 @@ A full-featured article layout with hero images, pull quotes, image galleries, a
     <div class="col-feature">
       <img src="chart.jpg" class="w-full h-64 object-cover rounded" />
     </div>
-    <div class="col-narrow bg-gray-50 p-gap rounded">
+    <div class="col-content bg-gray-50 p-gap rounded">
       <h3 class="font-bold mb-2">Key Insights</h3>
       <ul class="space-y-2 text-sm">
         <li>Insight one</li>
@@ -77,7 +77,7 @@ A marketing page with asymmetric hero, feature grid, and testimonials.
     </div>
     <div class="col-content flex flex-col justify-center">
       <h1 class="text-4xl font-bold mb-4">Revolutionary Product</h1>
-      <p class="col-narrow text-lg mb-6">
+      <p class="col-content text-lg mb-6">
         Product description at optimal reading width within the content column.
       </p>
       <div class="flex gap-4">
@@ -125,14 +125,14 @@ A standard blog/article layout with optimal reading width.
 <article class="grid-cols-breakout">
   <h1 class="col-content text-4xl font-bold">Article Title</h1>
 
-  <p class="col-narrow">
-    Body paragraphs use the narrow column for optimal reading.
+  <p class="col-content">
+    Body paragraphs use the content column for optimal reading.
   </p>
 
   <img class="col-feature" src="header.jpg" alt="Header" />
 
-  <p class="col-narrow">
-    More readable content in the narrow column.
+  <p class="col-content">
+    More readable content in the content column.
   </p>
 
   <blockquote class="col-popout bg-blue-50 p-gap italic">
@@ -202,7 +202,7 @@ Using `breakout-to-*` modifiers for nested grids inside constrained containers. 
     <article class="grid-cols-breakout breakout-to-content">
       <h1 class="col-content">Article Title</h1>
 
-      <p class="col-narrow">
+      <p class="col-content">
         Body text at optimal reading width.
       </p>
 
@@ -242,7 +242,7 @@ A docs-style layout with navigation sidebar.
     </aside>
 
     <!-- Main content area -->
-    <main class="grid-cols-breakout breakout-to-narrow">
+    <main class="grid-cols-breakout breakout-to-content">
       <h1 id="intro">Introduction</h1>
       <p>Welcome to the documentation...</p>
 
@@ -331,8 +331,8 @@ A gallery layout with mixed image sizes.
     <img class="h-48 w-full object-cover rounded" src="img5.jpg" alt="" />
   </div>
 
-  <!-- Caption at narrow width -->
-  <p class="col-narrow text-gray-600 text-center italic">
+  <!-- Caption at content width -->
+  <p class="col-content text-gray-600 text-center italic">
     A collection of moments captured during the event.
   </p>
 </div>

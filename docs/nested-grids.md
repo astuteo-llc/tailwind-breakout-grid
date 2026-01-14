@@ -8,7 +8,6 @@ The `breakout-to-*` modifier classes solve this by collapsing the outer tracks, 
 
 | Class | Effect |
 |-------|--------|
-| `breakout-to-narrow` | Collapses all outer tracks. Content spans full container width. |
 | `breakout-to-content` | Keeps `--content` margins, collapses everything outside. |
 | `breakout-to-popout` | Keeps `--popout` and `--content` margins. |
 | `breakout-to-feature` | Keeps `--feature`, `--popout`, and `--content` margins. |
@@ -18,7 +17,7 @@ The `breakout-to-*` modifier classes solve this by collapsing the outer tracks, 
 The standard `grid-cols-breakout` creates a grid with tracks for each breakout level:
 
 ```
-[full] [feature] [popout] [content] [narrow] [content] [popout] [feature] [full]
+[full] [feature] [popout] [content] [center] [content] [popout] [feature] [full]
 ```
 
 When nested inside a constrained container, those outer tracks (especially `--full` which uses `minmax(var(--gap), 1fr)`) still try to claim space based on viewport calculations.
@@ -48,7 +47,7 @@ A two-column layout with a sidebar and a nested breakout grid:
       <div class="col-full bg-blue-100">
         Spans full width of the container (not viewport)
       </div>
-      <p class="col-narrow">
+      <p class="col-content">
         Reading content at optimal width
       </p>
     </div>
@@ -59,16 +58,16 @@ A two-column layout with a sidebar and a nested breakout grid:
 
 ### Full-Width Nested Content
 
-When you want a nested grid to have no margins at all:
+When you want a nested grid to fill its container with just content margins:
 
 ```html
 <div class="grid-cols-breakout">
   <section class="col-feature">
-    <div class="grid-cols-breakout breakout-to-narrow">
-      <!-- All content spans full width of the feature column -->
-      <h2>Section Title</h2>
-      <p>All text fills the container.</p>
-      <img src="image.jpg" class="col-full" alt="Also fills container" />
+    <div class="grid-cols-breakout breakout-to-content">
+      <!-- Content fills the feature column with content margins -->
+      <h2 class="col-content">Section Title</h2>
+      <p class="col-content">Text at reading width.</p>
+      <img src="image.jpg" class="col-full" alt="Fills to feature edges" />
     </div>
   </section>
 </div>
@@ -82,18 +81,14 @@ If you want to keep content margins but collapse the outer tracks:
 <div class="layout-wrapper">
   <div class="grid-cols-breakout breakout-to-content">
     <!-- col-full, col-feature, col-popout all resolve to container edges -->
-    <!-- col-content and col-narrow still have their normal margins -->
+    <!-- col-content still has its normal margins -->
 
     <div class="col-full bg-gray-100 p-8">
       Full width band
     </div>
 
     <p class="col-content">
-      Content with standard margins
-    </p>
-
-    <p class="col-narrow">
-      Narrow reading column centered within content
+      Content with standard margins at optimal reading width
     </p>
   </div>
 </div>
@@ -101,9 +96,7 @@ If you want to keep content margins but collapse the outer tracks:
 
 ## Choosing the Right Modifier
 
-- **`breakout-to-narrow`**: Use when the nested grid should fill 100% of its container with no margins. All `col-*` classes will span the full width.
-
-- **`breakout-to-content`**: Use when you want to remove the viewport-based outer tracks but keep the `--content` margins for consistent spacing.
+- **`breakout-to-content`**: Use when you want to remove the viewport-based outer tracks but keep the `--content` margins for optimal reading width.
 
 - **`breakout-to-popout`**: Use when you need slightly more breakout room than content but don't need the full feature/full widths.
 
@@ -117,11 +110,11 @@ Each modifier redefines `grid-template-columns` with a simplified template. For 
 .grid-cols-breakout.breakout-to-content {
   grid-template-columns:
     [full-start feature-start popout-start content-start]
-    var(--content)
-    [narrow-start center-start]
+    var(--content-half)
+    [center-start]
     minmax(0, 1fr)
-    [center-end narrow-end]
-    var(--content)
+    [center-end]
+    var(--content-half)
     [content-end popout-end feature-end full-end];
 }
 ```
@@ -129,7 +122,7 @@ Each modifier redefines `grid-template-columns` with a simplified template. For 
 Key points:
 - Outer grid line names are stacked at the edges (e.g., `full-start`, `feature-start`, etc. all at the same position)
 - The center column uses `minmax(0, 1fr)` to fill available space
-- Inner track variables (like `var(--content)`) are preserved where appropriate
+- Inner track variables (like `var(--content-half)`) are preserved where appropriate
 
 ## Common Patterns
 
@@ -150,7 +143,7 @@ Key points:
     <article class="grid-cols-breakout breakout-to-content">
       <h1 class="col-content">Article Title</h1>
 
-      <p class="col-narrow">
+      <p class="col-content">
         Body text at optimal reading width.
       </p>
 
@@ -175,9 +168,9 @@ Key points:
   <div class="col-feature grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-      <div class="grid-cols-breakout breakout-to-narrow">
+      <div class="grid-cols-breakout breakout-to-content">
         <img class="col-full" src="card-image.jpg" alt="" />
-        <div class="p-6">
+        <div class="col-content p-6">
           <h3>Card Title</h3>
           <p>Card description text.</p>
         </div>

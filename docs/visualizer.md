@@ -111,7 +111,7 @@ visualizer.showBreakoutPadding = true;
 When active, the visualizer displays a control panel with:
 
 - **Viewport Width**: Current browser width in pixels
-- **Current Values**: Live CSS variable measurements (--gap, --narrow, etc.)
+- **Current Values**: Live CSS variable measurements (--gap, --content, etc.)
 - **Show Options**:
   - **Labels**: Toggle column name labels (e.g., "Full", "Feature", "Content")
   - **Class Names**: Toggle CSS class names (e.g., `.col-full`, `.col-feature`)

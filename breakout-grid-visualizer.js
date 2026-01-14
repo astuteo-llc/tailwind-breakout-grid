@@ -65,14 +65,23 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       resizeStartX: 0,
       resizeStartValue: 0,
 
+      // Computed column widths in pixels (pre-initialized for reactivity)
+      columnWidths: {
+        full: 0,
+        'full-limit': 0,
+        feature: 0,
+        popout: 0,
+        content: 0,
+        center: 0
+      },
+
       // Grid areas configuration (matches plugin)
       gridAreas: [
         { name: 'full', label: 'Full', className: '.col-full', color: 'rgba(239, 68, 68, 0.25)', borderColor: 'rgb(239, 68, 68)' },
         { name: 'full-limit', label: 'Full Limit', className: '.col-full-limit', color: 'rgba(220, 38, 38, 0.25)', borderColor: 'rgb(220, 38, 38)' },
         { name: 'feature', label: 'Feature', className: '.col-feature', color: 'rgba(234, 179, 8, 0.25)', borderColor: 'rgb(234, 179, 8)' },
         { name: 'popout', label: 'Popout', className: '.col-popout', color: 'rgba(34, 197, 94, 0.25)', borderColor: 'rgb(34, 197, 94)' },
-        { name: 'content', label: 'Content', className: '.col-content', color: 'rgba(59, 130, 246, 0.25)', borderColor: 'rgb(59, 130, 246)' },
-        { name: 'narrow', label: 'Narrow', className: '.col-narrow', color: 'rgba(168, 85, 247, 0.25)', borderColor: 'rgb(168, 85, 247)' },
+        { name: 'content', label: 'Content', className: '.col-content', color: 'rgba(168, 85, 247, 0.25)', borderColor: 'rgb(168, 85, 247)' },
       ],
 
       // Full plugin config structure with defaults and CSS var mappings
@@ -80,16 +89,15 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         // Base measurements
         baseGap: { value: '1rem', desc: 'Minimum gap between columns. Use rem.', cssVar: '--config-base-gap', liveVar: '--base-gap' },
         maxGap: { value: '15rem', desc: 'Maximum gap cap for ultra-wide. Use rem.', cssVar: '--config-max-gap', liveVar: '--max-gap' },
-        narrowMin: { value: '40rem', desc: 'Min width for readable text. Use rem.', cssVar: '--config-narrow-min', liveVar: '--narrow-min' },
-        narrowMax: { value: '50rem', desc: 'Max before text gets hard to read. Use rem.', cssVar: '--config-narrow-max', liveVar: '--narrow-max' },
-        narrowBase: { value: '52vw', desc: 'Preferred width for narrow sections. Use vw.', cssVar: '--config-narrow-base', liveVar: '--narrow-base' },
+        contentMin: { value: '53rem', desc: 'Min width for content column (~848px). Use rem.', cssVar: '--config-content-min', liveVar: '--content-min' },
+        contentMax: { value: '61rem', desc: 'Max width for content column (~976px). Use rem.', cssVar: '--config-content-max', liveVar: '--content-max' },
+        contentBase: { value: '75vw', desc: 'Preferred width for content (fluid). Use vw.', cssVar: '--config-content-base', liveVar: '--content-base' },
         // Track widths
-        content: { value: '4vw', desc: 'Content rail width. Min 1 (grid needs it).', cssVar: '--config-content', liveVar: null },
-        popoutWidth: { value: '4rem', desc: 'Popout extends beyond content. Use rem.', cssVar: '--config-popout', liveVar: null },
+        popoutWidth: { value: '5rem', desc: 'Popout extends beyond content. Use rem.', cssVar: '--config-popout', liveVar: null },
         featureWidth: { value: '12vw', desc: 'Feature extends for images/heroes. Use vw.', cssVar: '--config-feature', liveVar: null },
         fullLimit: { value: '115rem', desc: 'Max width for col-full-limit. Use rem.', cssVar: '--config-full-limit', liveVar: '--full-limit' },
         // Default column
-        defaultCol: { value: 'content', desc: 'Default column when no col-* class', type: 'select', options: ['narrow', 'content', 'popout', 'feature', 'full'], cssVar: '--config-default-col' },
+        defaultCol: { value: 'content', desc: 'Default column when no col-* class', type: 'select', options: ['content', 'popout', 'feature', 'full'], cssVar: '--config-default-col' },
       },
       gapScaleOptions: {
         default: { value: '4vw', desc: 'Mobile/default gap scaling. Use vw.' },
@@ -118,9 +126,10 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           }
         });
 
-        // Update viewport width on resize
+        // Update viewport width and column widths on resize
         window.addEventListener('resize', () => {
           this.viewportWidth = window.innerWidth;
+          this.updateColumnWidths();
         });
 
         console.log('🎨 Breakout Grid Visualizer loaded. Press Ctrl/Cmd + G to toggle.');
@@ -130,6 +139,18 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       toggle() {
         this.isVisible = !this.isVisible;
         localStorage.setItem('breakoutGridVisualizerVisible', this.isVisible);
+      },
+
+      // Update column widths by querying DOM elements
+      updateColumnWidths() {
+        this.$nextTick(() => {
+          this.gridAreas.forEach(area => {
+            const el = document.querySelector(`.breakout-visualizer-grid .col-${area.name}`);
+            if (el) {
+              this.columnWidths[area.name] = Math.round(el.getBoundingClientRect().width);
+            }
+          });
+        });
       },
 
       // Get computed CSS variable value
@@ -212,20 +233,19 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   /* Base measurements */
   --base-gap: ${c.baseGap};
   --max-gap: ${c.maxGap};
-  --narrow-min: ${c.narrowMin};
-  --narrow-max: ${c.narrowMax};
-  --narrow-base: ${c.narrowBase};
+  --content-min: ${c.contentMin};
+  --content-max: ${c.contentMax};
+  --content-base: ${c.contentBase};
 
   /* Computed values */
   --gap: clamp(var(--base-gap), ${c.gapScale?.default || '4vw'}, var(--max-gap));
-  --narrow: min(clamp(var(--narrow-min), var(--narrow-base), var(--narrow-max)), 100% - var(--gap) * 2);
-  --narrow-half: calc(var(--narrow) / 2);
+  --content: min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2);
+  --content-half: calc(var(--content) / 2);
 
   /* Track widths */
   --full: minmax(var(--gap), 1fr);
   --feature: minmax(0, ${c.featureWidth});
   --popout: minmax(0, ${c.popoutWidth});
-  --content: minmax(0, ${c.content});
   --full-limit: ${c.fullLimit};
 
   /* Padding/margin utilities */
@@ -243,10 +263,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     [full-start] var(--full)
     [feature-start] var(--feature)
     [popout-start] var(--popout)
-    [content-start] var(--content)
-    [narrow-start center-start] minmax(0, var(--narrow-half))
-    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
-    var(--content) [content-end]
+    [content-start] var(--content-half) [center-start center-end] var(--content-half) [content-end]
     var(--popout) [popout-end]
     var(--feature) [feature-end]
     var(--full) [full-end];
@@ -261,40 +278,31 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .grid-cols-feature-left {
   display: grid;
   grid-template-columns:
-    [full-start feature-start] var(--feature)
+    [full-start] var(--full)
+    [feature-start] var(--feature)
     [popout-start] var(--popout)
-    [content-start] var(--content)
-    [narrow-start center-start] minmax(0, var(--narrow-half))
-    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
-    var(--content) [content-end]
+    [content-start] var(--content-inset) [content-end]
     var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--full) [full-end];
+    var(--feature) [feature-end full-end];
 }
 
 .grid-cols-popout-left {
   display: grid;
   grid-template-columns:
-    [full-start feature-start popout-start] var(--popout)
-    [content-start] var(--content)
-    [narrow-start center-start] minmax(0, var(--narrow-half))
-    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
-    var(--content) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--full) [full-end];
+    [full-start] var(--full)
+    [feature-start] var(--feature)
+    [popout-start] var(--popout)
+    [content-start] var(--content-inset) [content-end]
+    var(--popout) [popout-end full-end];
 }
 
 .grid-cols-content-left {
   display: grid;
   grid-template-columns:
-    [full-start feature-start popout-start content-start] var(--content)
-    [narrow-start center-start] minmax(0, var(--narrow-half))
-    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
-    var(--content) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--full) [full-end];
+    [full-start] var(--full)
+    [feature-start] var(--feature)
+    [popout-start] var(--popout)
+    [content-start] var(--content-inset) [content-end full-end];
 }
 
 /* ========================================
@@ -303,59 +311,46 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .grid-cols-feature-right {
   display: grid;
   grid-template-columns:
-    [full-start] var(--full)
-    [feature-start] var(--feature)
+    [full-start feature-start] var(--feature)
     [popout-start] var(--popout)
-    [content-start] var(--content)
-    [narrow-start center-start] minmax(0, var(--narrow-half))
-    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
-    var(--content) [content-end]
+    [content-start] var(--content-inset) [content-end]
     var(--popout) [popout-end]
-    var(--feature) [feature-end full-end];
+    var(--feature) [feature-end]
+    var(--full) [full-end];
 }
 
 .grid-cols-popout-right {
   display: grid;
   grid-template-columns:
-    [full-start] var(--full)
-    [feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content)
-    [narrow-start center-start] minmax(0, var(--narrow-half))
-    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
-    var(--content) [content-end]
-    var(--popout) [popout-end feature-end full-end];
+    [full-start popout-start] var(--popout)
+    [content-start] var(--content-inset) [content-end]
+    var(--popout) [popout-end]
+    var(--feature) [feature-end]
+    var(--full) [full-end];
 }
 
 .grid-cols-content-right {
   display: grid;
   grid-template-columns:
-    [full-start] var(--full)
-    [feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content)
-    [narrow-start center-start] minmax(0, var(--narrow-half))
-    [center-end] minmax(0, var(--narrow-half)) [narrow-end]
-    var(--content) [content-end popout-end feature-end full-end];
+    [full-start content-start] var(--content-inset) [content-end]
+    var(--popout) [popout-end]
+    var(--feature) [feature-end]
+    var(--full) [full-end];
 }
 
 /* ========================================
    Breakout Modifiers (for nested grids)
    ======================================== */
-.grid-cols-breakout.breakout-to-narrow {
-  grid-template-columns: [full-start feature-start popout-start content-start narrow-start center-start] minmax(0, 1fr) [center-end narrow-end content-end popout-end feature-end full-end];
-}
-
 .grid-cols-breakout.breakout-to-content {
-  grid-template-columns: [full-start feature-start popout-start content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end popout-end feature-end full-end];
+  grid-template-columns: [full-start feature-start popout-start content-start center-start] minmax(0, 1fr) [center-end content-end popout-end feature-end full-end];
 }
 
 .grid-cols-breakout.breakout-to-popout {
-  grid-template-columns: [full-start feature-start popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end feature-end full-end];
+  grid-template-columns: [full-start feature-start popout-start] var(--popout) [content-start center-start] minmax(0, 1fr) [center-end content-end] var(--popout) [popout-end feature-end full-end];
 }
 
 .grid-cols-breakout.breakout-to-feature {
-  grid-template-columns: [full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start] var(--content) [narrow-start center-start] minmax(0, 1fr) [center-end narrow-end] var(--content) [content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end];
+  grid-template-columns: [full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start center-start] minmax(0, 1fr) [center-end content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end];
 }
 
 /* None - disables grid for sidebar layouts; nested content blocks/components with col-* classes are ignored */
@@ -370,8 +365,10 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .col-feature { grid-column: feature; }
 .col-popout { grid-column: popout; }
 .col-content { grid-column: content; }
-.col-narrow { grid-column: narrow; }
 .col-center { grid-column: center; }
+
+/* Backward compatibility: col-narrow maps to content */
+.col-narrow { grid-column: content; }
 
 /* ========================================
    Column Utilities - Start/End
@@ -380,15 +377,19 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .col-start-feature { grid-column-start: feature-start; }
 .col-start-popout { grid-column-start: popout-start; }
 .col-start-content { grid-column-start: content-start; }
-.col-start-narrow { grid-column-start: narrow-start; }
 .col-start-center { grid-column-start: center-start; }
+
+/* Backward compatibility */
+.col-start-narrow { grid-column-start: content-start; }
 
 .col-end-full { grid-column-end: full-end; }
 .col-end-feature { grid-column-end: feature-end; }
 .col-end-popout { grid-column-end: popout-end; }
 .col-end-content { grid-column-end: content-end; }
-.col-end-narrow { grid-column-end: narrow-end; }
 .col-end-center { grid-column-end: center-end; }
+
+/* Backward compatibility */
+.col-end-narrow { grid-column-end: content-end; }
 
 /* ========================================
    Column Utilities - Left/Right Spans
@@ -399,10 +400,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .col-popout-right { grid-column: popout-start / full-end; }
 .col-content-left { grid-column: full-start / content-end; }
 .col-content-right { grid-column: content-start / full-end; }
-.col-narrow-left { grid-column: full-start / narrow-end; }
-.col-narrow-right { grid-column: narrow-start / full-end; }
 .col-center-left { grid-column: full-start / center-end; }
 .col-center-right { grid-column: center-start / full-end; }
+
+/* Backward compatibility */
+.col-narrow-left { grid-column: full-start / content-end; }
+.col-narrow-right { grid-column: content-start / full-end; }
 
 /* ========================================
    Column Utilities - Advanced Spans
@@ -410,17 +413,14 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 /* Feature to other columns */
 .col-feature-to-popout { grid-column: feature-start / popout-end; }
 .col-feature-to-content { grid-column: feature-start / content-end; }
-.col-feature-to-narrow { grid-column: feature-start / narrow-end; }
 .col-feature-to-center { grid-column: feature-start / center-end; }
 
 /* Popout to other columns */
 .col-popout-to-content { grid-column: popout-start / content-end; }
-.col-popout-to-narrow { grid-column: popout-start / narrow-end; }
 .col-popout-to-center { grid-column: popout-start / center-end; }
 .col-popout-to-feature { grid-column: popout-start / feature-end; }
 
 /* Content to other columns */
-.col-content-to-narrow { grid-column: content-start / narrow-end; }
 .col-content-to-center { grid-column: content-start / center-end; }
 .col-content-to-popout { grid-column: content-start / popout-end; }
 .col-content-to-feature { grid-column: content-start / feature-end; }
@@ -703,14 +703,13 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           pxPerUnit = 1;
         }
 
-        // For right-edge handles (narrowMax, narrowBase), dragging right increases value
-        // For left-edge handles (narrowMin, others), dragging left increases value (inverted)
-        const isRightHandle = col === 'narrowMax' || col === 'narrowBase';
+        // For right-edge handles (contentMax, contentBase), dragging right increases value
+        // For left-edge handles (contentMin, others), dragging left increases value (inverted)
+        const isRightHandle = col === 'contentMax' || col === 'contentBase';
         const delta = isRightHandle ? (deltaX / pxPerUnit) : (-deltaX / pxPerUnit);
         let newValue = this.resizeStartValue + delta;
 
         // Enforce minimums
-        if (col === 'content' && newValue < 1) newValue = 1;
         if (newValue < 0) newValue = 0;
 
         // Round to 1 decimal
@@ -728,9 +727,8 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         const map = {
           'full-limit': 'fullLimit',
           'feature': 'featureWidth',
-          'popout': 'popoutWidth',
-          'content': 'content'
-          // narrow has its own integrated handles for min/max
+          'popout': 'popoutWidth'
+          // content has its own integrated handles for min/max/base
         };
         return map[colName] || null;
       },
@@ -916,7 +914,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           </div>
 
           <!-- Grid Overlay (hidden in Advanced mode) -->
-          <div x-show="!showAdvanced" class="grid-cols-breakout" style="height: 100%; position: relative;">
+          <div x-show="!showAdvanced" x-init="$watch('isVisible', v => v && setTimeout(() => updateColumnWidths(), 50)); setTimeout(() => updateColumnWidths(), 100)" class="grid-cols-breakout breakout-visualizer-grid" style="height: 100%; position: relative;">
             <template x-for="area in gridAreas" :key="area.name">
               <div :class="'col-' + area.name"
                    @click="selectArea(area.name)"
@@ -964,6 +962,18 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                     opacity: '0.9',
                     fontFamily: 'monospace'
                   }" x-text="area.className"></div>
+                  <div x-show="columnWidths[area.name] > 0"
+                       :style="{
+                    fontSize: '0.625rem',
+                    fontWeight: '600',
+                    textTransform: 'none',
+                    marginTop: '0.25rem',
+                    opacity: '0.75',
+                    fontFamily: 'monospace',
+                    backgroundColor: 'rgba(0,0,0,0.2)',
+                    padding: '0.125rem 0.375rem',
+                    borderRadius: '0.25rem'
+                  }" x-text="columnWidths[area.name] + 'px'"></div>
                 </div>
 
                 <!-- Lorem Ipsum Content (behind label) -->
@@ -1068,12 +1078,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       fontWeight: '700',
                       whiteSpace: 'nowrap',
                       boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    }" x-text="area.name === 'narrow' ? '← min' : '↔'"></div>
+                    }" x-text="area.name === 'content' ? '← min' : '↔'"></div>
                   </div>
                 </div>
 
-                <!-- Narrow Min/Base/Max Visual Guides with integrated handles (edit mode only) -->
-                <template x-if="editMode && area.name === 'narrow'">
+                <!-- Content Min/Base/Max Visual Guides with integrated handles (edit mode only) -->
+                <template x-if="editMode && area.name === 'content'">
                   <div style="position: absolute; inset: 0; pointer-events: none; z-index: 50; overflow: visible;">
                     <!-- Max boundary (outer, dotted) with drag handle - can overflow to show full width -->
                     <div :style="{
@@ -1082,17 +1092,17 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       bottom: '0',
                       left: '50%',
                       transform: 'translateX(-50%)',
-                      width: editValues.narrowMax || configOptions.narrowMax.value,
+                      width: editValues.contentMax || configOptions.contentMax.value,
                       border: '3px dotted rgba(139, 92, 246, 0.9)',
                       boxSizing: 'border-box',
                       background: 'rgba(139, 92, 246, 0.05)'
                     }">
                       <div style="position: absolute; top: 8px; right: 8px; background: rgba(139, 92, 246, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">
-                        max: <span x-text="editValues.narrowMax || configOptions.narrowMax.value"></span>
+                        max: <span x-text="editValues.contentMax || configOptions.contentMax.value"></span>
                       </div>
                       <!-- Max drag handle on right edge, at top - show on hover or when selected -->
-                      <div x-show="hoveredArea === 'narrow' || selectedArea === 'narrow'"
-                           @mousedown.stop="startColumnResize($event, 'narrowMax')"
+                      <div x-show="hoveredArea === 'content' || selectedArea === 'content'"
+                           @mousedown.stop="startColumnResize($event, 'contentMax')"
                            style="position: absolute; right: -8px; top: 8px; width: 16px; height: 60px; cursor: ew-resize; pointer-events: auto; display: flex; align-items: center; justify-content: center;">
                         <div style="width: 8px; height: 100%; background: rgb(139, 92, 246); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
                       </div>
@@ -1104,18 +1114,18 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       bottom: '25%',
                       left: '50%',
                       transform: 'translateX(-50%)',
-                      width: editValues.narrowBase || configOptions.narrowBase.value,
+                      width: editValues.contentBase || configOptions.contentBase.value,
                       border: '3px solid rgba(236, 72, 153, 1)',
                       background: 'rgba(236, 72, 153, 0.5)',
                       boxSizing: 'border-box',
                       borderRadius: '4px'
                     }">
                       <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(236, 72, 153, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;">
-                        base: <span x-text="editValues.narrowBase || configOptions.narrowBase.value"></span>
+                        base: <span x-text="editValues.contentBase || configOptions.contentBase.value"></span>
                       </div>
                       <!-- Base drag handle on right edge - show on hover or when selected -->
-                      <div x-show="hoveredArea === 'narrow' || selectedArea === 'narrow'"
-                           @mousedown.stop="startColumnResize($event, 'narrowBase')"
+                      <div x-show="hoveredArea === 'content' || selectedArea === 'content'"
+                           @mousedown.stop="startColumnResize($event, 'contentBase')"
                            style="position: absolute; right: -8px; top: 50%; transform: translateY(-50%); width: 16px; height: 40px; cursor: ew-resize; pointer-events: auto; display: flex; align-items: center; justify-content: center;">
                         <div style="width: 8px; height: 100%; background: rgb(236, 72, 153); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
                       </div>
@@ -1127,17 +1137,17 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                       bottom: '0',
                       left: '50%',
                       transform: 'translateX(-50%)',
-                      width: editValues.narrowMin || configOptions.narrowMin.value,
+                      width: editValues.contentMin || configOptions.contentMin.value,
                       border: '3px dashed rgba(168, 85, 247, 0.9)',
                       background: 'rgba(168, 85, 247, 0.15)',
                       boxSizing: 'border-box'
                     }">
                       <div style="position: absolute; top: 8px; left: 8px; background: rgba(168, 85, 247, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">
-                        min: <span x-text="editValues.narrowMin || configOptions.narrowMin.value"></span>
+                        min: <span x-text="editValues.contentMin || configOptions.contentMin.value"></span>
                       </div>
                       <!-- Min drag handle on left edge, at top - show on hover or when selected -->
-                      <div x-show="hoveredArea === 'narrow' || selectedArea === 'narrow'"
-                           @mousedown.stop="startColumnResize($event, 'narrowMin')"
+                      <div x-show="hoveredArea === 'content' || selectedArea === 'content'"
+                           @mousedown.stop="startColumnResize($event, 'contentMin')"
                            style="position: absolute; left: -8px; top: 8px; width: 16px; height: 60px; cursor: ew-resize; pointer-events: auto; display: flex; align-items: center; justify-content: center;">
                         <div style="width: 8px; height: 100%; background: rgb(168, 85, 247); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
                       </div>
@@ -1297,15 +1307,15 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             <div style="max-height: calc(85vh - 40px); overflow-y: auto;">
               <!-- Workflow tip -->
               <div style="background: #e8f4f8; padding: 8px 12px; font-size: 10px; color: #1a1a2e; line-height: 1.4; border-bottom: 1px solid #e5e5e5;">
-                Start with <strong>narrow</strong>, then build outward: content → popout → feature → full
+                Start with <strong>content</strong>, then build outward: popout → feature → full
               </div>
 
-              <!-- Narrow Section -->
+              <!-- Content Section -->
               <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-                <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Narrow (Text Width)</div>
-                <template x-for="key in ['narrowMin', 'narrowBase', 'narrowMax']" :key="'ed_'+key">
+                <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Content (Text Width)</div>
+                <template x-for="key in ['contentMin', 'contentBase', 'contentMax']" :key="'ed_'+key">
                   <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-                    <span style="font-size: 11px; color: #374151;" x-text="key.replace('narrow', '').toLowerCase()"></span>
+                    <span style="font-size: 11px; color: #374151;" x-text="key.replace('content', '').toLowerCase()"></span>
                     <div style="display: flex; align-items: center; gap: 4px;">
                       <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
                              style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
@@ -1318,7 +1328,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <!-- Track Widths Section -->
               <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
                 <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Track Widths</div>
-                <template x-for="key in ['content', 'popoutWidth', 'featureWidth', 'fullLimit']" :key="'ed_'+key">
+                <template x-for="key in ['popoutWidth', 'featureWidth', 'fullLimit']" :key="'ed_'+key">
                   <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
                     <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '')"></span>
                     <div style="display: flex; align-items: center; gap: 4px;">
@@ -1401,12 +1411,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                   <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.popoutWidth || configOptions.popoutWidth.value"></div>
                 </div>
                 <!-- Content -->
-                <div style="background: rgba(59, 130, 246, 0.2); padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; flex: 1; min-width: 80px;">
-                  <div style="color: #1d4ed8; font-weight: 700;">content</div>
-                  <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.content || configOptions.content.value"></div>
-                  <div style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: rgba(168, 85, 247, 0.3); border-radius: 0.125rem; color: #7c3aed; font-size: 0.5rem;">
-                    narrow <span x-text="'(' + (editValues.narrowMin || configOptions.narrowMin.value) + ' - ' + (editValues.narrowMax || configOptions.narrowMax.value) + ')'"></span>
-                  </div>
+                <div style="background: rgba(168, 85, 247, 0.2); padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; flex: 1; min-width: 80px;">
+                  <div style="color: #7c3aed; font-weight: 700;">content</div>
+                  <div style="color: #9ca3af; font-size: 0.5rem;" x-text="'(' + (editValues.contentMin || configOptions.contentMin.value) + ' - ' + (editValues.contentMax || configOptions.contentMax.value) + ')'"></div>
                 </div>
                 <!-- Popout right -->
                 <div style="background: rgba(34, 197, 94, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed #e5e7eb; min-width: 40px;">
@@ -1429,8 +1436,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                 <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(239, 68, 68, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-full</div>
                 <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(234, 179, 8, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-feature</div>
                 <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(34, 197, 94, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-popout</div>
-                <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(59, 130, 246, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-content</div>
-                <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(168, 85, 247, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-narrow</div>
+                <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(168, 85, 247, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-content</div>
               </div>
               <!-- Padding explanation -->
               <div style="margin-top: 1rem; padding: 0.75rem; background: #f9fafb; border-radius: 0.25rem; font-size: 0.5625rem; color: #4b5563;">

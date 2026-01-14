@@ -19,7 +19,7 @@ If your project already uses traditional Tailwind max-width containers (like `ma
 <!-- ✅ Children can break out to different widths -->
 <div class="grid-cols-breakout">
   <h1 class="col-content">Title</h1>
-  <p class="col-narrow">Optimal reading width</p>
+  <p class="col-content">Optimal reading width</p>
   <img class="col-feature" src="wide.jpg" />  <!-- Breaks out! -->
 </div>
 ```
@@ -43,7 +43,7 @@ If your project already uses traditional Tailwind max-width containers (like `ma
 ```html
 <article class="grid-cols-breakout">
   <h1 class="col-content">Article Title</h1>
-  <p class="col-narrow">Lorem ipsum dolor sit amet...</p>
+  <p class="col-content">Lorem ipsum dolor sit amet...</p>
   <img class="col-feature" src="hero.jpg" alt="Hero" />
 </article>
 ```
@@ -63,7 +63,7 @@ Use traditional containers where you don't need breakout behavior, and breakout 
   <!-- Breakout grid for complex layout -->
   <article class="grid-cols-breakout py-12">
     <h2 class="col-content">Complex Article</h2>
-    <p class="col-narrow">Body text with optimal reading width</p>
+    <p class="col-content">Body text with optimal reading width</p>
     <img class="col-feature" src="wide.jpg" />
     <div class="col-full bg-gray-100 p-gap">
       Full-width callout section
@@ -93,7 +93,7 @@ Then use `col-full-limit` for sections that should respect this maximum:
 ```html
 <div class="grid-cols-breakout">
   <!-- Normal breakout content -->
-  <p class="col-narrow">Reading text</p>
+  <p class="col-content">Reading text</p>
 
   <!-- Full width but with max-width constraint -->
   <div class="col-full-limit bg-gray-100 p-gap">
@@ -116,7 +116,7 @@ For gradual migration, you can use breakout grids inside traditional containers 
   <!-- Break out of the container for this section -->
   <article class="-mx-4 md:-mx-8 lg:-mx-12 grid-cols-breakout">
     <!-- Now using negative margins to escape the container padding -->
-    <p class="col-narrow">Body text</p>
+    <p class="col-content">Body text</p>
     <img class="col-feature" src="wide.jpg" />
   </article>
 
@@ -133,9 +133,9 @@ Here's how breakout grid columns map to common Tailwind max-width utilities:
 
 | Tailwind Utility | Approx. Width | Breakout Grid Equivalent | Notes |
 |------------------|---------------|--------------------------|-------|
-| `max-w-prose` | ~65ch (520px) | `col-narrow` | Optimal reading width |
-| `max-w-2xl` | 42rem (672px) | `col-narrow` + custom config | Adjust `narrowMax` |
-| `max-w-4xl` | 56rem (896px) | `col-content` | Standard content width |
+| `max-w-prose` | ~65ch (520px) | `col-content` + custom config | Adjust contentMin/Max for narrower |
+| `max-w-3xl` | 48rem (768px) | `col-content` | Close to default content min |
+| `max-w-4xl` | 56rem (896px) | `col-content` | Within default content range |
 | `max-w-6xl` | 72rem (1152px) | `col-popout` | Slightly wider |
 | `max-w-7xl` | 80rem (1280px) | `col-feature` or `col-full-limit` | Wide sections |
 | `max-w-full` | 100% | `col-full` | Edge-to-edge |
@@ -148,8 +148,7 @@ When converting an existing page:
 2. **Remove wrapping containers** (`max-w-*`, `container`) from those sections
 3. **Add `grid-cols-breakout`** to the parent
 4. **Classify children** with appropriate `col-*` classes:
-   - Long text → `col-narrow`
-   - Headlines, short content → `col-content`
+   - Body text, headlines → `col-content`
    - Images, callouts → `col-popout` or `col-feature`
    - Full-width bands → `col-full`
 5. **Test responsive behavior** at different viewport sizes
@@ -248,9 +247,9 @@ This approach lets you:
 ```html
 <article class="grid-cols-breakout py-12 gap-y-4">
   <h1 class="col-content text-4xl font-bold">Article Title</h1>
-  <p class="col-narrow text-lg">Lorem ipsum...</p>
+  <p class="col-content text-lg">Lorem ipsum...</p>
   <img class="col-feature" src="hero.jpg" />
-  <p class="col-narrow text-lg">More content...</p>
+  <p class="col-content text-lg">More content...</p>
   <blockquote class="col-popout border-l-4 pl-4 italic bg-gray-50 p-gap">
     Quote
   </blockquote>
@@ -258,7 +257,7 @@ This approach lets you:
 ```
 
 **Benefits of the conversion:**
-- Text is optimally readable at `col-narrow` (~50rem)
+- Text is optimally readable at `col-content` (53-61rem fluid)
 - Hero image can break out wider for impact
 - Blockquote visually distinct with `col-popout`
 - More design flexibility without changing HTML structure

@@ -26,8 +26,8 @@ export default {
   plugins: [
     breakoutGrid({
       // Optional configuration
-      narrowMin: '40rem',
-      narrowMax: '50rem',
+      contentMin: '53rem',
+      contentMax: '61rem',
       defaultCol: 'content',
     })
   ]
@@ -171,7 +171,7 @@ For easier access to the visualizer during development, add a visible toggle but
   <article class="py-12">
     <h1 class="col-content text-4xl font-bold mb-4">{{ entry.title }}</h1>
 
-    <div class="col-narrow text-gray-600 mb-8">
+    <div class="col-content text-gray-600 mb-8">
       <time datetime="{{ entry.postDate|date('c') }}">
         {{ entry.postDate|date('F j, Y') }}
       </time>
@@ -181,7 +181,7 @@ For easier access to the visualizer during development, add a visible toggle but
       <img class="col-feature mb-8" src="{{ entry.heroImage.one().url }}" alt="{{ entry.heroImage.one().title }}">
     {% endif %}
 
-    <div class="col-narrow prose prose-lg">
+    <div class="col-content prose prose-lg">
       {{ entry.body }}
     </div>
   </article>
@@ -203,7 +203,7 @@ For entries with Matrix or CKEditor fields containing various block types:
     {% for block in entry.contentBlocks.all() %}
 
       {% if block.type == 'text' %}
-        <div class="col-narrow prose prose-lg mb-8">
+        <div class="col-content prose prose-lg mb-8">
           {{ block.text }}
         </div>
 
@@ -255,7 +255,6 @@ Use Twig to dynamically set column classes based on CMS fields:
 ```twig
 {# Allow editors to choose image width in the CMS #}
 {% set widthClass = {
-  'narrow': 'col-narrow',
   'content': 'col-content',
   'popout': 'col-popout',
   'feature': 'col-feature',

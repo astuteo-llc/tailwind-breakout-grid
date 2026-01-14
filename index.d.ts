@@ -17,28 +17,22 @@ export interface BreakoutGridConfig {
   maxGap?: string;
 
   /**
-   * Minimum width for narrow reading columns
-   * @default '40rem'
+   * Minimum width for content column (~848px)
+   * @default '53rem'
    */
-  narrowMin?: string;
+  contentMin?: string;
 
   /**
-   * Maximum width for narrow reading columns
-   * @default '50rem'
+   * Maximum width for content column (~976px)
+   * @default '61rem'
    */
-  narrowMax?: string;
+  contentMax?: string;
 
   /**
-   * Preferred/default width for narrow columns (viewport-based)
-   * @default '52vw'
+   * Preferred width for content column (fluid)
+   * @default '75vw'
    */
-  narrowBase?: string;
-
-  /**
-   * Width for standard content sections
-   * @default '4vw'
-   */
-  content?: string;
+  contentBase?: string;
 
   /**
    * How far popout sections extend beyond content
@@ -56,7 +50,7 @@ export interface BreakoutGridConfig {
    * Default column for elements without a col-* class
    * @default 'content'
    */
-  defaultCol?: 'narrow' | 'content' | 'popout' | 'feature' | 'full';
+  defaultCol?: 'content' | 'popout' | 'feature' | 'full';
 
   /**
    * Maximum width for col-full-limit sections
@@ -124,7 +118,7 @@ export interface BreakoutGridConfig {
  *   plugins: [
  *     breakoutGrid({
  *       baseGap: '1.5rem',
- *       narrowMax: '50rem'
+ *       contentMax: '50rem'
  *     })
  *   ]
  * }
@@ -134,7 +128,7 @@ export interface BreakoutGridConfig {
  * ```html
  * <!-- HTML usage -->
  * <div class="grid-cols-breakout">
- *   <p class="col-narrow">Readable text width</p>
+ *   <p class="col-content">Readable text width</p>
  *   <img class="col-feature" src="wide.jpg" />
  *   <div class="col-full bg-gray-100">Full width section</div>
  * </div>
