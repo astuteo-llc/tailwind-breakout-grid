@@ -36,7 +36,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     // max is popoutWidth
   };
   function generateCSSExport(c) {
-    var _a;
+    var _a, _b, _c, _d, _e;
+    const breakoutMin = c.breakoutMin || "1rem";
+    const breakoutScale = c.breakoutScale || "5vw";
     return `/**
  * Breakout Grid - Standalone CSS
  * Generated from Tailwind Breakout Grid Plugin
@@ -59,7 +61,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
   /* Computed values */
   --gap: clamp(var(--base-gap), ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"}, var(--max-gap));
+  --computed-gap: max(var(--gap), calc((100vw - var(--content)) / 10));
   --content: min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2);
+  --content-inset: min(clamp(var(--content-min), var(--content-base), var(--content-max)), calc(100% - var(--gap)));
   --content-half: calc(var(--content) / 2);
 
   /* Track widths */
@@ -69,9 +73,22 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   --full-limit: ${c.fullLimit};
 
   /* Padding/margin utilities */
-  --breakout-padding: clamp(1rem, 5vw, ${c.popoutWidth});
-  --popout-to-content: clamp(1rem, 5vw, ${c.popoutWidth});
+  --breakout-padding: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth});
+  --popout-to-content: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth});
   --feature-to-content: calc(${c.featureWidth} + ${c.popoutWidth});
+}
+
+/* Responsive gap scaling */
+@media (min-width: 1024px) {
+  :root {
+    --gap: clamp(var(--base-gap), ${((_b = c.gapScale) == null ? void 0 : _b.lg) || ((_c = c.gapScale) == null ? void 0 : _c.default) || "5vw"}, var(--max-gap));
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --gap: clamp(var(--base-gap), ${((_d = c.gapScale) == null ? void 0 : _d.xl) || ((_e = c.gapScale) == null ? void 0 : _e.lg) || "6vw"}, var(--max-gap));
+  }
 }
 
 /* ========================================
@@ -91,6 +108,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
 /* Default column for direct children */
 .grid-cols-breakout > * { grid-column: ${c.defaultCol || "content"}; }
+
+/* Subgrid for nested alignment */
+.grid-cols-breakout-subgrid {
+  display: grid;
+  grid-template-columns: subgrid;
+}
 
 /* ========================================
    Grid Container - Left Aligned Variants
@@ -248,9 +271,11 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 /* Full limit */
 .col-full-limit {
   grid-column: full;
+  width: 100%;
   max-width: var(--full-limit);
   margin-left: auto;
   margin-right: auto;
+  box-sizing: border-box;
 }
 
 /* ========================================
@@ -276,17 +301,45 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .pb-gap { padding-bottom: var(--gap); }
 
 /* ========================================
+   Padding Utilities - Full Gap (computed)
+   ======================================== */
+.p-full-gap { padding: var(--computed-gap); }
+.px-full-gap { padding-left: var(--computed-gap); padding-right: var(--computed-gap); }
+.py-full-gap { padding-top: var(--computed-gap); padding-bottom: var(--computed-gap); }
+.pl-full-gap { padding-left: var(--computed-gap); }
+.pr-full-gap { padding-right: var(--computed-gap); }
+.pt-full-gap { padding-top: var(--computed-gap); }
+.pb-full-gap { padding-bottom: var(--computed-gap); }
+
+/* ========================================
+   Padding Utilities - Popout
+   ======================================== */
+.p-popout { padding: var(--popout); }
+.px-popout { padding-left: var(--popout); padding-right: var(--popout); }
+.py-popout { padding-top: var(--popout); padding-bottom: var(--popout); }
+.pl-popout { padding-left: var(--popout); }
+.pr-popout { padding-right: var(--popout); }
+.pt-popout { padding-top: var(--popout); }
+.pb-popout { padding-bottom: var(--popout); }
+
+/* ========================================
    Padding Utilities - Alignment
    ======================================== */
 .p-popout-to-content { padding: var(--popout-to-content); }
 .px-popout-to-content { padding-left: var(--popout-to-content); padding-right: var(--popout-to-content); }
-.pl-popout-to-content { padding-left: var(--popout-to-content); }
+.py-popout-to-content { padding-top: var(--popout-to-content); padding-bottom: var(--popout-to-content); }
+.pt-popout-to-content { padding-top: var(--popout-to-content); }
 .pr-popout-to-content { padding-right: var(--popout-to-content); }
+.pb-popout-to-content { padding-bottom: var(--popout-to-content); }
+.pl-popout-to-content { padding-left: var(--popout-to-content); }
 
 .p-feature-to-content { padding: var(--feature-to-content); }
 .px-feature-to-content { padding-left: var(--feature-to-content); padding-right: var(--feature-to-content); }
-.pl-feature-to-content { padding-left: var(--feature-to-content); }
+.py-feature-to-content { padding-top: var(--feature-to-content); padding-bottom: var(--feature-to-content); }
+.pt-feature-to-content { padding-top: var(--feature-to-content); }
 .pr-feature-to-content { padding-right: var(--feature-to-content); }
+.pb-feature-to-content { padding-bottom: var(--feature-to-content); }
+.pl-feature-to-content { padding-left: var(--feature-to-content); }
 
 /* ========================================
    Margin Utilities - Breakout
@@ -327,6 +380,46 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .-mr-gap { margin-right: calc(var(--gap) * -1); }
 .-mt-gap { margin-top: calc(var(--gap) * -1); }
 .-mb-gap { margin-bottom: calc(var(--gap) * -1); }
+
+/* ========================================
+   Margin Utilities - Full Gap (computed)
+   ======================================== */
+.m-full-gap { margin: var(--computed-gap); }
+.mx-full-gap { margin-left: var(--computed-gap); margin-right: var(--computed-gap); }
+.my-full-gap { margin-top: var(--computed-gap); margin-bottom: var(--computed-gap); }
+.ml-full-gap { margin-left: var(--computed-gap); }
+.mr-full-gap { margin-right: var(--computed-gap); }
+.mt-full-gap { margin-top: var(--computed-gap); }
+.mb-full-gap { margin-bottom: var(--computed-gap); }
+
+/* Negative margins */
+.-m-full-gap { margin: calc(var(--computed-gap) * -1); }
+.-mx-full-gap { margin-left: calc(var(--computed-gap) * -1); margin-right: calc(var(--computed-gap) * -1); }
+.-my-full-gap { margin-top: calc(var(--computed-gap) * -1); margin-bottom: calc(var(--computed-gap) * -1); }
+.-ml-full-gap { margin-left: calc(var(--computed-gap) * -1); }
+.-mr-full-gap { margin-right: calc(var(--computed-gap) * -1); }
+.-mt-full-gap { margin-top: calc(var(--computed-gap) * -1); }
+.-mb-full-gap { margin-bottom: calc(var(--computed-gap) * -1); }
+
+/* ========================================
+   Margin Utilities - Popout
+   ======================================== */
+.m-popout { margin: var(--popout); }
+.mx-popout { margin-left: var(--popout); margin-right: var(--popout); }
+.my-popout { margin-top: var(--popout); margin-bottom: var(--popout); }
+.ml-popout { margin-left: var(--popout); }
+.mr-popout { margin-right: var(--popout); }
+.mt-popout { margin-top: var(--popout); }
+.mb-popout { margin-bottom: var(--popout); }
+
+/* Negative margins */
+.-m-popout { margin: calc(var(--popout) * -1); }
+.-mx-popout { margin-left: calc(var(--popout) * -1); margin-right: calc(var(--popout) * -1); }
+.-my-popout { margin-top: calc(var(--popout) * -1); margin-bottom: calc(var(--popout) * -1); }
+.-ml-popout { margin-left: calc(var(--popout) * -1); }
+.-mr-popout { margin-right: calc(var(--popout) * -1); }
+.-mt-popout { margin-top: calc(var(--popout) * -1); }
+.-mb-popout { margin-bottom: calc(var(--popout) * -1); }
 `;
   }
   function createInitialState() {
