@@ -198,14 +198,17 @@ export const template = `
     </div>
 
     <!-- Gap Size Indicator -->
-    <div x-show="!showAdvanced" x-init="updateCurrentBreakpoint()" style="position: absolute; top: 12px; left: 12px; z-index: 30; pointer-events: auto; display: flex; flex-direction: column; gap: 4px; background: rgba(255, 255, 255, 0.95); padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Gap</span>
-        <span style="font-size: 9px; font-weight: 600; color: white; background: #f97316; padding: 2px 6px; border-radius: 3px;" x-text="'@' + currentBreakpoint"></span>
-        <div style="width: var(--gap); height: 20px; background: rgb(249, 115, 22); border-radius: 3px;"></div>
+    <div x-show="!showAdvanced" x-init="updateCurrentBreakpoint()" style="position: absolute; top: 16px; left: 16px; z-index: 30; pointer-events: auto; display: flex; flex-direction: column; gap: 8px; background: rgba(255, 255, 255, 0.97); padding: 12px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 11px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px;">Gap</span>
+        <span style="font-size: 10px; font-weight: 600; color: #6366f1; background: transparent; border: 2px solid #6366f1; padding: 2px 8px; border-radius: 4px;" x-text="'@' + currentBreakpoint"></span>
       </div>
-      <div style="font-size: 10px; font-family: 'SF Mono', Monaco, monospace; color: #9a3412;">
-        clamp(<span style="color: #10b981;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #f97316; font-weight: 600;" x-text="editValues['gapScale_' + (currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint)] || gapScaleOptions[currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint].value"></span>, <span style="color: #10b981;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
+      <div style="display: flex; align-items: flex-end; gap: 8px;">
+        <div style="width: var(--gap); height: 24px; background: #f97316; min-width: 20px;"></div>
+        <div style="width: 24px; height: var(--gap); background: #f97316; min-height: 20px;"></div>
+      </div>
+      <div style="font-size: 11px; font-family: 'SF Mono', Monaco, monospace; color: #6b7280; padding-top: 4px; border-top: 1px solid #e5e5e5;">
+        clamp(<span style="color: #10b981; font-weight: 600;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #6366f1; font-weight: 600;" x-text="editValues['gapScale_' + (currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint)] || gapScaleOptions[currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint].value"></span>, <span style="color: #10b981; font-weight: 600;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
       </div>
     </div>
 
