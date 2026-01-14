@@ -64,6 +64,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       resizingColumn: null,
       resizeStartX: 0,
       resizeStartValue: 0,
+      // Panel collapse state
+      controlPanelCollapsed: false,
+      configEditorCollapsed: false,
 
       // Computed column widths in pixels (pre-initialized for reactivity)
       columnWidths: {
@@ -1192,17 +1195,21 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                }">
 
             <!-- Header -->
-            <div style="padding: 8px 12px; background: #1a1a2e; color: white; display: flex; justify-content: space-between; align-items: center;">
+            <div @dblclick="controlPanelCollapsed = !controlPanelCollapsed"
+                 style="padding: 8px 12px; background: #1a1a2e; color: white; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-weight: 600; font-size: 12px;">Grid</span>
                 <span style="font-size: 10px; color: rgba(255,255,255,0.5);" x-text="version"></span>
+                <span x-show="controlPanelCollapsed" style="font-size: 10px; color: rgba(255,255,255,0.4);">⋯</span>
               </div>
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 11px; font-variant-numeric: tabular-nums; color: rgba(255,255,255,0.7);" x-text="viewportWidth + 'px'"></span>
-                <button @click="toggle()" style="background: transparent; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 16px; line-height: 1; padding: 0;">&times;</button>
+                <button @click.stop="toggle()" style="background: transparent; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 16px; line-height: 1; padding: 0;">&times;</button>
               </div>
             </div>
 
+            <!-- Collapsible Content -->
+            <div x-show="!controlPanelCollapsed">
             <!-- Action Buttons -->
             <div style="padding: 8px; background: white; border-bottom: 1px solid #e5e5e5; display: flex; gap: 6px;">
               <button @click="openEditor()"
@@ -1292,6 +1299,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             <div x-show="selectedArea" style="padding: 8px 12px; background: #f0f9ff; border-top: 1px solid #e5e5e5;">
               <div style="font-size: 11px; color: #1a1a2e; font-weight: 600; font-family: monospace;" x-text="gridAreas.find(a => a.name === selectedArea)?.className || ''"></div>
             </div>
+            </div><!-- End Collapsible Content -->
 
           </div>
 
@@ -1316,12 +1324,16 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
                }">
             <!-- Editor Header (draggable) -->
             <div @mousedown="startDrag($event)"
-                 style="padding: 10px 12px; background: #1a1a2e; color: white; cursor: move; display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-weight: 600; font-size: 12px; letter-spacing: 0.3px;">Grid Config</span>
-              <button @click="closeEditor()" style="background: transparent; border: none; color: rgba(255,255,255,0.6); padding: 2px 6px; cursor: pointer; font-size: 16px; line-height: 1;">&times;</button>
+                 @dblclick="configEditorCollapsed = !configEditorCollapsed"
+                 style="padding: 10px 12px; background: #1a1a2e; color: white; cursor: move; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-weight: 600; font-size: 12px; letter-spacing: 0.3px;">Grid Config</span>
+                <span x-show="configEditorCollapsed" style="font-size: 10px; color: rgba(255,255,255,0.4);">⋯</span>
+              </div>
+              <button @click.stop="closeEditor()" style="background: transparent; border: none; color: rgba(255,255,255,0.6); padding: 2px 6px; cursor: pointer; font-size: 16px; line-height: 1;">&times;</button>
             </div>
             <!-- Editor Content -->
-            <div style="max-height: calc(85vh - 40px); overflow-y: auto;">
+            <div x-show="!configEditorCollapsed" style="max-height: calc(85vh - 40px); overflow-y: auto;">
               <!-- Workflow tip -->
               <div style="background: #e8f4f8; padding: 8px 12px; font-size: 10px; color: #1a1a2e; line-height: 1.4; border-bottom: 1px solid #e5e5e5;">
                 Start with <strong>content</strong>, then build outward: popout → feature → full
