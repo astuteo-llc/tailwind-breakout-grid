@@ -153,6 +153,23 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         });
       },
 
+      // Check if configured track widths would exceed viewport
+      getTrackOverflowWarning() {
+        const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value) * 16;
+        const featureWidth = parseFloat(this.editValues.featureWidth || this.configOptions.featureWidth.value);
+        const popoutWidth = parseFloat(this.editValues.popoutWidth || this.configOptions.popoutWidth.value) * 16;
+
+        // Calculate feature in pixels (vw to px)
+        const featurePx = (featureWidth / 100) * this.viewportWidth * 2;
+        const popoutPx = popoutWidth * 2;
+        const totalFixed = contentMax + featurePx + popoutPx;
+
+        if (totalFixed > this.viewportWidth) {
+          return `Tracks exceed viewport by ~${Math.round(totalFixed - this.viewportWidth)}px — outer columns will compress`;
+        }
+        return null;
+      },
+
       // Get computed CSS variable value
       getCSSVariable(varName) {
         const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -1308,6 +1325,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <!-- Workflow tip -->
               <div style="background: #e8f4f8; padding: 8px 12px; font-size: 10px; color: #1a1a2e; line-height: 1.4; border-bottom: 1px solid #e5e5e5;">
                 Start with <strong>content</strong>, then build outward: popout → feature → full
+              </div>
+
+              <!-- Track overflow warning -->
+              <div x-show="getTrackOverflowWarning()"
+                   style="background: #fef3c7; padding: 8px 12px; font-size: 10px; color: #92400e; line-height: 1.4; border-bottom: 1px solid #fcd34d;">
+                <span style="font-weight: 600;">⚠️</span> <span x-text="getTrackOverflowWarning()"></span>
               </div>
 
               <!-- Content Section -->
