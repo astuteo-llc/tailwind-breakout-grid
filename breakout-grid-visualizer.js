@@ -1,6 +1,6 @@
 (function() {
   "use strict";
-  const VERSION = "v3.0";
+  const VERSION$1 = "v3.0";
   const LOREM_CONTENT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
 
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.`;
@@ -35,12 +35,63 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     scale: { value: "5vw", desc: "Fluid breakout scaling", cssVar: "--config-breakout-scale" }
     // max is popoutWidth
   };
+  function createInitialState() {
+    return {
+      // UI State
+      isVisible: false,
+      showLabels: true,
+      showClassNames: true,
+      showMeasurements: true,
+      showPixelWidths: false,
+      showGapPadding: false,
+      showBreakoutPadding: false,
+      showAdvanced: false,
+      showLoremIpsum: false,
+      showEditor: false,
+      showDiagram: false,
+      editMode: false,
+      viewportWidth: window.innerWidth,
+      selectedArea: null,
+      hoveredArea: null,
+      editValues: {},
+      copySuccess: false,
+      configCopied: false,
+      editorPos: { x: 20, y: 100 },
+      isDragging: false,
+      dragOffset: { x: 0, y: 0 },
+      // Column resize drag state
+      resizingColumn: null,
+      resizeStartX: 0,
+      resizeStartValue: 0,
+      // Panel collapse state
+      controlPanelCollapsed: false,
+      configEditorCollapsed: false,
+      // Computed column widths in pixels (pre-initialized for reactivity)
+      columnWidths: {
+        full: 0,
+        "full-limit": 0,
+        feature: 0,
+        popout: 0,
+        content: 0,
+        center: 0
+      },
+      // Current breakpoint for gap scale (mobile, lg, xl)
+      currentBreakpoint: "mobile",
+      // Spacing panel state
+      spacingPanelCollapsed: false,
+      spacingPanelPos: { x: 16, y: 16 },
+      isDraggingSpacing: false,
+      dragOffsetSpacing: { x: 0, y: 0 }
+    };
+  }
+  const VERSION = "3.1.0";
   function generateCSSExport(c) {
     var _a, _b, _c, _d, _e;
     const breakoutMin = c.breakoutMin || "1rem";
     const breakoutScale = c.breakoutScale || "5vw";
     return `/**
  * Breakout Grid - Standalone CSS
+ * Version: ${VERSION}
  * Generated from Tailwind Breakout Grid Plugin
  * https://github.com/astuteo-llc/tailwind-breakout-grid
  *
@@ -422,55 +473,6 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .-mb-popout { margin-bottom: calc(var(--popout) * -1); }
 `;
   }
-  function createInitialState() {
-    return {
-      // UI State
-      isVisible: false,
-      showLabels: true,
-      showClassNames: true,
-      showMeasurements: true,
-      showPixelWidths: false,
-      showGapPadding: false,
-      showBreakoutPadding: false,
-      showAdvanced: false,
-      showLoremIpsum: false,
-      showEditor: false,
-      showDiagram: false,
-      editMode: false,
-      viewportWidth: window.innerWidth,
-      selectedArea: null,
-      hoveredArea: null,
-      editValues: {},
-      copySuccess: false,
-      configCopied: false,
-      editorPos: { x: 20, y: 100 },
-      isDragging: false,
-      dragOffset: { x: 0, y: 0 },
-      // Column resize drag state
-      resizingColumn: null,
-      resizeStartX: 0,
-      resizeStartValue: 0,
-      // Panel collapse state
-      controlPanelCollapsed: false,
-      configEditorCollapsed: false,
-      // Computed column widths in pixels (pre-initialized for reactivity)
-      columnWidths: {
-        full: 0,
-        "full-limit": 0,
-        feature: 0,
-        popout: 0,
-        content: 0,
-        center: 0
-      },
-      // Current breakpoint for gap scale (mobile, lg, xl)
-      currentBreakpoint: "mobile",
-      // Spacing panel state
-      spacingPanelCollapsed: false,
-      spacingPanelPos: { x: 16, y: 16 },
-      isDraggingSpacing: false,
-      dragOffsetSpacing: { x: 0, y: 0 }
-    };
-  }
   const methods = {
     // Initialize
     init() {
@@ -623,7 +625,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "breakout-grid.css";
+      a.download = `breakout-grid-${this.cssExportVersion}.css`;
       a.click();
       URL.revokeObjectURL(url);
     },
@@ -1725,7 +1727,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     document.addEventListener("alpine:init", () => {
       Alpine.data("breakoutGridVisualizer", () => ({
         // Constants
-        version: VERSION,
+        version: VERSION$1,
         loremContent: LOREM_CONTENT,
         // Configuration
         gridAreas: GRID_AREAS,
@@ -1736,8 +1738,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         ...createInitialState(),
         // Methods
         ...methods,
-        // CSS export generator
+        // CSS export
         generateCSSExport,
+        cssExportVersion: VERSION,
         // Template
         template
       }));

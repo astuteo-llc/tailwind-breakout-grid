@@ -183,7 +183,7 @@ export const methods = {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'breakout-grid.css';
+    a.download = `breakout-grid-${this.cssExportVersion}.css`;
     a.click();
     URL.revokeObjectURL(url);
   },

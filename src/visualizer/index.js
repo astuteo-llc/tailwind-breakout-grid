@@ -34,9 +34,9 @@ import {
   CONFIG_OPTIONS,
   GAP_SCALE_OPTIONS,
   BREAKOUT_OPTIONS,
-  generateCSSExport,
   createInitialState
 } from './state.js';
+import { generateCSSExport, CSS_EXPORT_VERSION } from './css-export.js';
 
 import { methods } from './methods.js';
 import { template } from './template.js';
@@ -63,8 +63,9 @@ import { template } from './template.js';
       // Methods
       ...methods,
 
-      // CSS export generator
+      // CSS export
       generateCSSExport,
+      cssExportVersion: CSS_EXPORT_VERSION,
 
       // Template
       template
