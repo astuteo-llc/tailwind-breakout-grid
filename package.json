@@ -1,6 +1,7 @@
 {
   "name": "@astuteo/tailwind-breakout-grid",
-  "version": "2.2.0",
+  "version": "3.0.0",
+  "type": "module",
   "description": "A Tailwind CSS plugin for creating fluid breakout grid layouts with optimal reading widths",
   "main": "index.js",
   "types": "index.d.ts",
@@ -39,16 +40,22 @@
     "tailwindcss": ">=3.0.0"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.0"
+    "@tailwindcss/vite": "^4.0.0",
+    "alpinejs": "^3.14.0",
+    "tailwindcss": "^4.0.0",
+    "vite": "^6.0.0"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "scripts": {
-    "prepublishOnly": "npm run check-files",
+    "demo": "vite",
+    "build": "vite build",
+    "prepublishOnly": "npm run build && npm run check-files",
     "check-files": "npm pack --dry-run",
-    "release:patch": "npm version patch && git push && git push --tags",
-    "release:minor": "npm version minor && git push && git push --tags",
-    "release:major": "npm version major && git push && git push --tags"
+    "release": "npm run build && npm run check-files",
+    "release:patch": "npm run release && npm version patch && git push && git push --tags",
+    "release:minor": "npm run release && npm version minor && git push && git push --tags",
+    "release:major": "npm run release && npm version major && git push && git push --tags"
   }
 }
