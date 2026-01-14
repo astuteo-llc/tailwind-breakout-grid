@@ -645,6 +645,7 @@ export const methods = {
     newValue = Math.round(newValue * 10) / 10;
 
     this.updateConfigValue(col, newValue + unit);
+    this.updateColumnWidths();
   },
 
   stopColumnResize() {

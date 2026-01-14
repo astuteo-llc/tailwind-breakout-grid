@@ -52,6 +52,7 @@ export function createInitialState() {
     showLabels: true,
     showClassNames: true,
     showMeasurements: true,
+    showPixelWidths: false,
     showGapPadding: false,
     showBreakoutPadding: false,
     showAdvanced: false,
