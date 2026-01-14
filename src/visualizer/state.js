@@ -35,9 +35,9 @@ export const CONFIG_OPTIONS = {
 };
 
 export const GAP_SCALE_OPTIONS = {
-  default: { value: '4vw', desc: 'Mobile/default gap scaling. Use vw.' },
-  lg: { value: '5vw', desc: 'Large screens (1024px+). Use vw.' },
-  xl: { value: '6vw', desc: 'Extra large (1280px+). Use vw.' },
+  default: { value: '4vw', desc: 'Mobile/default gap scaling. Use vw.', cssVar: '--config-gap-scale-default' },
+  lg: { value: '5vw', desc: 'Large screens (1024px+). Use vw.', cssVar: '--config-gap-scale-lg' },
+  xl: { value: '6vw', desc: 'Extra large (1280px+). Use vw.', cssVar: '--config-gap-scale-xl' },
 };
 
 export const BREAKOUT_PADDING_OPTIONS = {

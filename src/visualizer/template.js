@@ -197,6 +197,17 @@ export const template = `
 
     </div>
 
+    <!-- Gap Size Indicator -->
+    <div x-show="!showAdvanced" style="position: absolute; top: 12px; left: 12px; z-index: 30; pointer-events: auto; display: flex; flex-direction: column; gap: 4px; background: rgba(255, 255, 255, 0.95); padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Gap</span>
+        <div style="width: var(--gap); height: 20px; background: rgb(249, 115, 22); border-radius: 3px;"></div>
+      </div>
+      <div style="font-size: 10px; font-family: 'SF Mono', Monaco, monospace; color: #9a3412;">
+        clamp(<span style="color: #10b981;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #6b7280;" x-text="editValues.gapScale_default || gapScaleOptions.default.value"></span>, <span style="color: #10b981;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
+      </div>
+    </div>
+
     <!-- Grid Overlay (hidden in Advanced mode) -->
     <div x-show="!showAdvanced" x-init="$watch('isVisible', v => v && setTimeout(() => updateColumnWidths(), 50)); setTimeout(() => updateColumnWidths(), 100)" class="grid-cols-breakout breakout-visualizer-grid" style="height: 100%; position: relative;">
       <template x-for="area in gridAreas" :key="area.name">
@@ -643,11 +654,17 @@ export const template = `
           </template>
         </div>
 
-        <!-- Gap Section -->
+        <!-- Gap Section (Outer Margins) -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Gap</div>
+          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Outer Margins</div>
+          <div style="font-size: 9px; color: #9ca3af; margin-bottom: 8px; line-height: 1.4;">Space between viewport edge and content. Auto-centers your layout.</div>
+
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-            <span style="font-size: 11px; color: #374151;">base</span>
+            <div>
+              <span style="font-size: 11px; color: #374151;">min</span>
+              <span style="font-size: 9px; color: #9ca3af; margin-left: 4px;">floor</span>
+              <span style="font-size: 8px; color: #10b981; margin-left: 4px; font-weight: 500;">live</span>
+            </div>
             <div style="display: flex; align-items: center; gap: 4px;">
               <input type="number" :value="getNumericValue('baseGap')" @input="updateNumericValue('baseGap', $event.target.value)" step="0.5"
                      style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
@@ -655,18 +672,23 @@ export const template = `
             </div>
           </div>
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-            <span style="font-size: 11px; color: #374151;">max</span>
+            <div>
+              <span style="font-size: 11px; color: #374151;">max</span>
+              <span style="font-size: 9px; color: #9ca3af; margin-left: 4px;">ceiling</span>
+              <span style="font-size: 8px; color: #10b981; margin-left: 4px; font-weight: 500;">live</span>
+            </div>
             <div style="display: flex; align-items: center; gap: 4px;">
               <input type="number" :value="getNumericValue('maxGap')" @input="updateNumericValue('maxGap', $event.target.value)" step="1"
                      style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
               <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit('maxGap')"></span>
             </div>
           </div>
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 4px;">Scale <span style="font-size: 8px; color: #ef4444; font-weight: 400; text-transform: none;">(config only)</span></div>
-          <div style="font-size: 9px; color: #9ca3af; margin-bottom: 6px; line-height: 1.4;">For config export only — no live preview. Fluid value in <code style="background: #f3f4f6; padding: 1px 3px; border-radius: 2px;">clamp(base, scale, max)</code> for outer tracks + p-gap/m-gap.</div>
+
+          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 10px 0 2px;">Responsive Scale <span style="font-size: 8px; color: #ef4444; font-weight: 400; text-transform: none;">(config only)</span></div>
+          <div style="font-size: 9px; color: #9ca3af; margin-bottom: 6px; line-height: 1.4;">Fluid value (vw) that grows with viewport. Requires rebuild.</div>
           <template x-for="key in Object.keys(gapScaleOptions)" :key="'ed_gs_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-              <span style="font-size: 11px; color: #374151;" x-text="key"></span>
+              <span style="font-size: 11px; color: #374151;" x-text="key === 'default' ? 'mobile' : key"></span>
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getGapScaleNumeric(key)" @input="updateGapScaleNumeric(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
@@ -674,6 +696,14 @@ export const template = `
               </div>
             </div>
           </template>
+
+          <!-- Live formula preview -->
+          <div style="margin-top: 8px; padding: 8px; background: #f3f4f6; border-radius: 4px; font-family: 'SF Mono', Monaco, monospace; font-size: 9px; line-height: 1.6;">
+            <div style="color: #6b7280; margin-bottom: 4px;">Generated CSS:</div>
+            <div style="color: #374151;"><span style="color: #9ca3af;">mobile:</span> clamp(<span x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span x-text="editValues.gapScale_default || gapScaleOptions.default.value"></span>, <span x-text="editValues.maxGap || configOptions.maxGap.value"></span>)</div>
+            <div style="color: #374151;"><span style="color: #9ca3af;">lg:</span> clamp(<span x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span x-text="editValues.gapScale_lg || gapScaleOptions.lg.value"></span>, <span x-text="editValues.maxGap || configOptions.maxGap.value"></span>)</div>
+            <div style="color: #374151;"><span style="color: #9ca3af;">xl:</span> clamp(<span x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span x-text="editValues.gapScale_xl || gapScaleOptions.xl.value"></span>, <span x-text="editValues.maxGap || configOptions.maxGap.value"></span>)</div>
+          </div>
         </div>
 
         <!-- Action Buttons -->

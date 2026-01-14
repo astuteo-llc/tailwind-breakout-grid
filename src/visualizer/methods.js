@@ -101,9 +101,19 @@ export const methods = {
         this.editValues[key] = opt.value;
       }
     });
-    // Try to read gapScale from CSS (only default is directly readable)
+    // Read gapScale from CSS variables
     Object.keys(this.gapScaleOptions).forEach(key => {
-      this.editValues[`gapScale_${key}`] = this.gapScaleOptions[key].value;
+      const opt = this.gapScaleOptions[key];
+      if (opt.cssVar) {
+        const computed = this.getCSSVariable(opt.cssVar);
+        if (computed && computed !== 'Not set' && computed !== '') {
+          this.editValues[`gapScale_${key}`] = computed;
+        } else {
+          this.editValues[`gapScale_${key}`] = opt.value;
+        }
+      } else {
+        this.editValues[`gapScale_${key}`] = opt.value;
+      }
     });
     // Read breakout padding from CSS (defaults to var(--gap))
     const bpBase = this.getCSSVariable('--breakout-padding');

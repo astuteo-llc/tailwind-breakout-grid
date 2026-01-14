@@ -209,6 +209,10 @@ const createRootCSS = (pluginConfig) => {
       '--config-feature': pluginConfig.featureWidth,
       '--config-full-limit': pluginConfig.fullLimit,
       '--config-default-col': pluginConfig.defaultCol,
+      // Gap scale values (for visualizer)
+      '--config-gap-scale-default': pluginConfig.gapScale.default,
+      '--config-gap-scale-lg': pluginConfig.gapScale.lg || pluginConfig.gapScale.default,
+      '--config-gap-scale-xl': pluginConfig.gapScale.xl || pluginConfig.gapScale.lg || pluginConfig.gapScale.default,
       // Padding to align content with inner columns (scales down, 1rem floor)
       '--popout-to-content': `clamp(1rem, 5vw, ${pluginConfig.popoutWidth})`,
       '--feature-to-content': `calc(${pluginConfig.featureWidth} + ${pluginConfig.popoutWidth})`,
