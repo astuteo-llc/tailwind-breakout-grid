@@ -40,6 +40,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       showLabels: true,
       showClassNames: true,
       showMeasurements: true,
+      showPixelWidths: false,
       showGapPadding: false,
       showBreakoutPadding: false,
       showAdvanced: false,
@@ -660,6 +661,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       if (newValue < 0) newValue = 0;
       newValue = Math.round(newValue * 10) / 10;
       this.updateConfigValue(col, newValue + unit);
+      this.updateColumnWidths();
     },
     stopColumnResize() {
       this.resizingColumn = null;
@@ -689,17 +691,20 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
          style="position: absolute; inset: 0; height: 100%; pointer-events: auto; z-index: 5;">
 
       <!-- Left-anchored: full-start to feature-end -->
-      <div style="grid-column: full-start / feature-end;
-                  background: linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%);
-                  border: 3px solid rgb(168, 85, 247);
-                  margin: 1rem 0;
-                  padding: 1rem;
-                  display: flex;
-                  align-items: center;
-                  justify-content: flex-start;
-                  transition: background 0.2s ease;"
-           onmouseenter="this.style.background='linear-gradient(135deg, rgba(236, 72, 153, 0.6) 0%, rgba(139, 92, 246, 0.6) 100%)'"
-           onmouseleave="this.style.background='linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%)'">
+      <div x-data="{ hovered: false }"
+           @mouseenter="hovered = true"
+           @mouseleave="hovered = false"
+           :style="{
+             gridColumn: 'full-start / feature-end',
+             background: hovered ? 'linear-gradient(135deg, rgba(236, 72, 153, 0.6) 0%, rgba(139, 92, 246, 0.6) 100%)' : 'linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%)',
+             border: '3px solid rgb(168, 85, 247)',
+             margin: '1rem 0',
+             padding: '1rem',
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'flex-start',
+             transition: 'background 0.2s ease'
+           }">
         <div style="background: rgb(139, 92, 246);
                     color: white;
                     padding: 0.75rem 1rem;
@@ -713,17 +718,20 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       </div>
 
       <!-- Right-anchored: feature-start to full-end -->
-      <div style="grid-column: feature-start / full-end;
-                  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
-                  border: 3px solid rgb(34, 197, 94);
-                  margin: 1rem 0;
-                  padding: 1rem;
-                  display: flex;
-                  align-items: center;
-                  justify-content: flex-end;
-                  transition: background 0.2s ease;"
-           onmouseenter="this.style.background='linear-gradient(135deg, rgba(34, 197, 94, 0.6) 0%, rgba(59, 130, 246, 0.6) 100%)'"
-           onmouseleave="this.style.background='linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%)'">
+      <div x-data="{ hovered: false }"
+           @mouseenter="hovered = true"
+           @mouseleave="hovered = false"
+           :style="{
+             gridColumn: 'feature-start / full-end',
+             background: hovered ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.6) 0%, rgba(59, 130, 246, 0.6) 100%)' : 'linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%)',
+             border: '3px solid rgb(34, 197, 94)',
+             margin: '1rem 0',
+             padding: '1rem',
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'flex-end',
+             transition: 'background 0.2s ease'
+           }">
         <div style="background: rgb(34, 197, 94);
                     color: white;
                     padding: 0.75rem 1rem;
@@ -737,17 +745,20 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       </div>
 
       <!-- To center point: full-start to center-end -->
-      <div style="grid-column: full-start / center-end;
-                  background: linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%);
-                  border: 3px solid rgb(234, 179, 8);
-                  margin: 1rem 0;
-                  padding: 1rem;
-                  display: flex;
-                  align-items: center;
-                  justify-content: flex-end;
-                  transition: background 0.2s ease;"
-           onmouseenter="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.6) 0%, rgba(234, 179, 8, 0.6) 100%)'"
-           onmouseleave="this.style.background='linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%)'">
+      <div x-data="{ hovered: false }"
+           @mouseenter="hovered = true"
+           @mouseleave="hovered = false"
+           :style="{
+             gridColumn: 'full-start / center-end',
+             background: hovered ? 'linear-gradient(135deg, rgba(251, 146, 60, 0.6) 0%, rgba(234, 179, 8, 0.6) 100%)' : 'linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(234, 179, 8, 0.25) 100%)',
+             border: '3px solid rgb(234, 179, 8)',
+             margin: '1rem 0',
+             padding: '1rem',
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'flex-end',
+             transition: 'background 0.2s ease'
+           }">
         <div style="background: rgb(234, 179, 8);
                     color: white;
                     padding: 0.75rem 1rem;
@@ -761,14 +772,17 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       </div>
 
       <!-- Nested grid example: breakout-to-feature inside col-feature -->
-      <div style="grid-column: feature;
-                  border: 3px dashed rgb(59, 130, 246);
-                  margin: 1rem 0;
-                  background: rgba(59, 130, 246, 0.05);
-                  transition: background 0.2s ease;
-                  padding: 0.5rem;"
-           onmouseenter="this.style.background='rgba(59, 130, 246, 0.3)'"
-           onmouseleave="this.style.background='rgba(59, 130, 246, 0.05)'">
+      <div x-data="{ hovered: false }"
+           @mouseenter="hovered = true"
+           @mouseleave="hovered = false"
+           :style="{
+             gridColumn: 'feature',
+             border: '3px dashed rgb(59, 130, 246)',
+             margin: '1rem 0',
+             background: hovered ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.05)',
+             transition: 'background 0.2s ease',
+             padding: '0.5rem'
+           }">
         <div style="font-size: 0.625rem; font-family: monospace; color: rgb(30, 64, 175); margin-bottom: 0.5rem; padding: 0.25rem;">
           Parent: .col-feature container
         </div>
@@ -802,15 +816,18 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       </div>
 
       <!-- Subgrid example: child aligns to parent grid tracks -->
-      <div style="grid-column: feature-start / full-end;
-                  display: grid;
-                  grid-template-columns: subgrid;
-                  border: 3px solid rgb(236, 72, 153);
-                  margin: 1rem 0;
-                  background: rgba(236, 72, 153, 0.05);
-                  transition: background 0.2s ease;"
-           onmouseenter="this.style.background='rgba(236, 72, 153, 0.15)'"
-           onmouseleave="this.style.background='rgba(236, 72, 153, 0.05)'">
+      <div x-data="{ hovered: false }"
+           @mouseenter="hovered = true"
+           @mouseleave="hovered = false"
+           :style="{
+             gridColumn: 'feature-start / full-end',
+             display: 'grid',
+             gridTemplateColumns: 'subgrid',
+             border: '3px solid rgb(236, 72, 153)',
+             margin: '1rem 0',
+             background: hovered ? 'rgba(236, 72, 153, 0.15)' : 'rgba(236, 72, 153, 0.05)',
+             transition: 'background 0.2s ease'
+           }">
         <!-- Parent label -->
         <div style="grid-column: 1 / -1;
                     font-size: 0.625rem;
@@ -903,7 +920,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               opacity: '0.9',
               fontFamily: 'monospace'
             }" x-text="area.className"></div>
-            <div x-show="columnWidths[area.name] > 0"
+            <div x-show="showPixelWidths && columnWidths[area.name] > 0"
                  :style="{
               fontSize: '0.625rem',
               fontWeight: '600',
@@ -1183,6 +1200,10 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             <input type="checkbox" x-model="showLoremIpsum" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
             Lorem
           </label>
+          <label style="display: flex; align-items: center; cursor: pointer; font-size: 11px; color: #374151;">
+            <input type="checkbox" x-model="showPixelWidths" style="margin-right: 6px; cursor: pointer; accent-color: #1a1a2e;">
+            Pixels
+          </label>
         </div>
       </div>
 
@@ -1315,7 +1336,8 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit('maxGap')"></span>
             </div>
           </div>
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 4px;">Scale <span style="font-size: 8px; color: #ef4444; font-weight: 400; text-transform: none;">(rebuild)</span></div>
+          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 4px;">Scale <span style="font-size: 8px; color: #ef4444; font-weight: 400; text-transform: none;">(config only)</span></div>
+          <div style="font-size: 9px; color: #9ca3af; margin-bottom: 6px; line-height: 1.4;">For config export only — no live preview. Fluid value in <code style="background: #f3f4f6; padding: 1px 3px; border-radius: 2px;">clamp(base, scale, max)</code> for outer tracks + p-gap/m-gap.</div>
           <template x-for="key in Object.keys(gapScaleOptions)" :key="'ed_gs_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
               <span style="font-size: 11px; color: #374151;" x-text="key"></span>
