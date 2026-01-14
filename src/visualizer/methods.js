@@ -28,6 +28,18 @@ export const methods = {
       } catch (e) {}
     }
 
+    // Load spacing panel position and state
+    const spacingPos = localStorage.getItem('breakoutGridSpacingPos');
+    if (spacingPos) {
+      try {
+        this.spacingPanelPos = JSON.parse(spacingPos);
+      } catch (e) {}
+    }
+    const spacingCollapsed = localStorage.getItem('breakoutGridSpacingCollapsed');
+    if (spacingCollapsed !== null) {
+      this.spacingPanelCollapsed = spacingCollapsed === 'true';
+    }
+
     // Keyboard shortcut: Ctrl/Cmd + G
     window.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
@@ -116,42 +128,25 @@ export const methods = {
     return value || 'Not set';
   },
 
+  // Helper to load options from CSS variables
+  loadOptionsFromCSS(options, prefix = '') {
+    Object.keys(options).forEach(key => {
+      const opt = options[key];
+      const editKey = prefix ? `${prefix}_${key}` : key;
+      if (opt.cssVar) {
+        const computed = this.getCSSVariable(opt.cssVar);
+        this.editValues[editKey] = (computed && computed !== 'Not set' && computed !== '') ? computed : opt.value;
+      } else {
+        this.editValues[editKey] = opt.value;
+      }
+    });
+  },
+
   // Load current values from CSS variables where available
   loadCurrentValues() {
-    Object.keys(this.configOptions).forEach(key => {
-      const opt = this.configOptions[key];
-      if (opt.cssVar) {
-        const computed = this.getCSSVariable(opt.cssVar);
-        if (computed && computed !== 'Not set' && computed !== '') {
-          this.editValues[key] = computed;
-        } else {
-          this.editValues[key] = opt.value;
-        }
-      } else {
-        this.editValues[key] = opt.value;
-      }
-    });
-    // Read gapScale from CSS variables
-    Object.keys(this.gapScaleOptions).forEach(key => {
-      const opt = this.gapScaleOptions[key];
-      if (opt.cssVar) {
-        const computed = this.getCSSVariable(opt.cssVar);
-        if (computed && computed !== 'Not set' && computed !== '') {
-          this.editValues[`gapScale_${key}`] = computed;
-        } else {
-          this.editValues[`gapScale_${key}`] = opt.value;
-        }
-      } else {
-        this.editValues[`gapScale_${key}`] = opt.value;
-      }
-    });
-    // Read breakout padding from CSS (defaults to var(--gap))
-    const bpBase = this.getCSSVariable('--breakout-padding');
-    if (bpBase && bpBase !== 'Not set') {
-      this.editValues['breakoutPadding_base'] = bpBase;
-    } else {
-      this.editValues['breakoutPadding_base'] = 'var(--gap)';
-    }
+    this.loadOptionsFromCSS(this.configOptions);
+    this.loadOptionsFromCSS(this.gapScaleOptions, 'gapScale');
+    this.loadOptionsFromCSS(this.breakoutOptions, 'breakout');
   },
 
   // Generate export config object
@@ -164,6 +159,9 @@ export const methods = {
     Object.keys(this.gapScaleOptions).forEach(key => {
       config.gapScale[key] = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
     });
+    // Add breakout values
+    config.breakoutMin = this.editValues.breakout_min || this.breakoutOptions.min.value;
+    config.breakoutScale = this.editValues.breakout_scale || this.breakoutOptions.scale.value;
     return config;
   },
 
@@ -180,299 +178,7 @@ export const methods = {
 
   // Generate and download standalone CSS file
   downloadCSS() {
-    const c = this.generateConfigExport();
-    const css = `/**
- * Breakout Grid - Standalone CSS
- * Generated from Tailwind Breakout Grid Plugin
- * https://github.com/astuteo-llc/tailwind-breakout-grid
- *
- * NOTE: This CSS export feature is in beta and not fully tested.
- * Please verify output before using in production.
- */
-
-/* ========================================
-   CSS Custom Properties
-   ======================================== */
-:root {
-  /* Base measurements */
-  --base-gap: ${c.baseGap};
-  --max-gap: ${c.maxGap};
-  --content-min: ${c.contentMin};
-  --content-max: ${c.contentMax};
-  --content-base: ${c.contentBase};
-
-  /* Computed values */
-  --gap: clamp(var(--base-gap), ${c.gapScale?.default || '4vw'}, var(--max-gap));
-  --content: min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2);
-  --content-half: calc(var(--content) / 2);
-
-  /* Track widths */
-  --full: minmax(var(--gap), 1fr);
-  --feature: minmax(0, ${c.featureWidth});
-  --popout: minmax(0, ${c.popoutWidth});
-  --full-limit: ${c.fullLimit};
-
-  /* Padding/margin utilities */
-  --breakout-padding: clamp(1rem, 5vw, ${c.popoutWidth});
-  --popout-to-content: clamp(1rem, 5vw, ${c.popoutWidth});
-  --feature-to-content: calc(${c.featureWidth} + ${c.popoutWidth});
-}
-
-/* ========================================
-   Grid Container - Main
-   ======================================== */
-.grid-cols-breakout {
-  display: grid;
-  grid-template-columns:
-    [full-start] var(--full)
-    [feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content-half) [center-start center-end] var(--content-half) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--full) [full-end];
-}
-
-/* Default column for direct children */
-.grid-cols-breakout > * { grid-column: ${c.defaultCol || 'content'}; }
-
-/* ========================================
-   Grid Container - Left Aligned Variants
-   ======================================== */
-.grid-cols-feature-left {
-  display: grid;
-  grid-template-columns:
-    [full-start] var(--full)
-    [feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content-inset) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end full-end];
-}
-
-.grid-cols-popout-left {
-  display: grid;
-  grid-template-columns:
-    [full-start] var(--full)
-    [feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content-inset) [content-end]
-    var(--popout) [popout-end full-end];
-}
-
-.grid-cols-content-left {
-  display: grid;
-  grid-template-columns:
-    [full-start] var(--full)
-    [feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content-inset) [content-end full-end];
-}
-
-/* ========================================
-   Grid Container - Right Aligned Variants
-   ======================================== */
-.grid-cols-feature-right {
-  display: grid;
-  grid-template-columns:
-    [full-start feature-start] var(--feature)
-    [popout-start] var(--popout)
-    [content-start] var(--content-inset) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--full) [full-end];
-}
-
-.grid-cols-popout-right {
-  display: grid;
-  grid-template-columns:
-    [full-start popout-start] var(--popout)
-    [content-start] var(--content-inset) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--full) [full-end];
-}
-
-.grid-cols-content-right {
-  display: grid;
-  grid-template-columns:
-    [full-start content-start] var(--content-inset) [content-end]
-    var(--popout) [popout-end]
-    var(--feature) [feature-end]
-    var(--full) [full-end];
-}
-
-/* ========================================
-   Breakout Modifiers (for nested grids)
-   ======================================== */
-.grid-cols-breakout.breakout-to-content {
-  grid-template-columns: [full-start feature-start popout-start content-start center-start] minmax(0, 1fr) [center-end content-end popout-end feature-end full-end];
-}
-
-.grid-cols-breakout.breakout-to-popout {
-  grid-template-columns: [full-start feature-start popout-start] var(--popout) [content-start center-start] minmax(0, 1fr) [center-end content-end] var(--popout) [popout-end feature-end full-end];
-}
-
-.grid-cols-breakout.breakout-to-feature {
-  grid-template-columns: [full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start center-start] minmax(0, 1fr) [center-end content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end];
-}
-
-/* None - disables grid for sidebar layouts; nested content blocks/components with col-* classes are ignored */
-.breakout-none { display: block; }
-.breakout-none-flex { display: flex; }
-.breakout-none-grid { display: grid; }
-
-/* ========================================
-   Column Utilities - Basic
-   ======================================== */
-.col-full { grid-column: full; }
-.col-feature { grid-column: feature; }
-.col-popout { grid-column: popout; }
-.col-content { grid-column: content; }
-.col-center { grid-column: center; }
-
-/* Backward compatibility: col-narrow maps to content */
-.col-narrow { grid-column: content; }
-
-/* ========================================
-   Column Utilities - Start/End
-   ======================================== */
-.col-start-full { grid-column-start: full-start; }
-.col-start-feature { grid-column-start: feature-start; }
-.col-start-popout { grid-column-start: popout-start; }
-.col-start-content { grid-column-start: content-start; }
-.col-start-center { grid-column-start: center-start; }
-
-/* Backward compatibility */
-.col-start-narrow { grid-column-start: content-start; }
-
-.col-end-full { grid-column-end: full-end; }
-.col-end-feature { grid-column-end: feature-end; }
-.col-end-popout { grid-column-end: popout-end; }
-.col-end-content { grid-column-end: content-end; }
-.col-end-center { grid-column-end: center-end; }
-
-/* Backward compatibility */
-.col-end-narrow { grid-column-end: content-end; }
-
-/* ========================================
-   Column Utilities - Left/Right Spans
-   ======================================== */
-.col-feature-left { grid-column: full-start / feature-end; }
-.col-feature-right { grid-column: feature-start / full-end; }
-.col-popout-left { grid-column: full-start / popout-end; }
-.col-popout-right { grid-column: popout-start / full-end; }
-.col-content-left { grid-column: full-start / content-end; }
-.col-content-right { grid-column: content-start / full-end; }
-.col-center-left { grid-column: full-start / center-end; }
-.col-center-right { grid-column: center-start / full-end; }
-
-/* Backward compatibility */
-.col-narrow-left { grid-column: full-start / content-end; }
-.col-narrow-right { grid-column: content-start / full-end; }
-
-/* ========================================
-   Column Utilities - Advanced Spans
-   ======================================== */
-/* Feature to other columns */
-.col-feature-to-popout { grid-column: feature-start / popout-end; }
-.col-feature-to-content { grid-column: feature-start / content-end; }
-.col-feature-to-center { grid-column: feature-start / center-end; }
-
-/* Popout to other columns */
-.col-popout-to-content { grid-column: popout-start / content-end; }
-.col-popout-to-center { grid-column: popout-start / center-end; }
-.col-popout-to-feature { grid-column: popout-start / feature-end; }
-
-/* Content to other columns */
-.col-content-to-center { grid-column: content-start / center-end; }
-.col-content-to-popout { grid-column: content-start / popout-end; }
-.col-content-to-feature { grid-column: content-start / feature-end; }
-
-/* Full limit */
-.col-full-limit {
-  grid-column: full;
-  max-width: var(--full-limit);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* ========================================
-   Padding Utilities - Breakout
-   ======================================== */
-.p-breakout { padding: var(--breakout-padding); }
-.px-breakout { padding-left: var(--breakout-padding); padding-right: var(--breakout-padding); }
-.py-breakout { padding-top: var(--breakout-padding); padding-bottom: var(--breakout-padding); }
-.pl-breakout { padding-left: var(--breakout-padding); }
-.pr-breakout { padding-right: var(--breakout-padding); }
-.pt-breakout { padding-top: var(--breakout-padding); }
-.pb-breakout { padding-bottom: var(--breakout-padding); }
-
-/* ========================================
-   Padding Utilities - Gap
-   ======================================== */
-.p-gap { padding: var(--gap); }
-.px-gap { padding-left: var(--gap); padding-right: var(--gap); }
-.py-gap { padding-top: var(--gap); padding-bottom: var(--gap); }
-.pl-gap { padding-left: var(--gap); }
-.pr-gap { padding-right: var(--gap); }
-.pt-gap { padding-top: var(--gap); }
-.pb-gap { padding-bottom: var(--gap); }
-
-/* ========================================
-   Padding Utilities - Alignment
-   ======================================== */
-.p-popout-to-content { padding: var(--popout-to-content); }
-.px-popout-to-content { padding-left: var(--popout-to-content); padding-right: var(--popout-to-content); }
-.pl-popout-to-content { padding-left: var(--popout-to-content); }
-.pr-popout-to-content { padding-right: var(--popout-to-content); }
-
-.p-feature-to-content { padding: var(--feature-to-content); }
-.px-feature-to-content { padding-left: var(--feature-to-content); padding-right: var(--feature-to-content); }
-.pl-feature-to-content { padding-left: var(--feature-to-content); }
-.pr-feature-to-content { padding-right: var(--feature-to-content); }
-
-/* ========================================
-   Margin Utilities - Breakout
-   ======================================== */
-.m-breakout { margin: var(--breakout-padding); }
-.mx-breakout { margin-left: var(--breakout-padding); margin-right: var(--breakout-padding); }
-.my-breakout { margin-top: var(--breakout-padding); margin-bottom: var(--breakout-padding); }
-.ml-breakout { margin-left: var(--breakout-padding); }
-.mr-breakout { margin-right: var(--breakout-padding); }
-.mt-breakout { margin-top: var(--breakout-padding); }
-.mb-breakout { margin-bottom: var(--breakout-padding); }
-
-/* Negative margins */
-.-m-breakout { margin: calc(var(--breakout-padding) * -1); }
-.-mx-breakout { margin-left: calc(var(--breakout-padding) * -1); margin-right: calc(var(--breakout-padding) * -1); }
-.-my-breakout { margin-top: calc(var(--breakout-padding) * -1); margin-bottom: calc(var(--breakout-padding) * -1); }
-.-ml-breakout { margin-left: calc(var(--breakout-padding) * -1); }
-.-mr-breakout { margin-right: calc(var(--breakout-padding) * -1); }
-.-mt-breakout { margin-top: calc(var(--breakout-padding) * -1); }
-.-mb-breakout { margin-bottom: calc(var(--breakout-padding) * -1); }
-
-/* ========================================
-   Margin Utilities - Gap
-   ======================================== */
-.m-gap { margin: var(--gap); }
-.mx-gap { margin-left: var(--gap); margin-right: var(--gap); }
-.my-gap { margin-top: var(--gap); margin-bottom: var(--gap); }
-.ml-gap { margin-left: var(--gap); }
-.mr-gap { margin-right: var(--gap); }
-.mt-gap { margin-top: var(--gap); }
-.mb-gap { margin-bottom: var(--gap); }
-
-/* Negative margins */
-.-m-gap { margin: calc(var(--gap) * -1); }
-.-mx-gap { margin-left: calc(var(--gap) * -1); margin-right: calc(var(--gap) * -1); }
-.-my-gap { margin-top: calc(var(--gap) * -1); margin-bottom: calc(var(--gap) * -1); }
-.-ml-gap { margin-left: calc(var(--gap) * -1); }
-.-mr-gap { margin-right: calc(var(--gap) * -1); }
-.-mt-gap { margin-top: calc(var(--gap) * -1); }
-.-mb-gap { margin-bottom: calc(var(--gap) * -1); }
-`;
-
+    const css = this.generateCSSExport(this.generateConfigExport());
     const blob = new Blob([css], { type: 'text/css' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -514,24 +220,41 @@ export const methods = {
     this.updateConfigValue(key, num + unit);
   },
 
-  // Get numeric value for gapScale
-  getGapScaleNumeric(key) {
-    const val = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
+  // Generic getter for prefixed options (gapScale, breakout)
+  getPrefixedNumeric(prefix, options, key) {
+    const val = this.editValues[`${prefix}_${key}`] || options[key].value;
     return this.parseValue(val).num;
   },
 
-  // Get unit for gapScale
-  getGapScaleUnit(key) {
-    const val = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
+  getPrefixedUnit(prefix, options, key) {
+    const val = this.editValues[`${prefix}_${key}`] || options[key].value;
     return this.parseValue(val).unit;
   },
 
-  // Update gapScale numeric value
+  // Gap scale helpers (use generic)
+  getGapScaleNumeric(key) { return this.getPrefixedNumeric('gapScale', this.gapScaleOptions, key); },
+  getGapScaleUnit(key) { return this.getPrefixedUnit('gapScale', this.gapScaleOptions, key); },
   updateGapScaleNumeric(key, num) {
-    const unit = this.getGapScaleUnit(key);
-    this.editValues[`gapScale_${key}`] = num + unit;
-    this.configCopied = false; // Mark as unsaved
-    this.updateGapLive(); // Live preview
+    this.editValues[`gapScale_${key}`] = num + this.getGapScaleUnit(key);
+    this.configCopied = false;
+    this.updateGapLive();
+  },
+
+  // Breakout helpers (use generic)
+  getBreakoutNumeric(key) { return this.getPrefixedNumeric('breakout', this.breakoutOptions, key); },
+  getBreakoutUnit(key) { return this.getPrefixedUnit('breakout', this.breakoutOptions, key); },
+  updateBreakoutNumeric(key, num) {
+    this.editValues[`breakout_${key}`] = num + this.getBreakoutUnit(key);
+    this.configCopied = false;
+    this.updateBreakoutLive();
+  },
+
+  // Update --breakout-padding live
+  updateBreakoutLive() {
+    const min = this.editValues.breakout_min || this.breakoutOptions.min.value;
+    const scale = this.editValues.breakout_scale || this.breakoutOptions.scale.value;
+    const max = this.editValues.popoutWidth || this.configOptions.popoutWidth.value;
+    document.documentElement.style.setProperty('--breakout-padding', `clamp(${min}, ${scale}, ${max})`);
   },
 
   // Update a config value (and live CSS var if applicable)
@@ -545,8 +268,7 @@ export const methods = {
     // Special handling for track widths (need minmax wrapper)
     if (key === 'popoutWidth') {
       document.documentElement.style.setProperty('--popout', `minmax(0, ${value})`);
-      document.documentElement.style.setProperty('--breakout-padding', `clamp(1rem, 5vw, ${value})`);
-      document.documentElement.style.setProperty('--popout-to-content', `clamp(1rem, 5vw, ${value})`);
+      this.updateBreakoutLive(); // Update breakout padding with new popout ceiling
     }
     if (key === 'featureWidth') {
       document.documentElement.style.setProperty('--feature', `minmax(0, ${value})`);
@@ -624,30 +346,40 @@ export const methods = {
     localStorage.setItem('breakoutGridEditorOpen', 'false');
   },
 
-  // Drag handling for editor window
-  startDrag(e) {
-    this.isDragging = true;
-    this.dragOffset = {
-      x: e.clientX - this.editorPos.x,
-      y: e.clientY - this.editorPos.y
-    };
+  // Generic drag handling for panels
+  _dragConfigs: {
+    editor: { pos: 'editorPos', dragging: 'isDragging', offset: 'dragOffset', storage: 'breakoutGridEditorPos' },
+    spacing: { pos: 'spacingPanelPos', dragging: 'isDraggingSpacing', offset: 'dragOffsetSpacing', storage: 'breakoutGridSpacingPos' }
   },
 
-  onDrag(e) {
-    if (this.isDragging) {
-      this.editorPos = {
-        x: e.clientX - this.dragOffset.x,
-        y: e.clientY - this.dragOffset.y
-      };
+  startPanelDrag(e, panel) {
+    const cfg = this._dragConfigs[panel];
+    this[cfg.dragging] = true;
+    this[cfg.offset] = { x: e.clientX - this[cfg.pos].x, y: e.clientY - this[cfg.pos].y };
+  },
+
+  onPanelDrag(e, panel) {
+    const cfg = this._dragConfigs[panel];
+    if (this[cfg.dragging]) {
+      this[cfg.pos] = { x: e.clientX - this[cfg.offset].x, y: e.clientY - this[cfg.offset].y };
     }
   },
 
-  stopDrag() {
-    if (this.isDragging) {
-      localStorage.setItem('breakoutGridEditorPos', JSON.stringify(this.editorPos));
-    }
-    this.isDragging = false;
+  stopPanelDrag(panel) {
+    const cfg = this._dragConfigs[panel];
+    if (this[cfg.dragging]) localStorage.setItem(cfg.storage, JSON.stringify(this[cfg.pos]));
+    this[cfg.dragging] = false;
   },
+
+  // Editor drag (shorthand)
+  startDrag(e) { this.startPanelDrag(e, 'editor'); },
+  onDrag(e) { this.onPanelDrag(e, 'editor'); },
+  stopDrag() { this.stopPanelDrag('editor'); },
+
+  // Spacing drag (shorthand)
+  startDragSpacing(e) { this.startPanelDrag(e, 'spacing'); },
+  onDragSpacing(e) { this.onPanelDrag(e, 'spacing'); },
+  stopDragSpacing() { this.stopPanelDrag('spacing'); },
 
   // Column resize drag handling
   startColumnResize(e, columnType) {

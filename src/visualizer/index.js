@@ -33,7 +33,8 @@ import {
   GRID_AREAS,
   CONFIG_OPTIONS,
   GAP_SCALE_OPTIONS,
-  BREAKOUT_PADDING_OPTIONS,
+  BREAKOUT_OPTIONS,
+  generateCSSExport,
   createInitialState
 } from './state.js';
 
@@ -54,13 +55,16 @@ import { template } from './template.js';
       gridAreas: GRID_AREAS,
       configOptions: CONFIG_OPTIONS,
       gapScaleOptions: GAP_SCALE_OPTIONS,
-      breakoutPaddingOptions: BREAKOUT_PADDING_OPTIONS,
+      breakoutOptions: BREAKOUT_OPTIONS,
 
       // State
       ...createInitialState(),
 
       // Methods
       ...methods,
+
+      // CSS export generator
+      generateCSSExport,
 
       // Template
       template

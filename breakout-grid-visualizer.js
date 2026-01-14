@@ -30,206 +30,14 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     lg: { value: "5vw", desc: "Large screens (1024px+). Use vw.", cssVar: "--config-gap-scale-lg" },
     xl: { value: "6vw", desc: "Extra large (1280px+). Use vw.", cssVar: "--config-gap-scale-xl" }
   };
-  const BREAKOUT_PADDING_OPTIONS = {
-    base: { value: "var(--gap)", desc: "Uses grid gap by default" }
+  const BREAKOUT_OPTIONS = {
+    min: { value: "1rem", desc: "Minimum breakout padding (floor)", cssVar: "--config-breakout-min" },
+    scale: { value: "5vw", desc: "Fluid breakout scaling", cssVar: "--config-breakout-scale" }
+    // max is popoutWidth
   };
-  function createInitialState() {
-    return {
-      // UI State
-      isVisible: false,
-      showLabels: true,
-      showClassNames: true,
-      showMeasurements: true,
-      showPixelWidths: false,
-      showGapPadding: false,
-      showBreakoutPadding: false,
-      showAdvanced: false,
-      showLoremIpsum: false,
-      showEditor: false,
-      showDiagram: false,
-      editMode: false,
-      viewportWidth: window.innerWidth,
-      selectedArea: null,
-      hoveredArea: null,
-      editValues: {},
-      copySuccess: false,
-      configCopied: false,
-      editorPos: { x: 20, y: 100 },
-      isDragging: false,
-      dragOffset: { x: 0, y: 0 },
-      // Column resize drag state
-      resizingColumn: null,
-      resizeStartX: 0,
-      resizeStartValue: 0,
-      // Panel collapse state
-      controlPanelCollapsed: false,
-      configEditorCollapsed: false,
-      // Computed column widths in pixels (pre-initialized for reactivity)
-      columnWidths: {
-        full: 0,
-        "full-limit": 0,
-        feature: 0,
-        popout: 0,
-        content: 0,
-        center: 0
-      },
-      // Current breakpoint for gap scale (mobile, lg, xl)
-      currentBreakpoint: "mobile"
-    };
-  }
-  const methods = {
-    // Initialize
-    init() {
-      const saved = localStorage.getItem("breakoutGridVisualizerVisible");
-      if (saved !== null) {
-        this.isVisible = saved === "true";
-      }
-      const editorOpen = localStorage.getItem("breakoutGridEditorOpen");
-      if (editorOpen === "true") {
-        this.showEditor = true;
-        this.editMode = true;
-        this.$nextTick(() => this.loadCurrentValues());
-      }
-      const editorPos = localStorage.getItem("breakoutGridEditorPos");
-      if (editorPos) {
-        try {
-          this.editorPos = JSON.parse(editorPos);
-        } catch (e) {
-        }
-      }
-      window.addEventListener("keydown", (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === "g") {
-          e.preventDefault();
-          this.toggle();
-        }
-      });
-      window.addEventListener("resize", () => {
-        this.viewportWidth = window.innerWidth;
-        this.updateColumnWidths();
-        this.updateCurrentBreakpoint();
-        if (this.editMode) {
-          this.updateGapLive();
-        }
-      });
-      this.updateCurrentBreakpoint();
-      console.log("Breakout Grid Visualizer loaded. Press Ctrl/Cmd + G to toggle.");
-    },
-    // Toggle visibility
-    toggle() {
-      this.isVisible = !this.isVisible;
-      localStorage.setItem("breakoutGridVisualizerVisible", this.isVisible);
-    },
-    // Update column widths by querying DOM elements
-    updateColumnWidths() {
-      this.$nextTick(() => {
-        this.gridAreas.forEach((area) => {
-          const el = document.querySelector(`.breakout-visualizer-grid .col-${area.name}`);
-          if (el) {
-            this.columnWidths[area.name] = Math.round(el.getBoundingClientRect().width);
-          }
-        });
-      });
-    },
-    // Detect current breakpoint based on viewport width
-    updateCurrentBreakpoint() {
-      const width = window.innerWidth;
-      if (width >= 1280) {
-        this.currentBreakpoint = "xl";
-      } else if (width >= 1024) {
-        this.currentBreakpoint = "lg";
-      } else {
-        this.currentBreakpoint = "mobile";
-      }
-    },
-    // Update --gap live based on current breakpoint and edit values
-    updateGapLive() {
-      const scaleKey = this.currentBreakpoint === "mobile" ? "default" : this.currentBreakpoint;
-      const base = this.editValues.baseGap || this.configOptions.baseGap.value;
-      const max = this.editValues.maxGap || this.configOptions.maxGap.value;
-      const scale = this.editValues[`gapScale_${scaleKey}`] || this.gapScaleOptions[scaleKey].value;
-      document.documentElement.style.setProperty("--gap", `clamp(${base}, ${scale}, ${max})`);
-      this.updateColumnWidths();
-    },
-    // Check if configured track widths would exceed viewport
-    getTrackOverflowWarning() {
-      const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value) * 16;
-      const featureWidth = parseFloat(this.editValues.featureWidth || this.configOptions.featureWidth.value);
-      const popoutWidth = parseFloat(this.editValues.popoutWidth || this.configOptions.popoutWidth.value) * 16;
-      const featurePx = featureWidth / 100 * this.viewportWidth * 2;
-      const popoutPx = popoutWidth * 2;
-      const totalFixed = contentMax + featurePx + popoutPx;
-      if (totalFixed > this.viewportWidth) {
-        return `Tracks exceed viewport by ~${Math.round(totalFixed - this.viewportWidth)}px — outer columns will compress`;
-      }
-      return null;
-    },
-    // Get computed CSS variable value
-    getCSSVariable(varName) {
-      const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-      return value || "Not set";
-    },
-    // Load current values from CSS variables where available
-    loadCurrentValues() {
-      Object.keys(this.configOptions).forEach((key) => {
-        const opt = this.configOptions[key];
-        if (opt.cssVar) {
-          const computed = this.getCSSVariable(opt.cssVar);
-          if (computed && computed !== "Not set" && computed !== "") {
-            this.editValues[key] = computed;
-          } else {
-            this.editValues[key] = opt.value;
-          }
-        } else {
-          this.editValues[key] = opt.value;
-        }
-      });
-      Object.keys(this.gapScaleOptions).forEach((key) => {
-        const opt = this.gapScaleOptions[key];
-        if (opt.cssVar) {
-          const computed = this.getCSSVariable(opt.cssVar);
-          if (computed && computed !== "Not set" && computed !== "") {
-            this.editValues[`gapScale_${key}`] = computed;
-          } else {
-            this.editValues[`gapScale_${key}`] = opt.value;
-          }
-        } else {
-          this.editValues[`gapScale_${key}`] = opt.value;
-        }
-      });
-      const bpBase = this.getCSSVariable("--breakout-padding");
-      if (bpBase && bpBase !== "Not set") {
-        this.editValues["breakoutPadding_base"] = bpBase;
-      } else {
-        this.editValues["breakoutPadding_base"] = "var(--gap)";
-      }
-    },
-    // Generate export config object
-    generateConfigExport() {
-      const config = {};
-      Object.keys(this.configOptions).forEach((key) => {
-        config[key] = this.editValues[key] || this.configOptions[key].value;
-      });
-      config.gapScale = {};
-      Object.keys(this.gapScaleOptions).forEach((key) => {
-        config.gapScale[key] = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
-      });
-      return config;
-    },
-    // Copy config to clipboard
-    copyConfig() {
-      const config = this.generateConfigExport();
-      const configStr = `breakoutGrid(${JSON.stringify(config, null, 2)})`;
-      navigator.clipboard.writeText(configStr).then(() => {
-        this.copySuccess = true;
-        this.configCopied = true;
-        setTimeout(() => this.copySuccess = false, 2e3);
-      });
-    },
-    // Generate and download standalone CSS file
-    downloadCSS() {
-      var _a;
-      const c = this.generateConfigExport();
-      const css = `/**
+  function generateCSSExport(c) {
+    var _a;
+    return `/**
  * Breakout Grid - Standalone CSS
  * Generated from Tailwind Breakout Grid Plugin
  * https://github.com/astuteo-llc/tailwind-breakout-grid
@@ -520,6 +328,204 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .-mt-gap { margin-top: calc(var(--gap) * -1); }
 .-mb-gap { margin-bottom: calc(var(--gap) * -1); }
 `;
+  }
+  function createInitialState() {
+    return {
+      // UI State
+      isVisible: false,
+      showLabels: true,
+      showClassNames: true,
+      showMeasurements: true,
+      showPixelWidths: false,
+      showGapPadding: false,
+      showBreakoutPadding: false,
+      showAdvanced: false,
+      showLoremIpsum: false,
+      showEditor: false,
+      showDiagram: false,
+      editMode: false,
+      viewportWidth: window.innerWidth,
+      selectedArea: null,
+      hoveredArea: null,
+      editValues: {},
+      copySuccess: false,
+      configCopied: false,
+      editorPos: { x: 20, y: 100 },
+      isDragging: false,
+      dragOffset: { x: 0, y: 0 },
+      // Column resize drag state
+      resizingColumn: null,
+      resizeStartX: 0,
+      resizeStartValue: 0,
+      // Panel collapse state
+      controlPanelCollapsed: false,
+      configEditorCollapsed: false,
+      // Computed column widths in pixels (pre-initialized for reactivity)
+      columnWidths: {
+        full: 0,
+        "full-limit": 0,
+        feature: 0,
+        popout: 0,
+        content: 0,
+        center: 0
+      },
+      // Current breakpoint for gap scale (mobile, lg, xl)
+      currentBreakpoint: "mobile",
+      // Spacing panel state
+      spacingPanelCollapsed: false,
+      spacingPanelPos: { x: 16, y: 16 },
+      isDraggingSpacing: false,
+      dragOffsetSpacing: { x: 0, y: 0 }
+    };
+  }
+  const methods = {
+    // Initialize
+    init() {
+      const saved = localStorage.getItem("breakoutGridVisualizerVisible");
+      if (saved !== null) {
+        this.isVisible = saved === "true";
+      }
+      const editorOpen = localStorage.getItem("breakoutGridEditorOpen");
+      if (editorOpen === "true") {
+        this.showEditor = true;
+        this.editMode = true;
+        this.$nextTick(() => this.loadCurrentValues());
+      }
+      const editorPos = localStorage.getItem("breakoutGridEditorPos");
+      if (editorPos) {
+        try {
+          this.editorPos = JSON.parse(editorPos);
+        } catch (e) {
+        }
+      }
+      const spacingPos = localStorage.getItem("breakoutGridSpacingPos");
+      if (spacingPos) {
+        try {
+          this.spacingPanelPos = JSON.parse(spacingPos);
+        } catch (e) {
+        }
+      }
+      const spacingCollapsed = localStorage.getItem("breakoutGridSpacingCollapsed");
+      if (spacingCollapsed !== null) {
+        this.spacingPanelCollapsed = spacingCollapsed === "true";
+      }
+      window.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "g") {
+          e.preventDefault();
+          this.toggle();
+        }
+      });
+      window.addEventListener("resize", () => {
+        this.viewportWidth = window.innerWidth;
+        this.updateColumnWidths();
+        this.updateCurrentBreakpoint();
+        if (this.editMode) {
+          this.updateGapLive();
+        }
+      });
+      this.updateCurrentBreakpoint();
+      console.log("Breakout Grid Visualizer loaded. Press Ctrl/Cmd + G to toggle.");
+    },
+    // Toggle visibility
+    toggle() {
+      this.isVisible = !this.isVisible;
+      localStorage.setItem("breakoutGridVisualizerVisible", this.isVisible);
+    },
+    // Update column widths by querying DOM elements
+    updateColumnWidths() {
+      this.$nextTick(() => {
+        this.gridAreas.forEach((area) => {
+          const el = document.querySelector(`.breakout-visualizer-grid .col-${area.name}`);
+          if (el) {
+            this.columnWidths[area.name] = Math.round(el.getBoundingClientRect().width);
+          }
+        });
+      });
+    },
+    // Detect current breakpoint based on viewport width
+    updateCurrentBreakpoint() {
+      const width = window.innerWidth;
+      if (width >= 1280) {
+        this.currentBreakpoint = "xl";
+      } else if (width >= 1024) {
+        this.currentBreakpoint = "lg";
+      } else {
+        this.currentBreakpoint = "mobile";
+      }
+    },
+    // Update --gap live based on current breakpoint and edit values
+    updateGapLive() {
+      const scaleKey = this.currentBreakpoint === "mobile" ? "default" : this.currentBreakpoint;
+      const base = this.editValues.baseGap || this.configOptions.baseGap.value;
+      const max = this.editValues.maxGap || this.configOptions.maxGap.value;
+      const scale = this.editValues[`gapScale_${scaleKey}`] || this.gapScaleOptions[scaleKey].value;
+      document.documentElement.style.setProperty("--gap", `clamp(${base}, ${scale}, ${max})`);
+      this.updateColumnWidths();
+    },
+    // Check if configured track widths would exceed viewport
+    getTrackOverflowWarning() {
+      const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value) * 16;
+      const featureWidth = parseFloat(this.editValues.featureWidth || this.configOptions.featureWidth.value);
+      const popoutWidth = parseFloat(this.editValues.popoutWidth || this.configOptions.popoutWidth.value) * 16;
+      const featurePx = featureWidth / 100 * this.viewportWidth * 2;
+      const popoutPx = popoutWidth * 2;
+      const totalFixed = contentMax + featurePx + popoutPx;
+      if (totalFixed > this.viewportWidth) {
+        return `Tracks exceed viewport by ~${Math.round(totalFixed - this.viewportWidth)}px — outer columns will compress`;
+      }
+      return null;
+    },
+    // Get computed CSS variable value
+    getCSSVariable(varName) {
+      const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return value || "Not set";
+    },
+    // Helper to load options from CSS variables
+    loadOptionsFromCSS(options, prefix = "") {
+      Object.keys(options).forEach((key) => {
+        const opt = options[key];
+        const editKey = prefix ? `${prefix}_${key}` : key;
+        if (opt.cssVar) {
+          const computed = this.getCSSVariable(opt.cssVar);
+          this.editValues[editKey] = computed && computed !== "Not set" && computed !== "" ? computed : opt.value;
+        } else {
+          this.editValues[editKey] = opt.value;
+        }
+      });
+    },
+    // Load current values from CSS variables where available
+    loadCurrentValues() {
+      this.loadOptionsFromCSS(this.configOptions);
+      this.loadOptionsFromCSS(this.gapScaleOptions, "gapScale");
+      this.loadOptionsFromCSS(this.breakoutOptions, "breakout");
+    },
+    // Generate export config object
+    generateConfigExport() {
+      const config = {};
+      Object.keys(this.configOptions).forEach((key) => {
+        config[key] = this.editValues[key] || this.configOptions[key].value;
+      });
+      config.gapScale = {};
+      Object.keys(this.gapScaleOptions).forEach((key) => {
+        config.gapScale[key] = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
+      });
+      config.breakoutMin = this.editValues.breakout_min || this.breakoutOptions.min.value;
+      config.breakoutScale = this.editValues.breakout_scale || this.breakoutOptions.scale.value;
+      return config;
+    },
+    // Copy config to clipboard
+    copyConfig() {
+      const config = this.generateConfigExport();
+      const configStr = `breakoutGrid(${JSON.stringify(config, null, 2)})`;
+      navigator.clipboard.writeText(configStr).then(() => {
+        this.copySuccess = true;
+        this.configCopied = true;
+        setTimeout(() => this.copySuccess = false, 2e3);
+      });
+    },
+    // Generate and download standalone CSS file
+    downloadCSS() {
+      const css = this.generateCSSExport(this.generateConfigExport());
       const blob = new Blob([css], { type: "text/css" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -555,22 +561,45 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       const unit = this.getUnit(key);
       this.updateConfigValue(key, num + unit);
     },
-    // Get numeric value for gapScale
-    getGapScaleNumeric(key) {
-      const val = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
+    // Generic getter for prefixed options (gapScale, breakout)
+    getPrefixedNumeric(prefix, options, key) {
+      const val = this.editValues[`${prefix}_${key}`] || options[key].value;
       return this.parseValue(val).num;
     },
-    // Get unit for gapScale
-    getGapScaleUnit(key) {
-      const val = this.editValues[`gapScale_${key}`] || this.gapScaleOptions[key].value;
+    getPrefixedUnit(prefix, options, key) {
+      const val = this.editValues[`${prefix}_${key}`] || options[key].value;
       return this.parseValue(val).unit;
     },
-    // Update gapScale numeric value
+    // Gap scale helpers (use generic)
+    getGapScaleNumeric(key) {
+      return this.getPrefixedNumeric("gapScale", this.gapScaleOptions, key);
+    },
+    getGapScaleUnit(key) {
+      return this.getPrefixedUnit("gapScale", this.gapScaleOptions, key);
+    },
     updateGapScaleNumeric(key, num) {
-      const unit = this.getGapScaleUnit(key);
-      this.editValues[`gapScale_${key}`] = num + unit;
+      this.editValues[`gapScale_${key}`] = num + this.getGapScaleUnit(key);
       this.configCopied = false;
       this.updateGapLive();
+    },
+    // Breakout helpers (use generic)
+    getBreakoutNumeric(key) {
+      return this.getPrefixedNumeric("breakout", this.breakoutOptions, key);
+    },
+    getBreakoutUnit(key) {
+      return this.getPrefixedUnit("breakout", this.breakoutOptions, key);
+    },
+    updateBreakoutNumeric(key, num) {
+      this.editValues[`breakout_${key}`] = num + this.getBreakoutUnit(key);
+      this.configCopied = false;
+      this.updateBreakoutLive();
+    },
+    // Update --breakout-padding live
+    updateBreakoutLive() {
+      const min = this.editValues.breakout_min || this.breakoutOptions.min.value;
+      const scale = this.editValues.breakout_scale || this.breakoutOptions.scale.value;
+      const max = this.editValues.popoutWidth || this.configOptions.popoutWidth.value;
+      document.documentElement.style.setProperty("--breakout-padding", `clamp(${min}, ${scale}, ${max})`);
     },
     // Update a config value (and live CSS var if applicable)
     updateConfigValue(key, value) {
@@ -582,8 +611,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       }
       if (key === "popoutWidth") {
         document.documentElement.style.setProperty("--popout", `minmax(0, ${value})`);
-        document.documentElement.style.setProperty("--breakout-padding", `clamp(1rem, 5vw, ${value})`);
-        document.documentElement.style.setProperty("--popout-to-content", `clamp(1rem, 5vw, ${value})`);
+        this.updateBreakoutLive();
       }
       if (key === "featureWidth") {
         document.documentElement.style.setProperty("--feature", `minmax(0, ${value})`);
@@ -651,27 +679,46 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       this.restoreCSSVariables();
       localStorage.setItem("breakoutGridEditorOpen", "false");
     },
-    // Drag handling for editor window
+    // Generic drag handling for panels
+    _dragConfigs: {
+      editor: { pos: "editorPos", dragging: "isDragging", offset: "dragOffset", storage: "breakoutGridEditorPos" },
+      spacing: { pos: "spacingPanelPos", dragging: "isDraggingSpacing", offset: "dragOffsetSpacing", storage: "breakoutGridSpacingPos" }
+    },
+    startPanelDrag(e, panel) {
+      const cfg = this._dragConfigs[panel];
+      this[cfg.dragging] = true;
+      this[cfg.offset] = { x: e.clientX - this[cfg.pos].x, y: e.clientY - this[cfg.pos].y };
+    },
+    onPanelDrag(e, panel) {
+      const cfg = this._dragConfigs[panel];
+      if (this[cfg.dragging]) {
+        this[cfg.pos] = { x: e.clientX - this[cfg.offset].x, y: e.clientY - this[cfg.offset].y };
+      }
+    },
+    stopPanelDrag(panel) {
+      const cfg = this._dragConfigs[panel];
+      if (this[cfg.dragging]) localStorage.setItem(cfg.storage, JSON.stringify(this[cfg.pos]));
+      this[cfg.dragging] = false;
+    },
+    // Editor drag (shorthand)
     startDrag(e) {
-      this.isDragging = true;
-      this.dragOffset = {
-        x: e.clientX - this.editorPos.x,
-        y: e.clientY - this.editorPos.y
-      };
+      this.startPanelDrag(e, "editor");
     },
     onDrag(e) {
-      if (this.isDragging) {
-        this.editorPos = {
-          x: e.clientX - this.dragOffset.x,
-          y: e.clientY - this.dragOffset.y
-        };
-      }
+      this.onPanelDrag(e, "editor");
     },
     stopDrag() {
-      if (this.isDragging) {
-        localStorage.setItem("breakoutGridEditorPos", JSON.stringify(this.editorPos));
-      }
-      this.isDragging = false;
+      this.stopPanelDrag("editor");
+    },
+    // Spacing drag (shorthand)
+    startDragSpacing(e) {
+      this.startPanelDrag(e, "spacing");
+    },
+    onDragSpacing(e) {
+      this.onPanelDrag(e, "spacing");
+    },
+    stopDragSpacing() {
+      this.stopPanelDrag("spacing");
     },
     // Column resize drag handling
     startColumnResize(e, columnType) {
@@ -912,18 +959,84 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
     </div>
 
-    <!-- Gap Size Indicator -->
-    <div x-show="!showAdvanced" x-init="updateCurrentBreakpoint()" style="position: absolute; top: 16px; left: 16px; z-index: 30; pointer-events: auto; display: flex; flex-direction: column; gap: 8px; background: rgba(255, 255, 255, 0.97); padding: 12px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 11px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px;">Gap</span>
-        <span style="font-size: 10px; font-weight: 600; color: #6366f1; background: transparent; border: 2px solid #6366f1; padding: 2px 8px; border-radius: 4px;" x-text="'@' + currentBreakpoint"></span>
+    <!-- Spacing Panel -->
+    <div x-show="!showAdvanced"
+         x-init="updateCurrentBreakpoint()"
+         @mousemove.window="onDragSpacing($event)"
+         @mouseup.window="stopDragSpacing()"
+         :style="{
+           position: 'fixed',
+           left: spacingPanelPos.x + 'px',
+           top: spacingPanelPos.y + 'px',
+           zIndex: 30,
+           pointerEvents: 'auto',
+           background: '#f7f7f7',
+           borderRadius: '8px',
+           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
+           width: '220px',
+           fontFamily: 'system-ui, -apple-system, sans-serif',
+           overflow: 'hidden'
+         }">
+      <!-- Header -->
+      <div @mousedown="startDragSpacing($event)"
+           @dblclick="spacingPanelCollapsed = !spacingPanelCollapsed; localStorage.setItem('breakoutGridSpacingCollapsed', spacingPanelCollapsed)"
+           style="padding: 8px 12px; background: #1a1a2e; color: white; display: flex; justify-content: space-between; align-items: center; cursor: move; user-select: none;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-weight: 600; font-size: 12px;">Spacing</span>
+          <span style="font-size: 10px; font-weight: 600; color: white; background: transparent; border: 1.5px solid rgba(255,255,255,0.5); padding: 1px 6px; border-radius: 3px;" x-text="'@' + currentBreakpoint"></span>
+        </div>
+        <button @click.stop="spacingPanelCollapsed = !spacingPanelCollapsed; localStorage.setItem('breakoutGridSpacingCollapsed', spacingPanelCollapsed)" style="background: transparent; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 14px; line-height: 1; padding: 0;" x-text="spacingPanelCollapsed ? '+' : '−'"></button>
       </div>
-      <div style="display: flex; align-items: flex-end; gap: 8px;">
-        <div style="width: var(--gap); height: 24px; background: #f97316; min-width: 20px;"></div>
-        <div style="width: 24px; height: var(--gap); background: #f97316; min-height: 20px;"></div>
-      </div>
-      <div style="font-size: 11px; font-family: 'SF Mono', Monaco, monospace; color: #6b7280; padding-top: 4px; border-top: 1px solid #e5e5e5;">
-        clamp(<span style="color: #10b981; font-weight: 600;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #6366f1; font-weight: 600;" x-text="editValues['gapScale_' + (currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint)] || gapScaleOptions[currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint].value"></span>, <span style="color: #10b981; font-weight: 600;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
+      <!-- Content -->
+      <div x-show="!spacingPanelCollapsed" style="padding: 12px;">
+        <!-- Gap -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Gap</span>
+            <span style="font-size: 9px; color: #9ca3af;">outer margins</span>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: 8px;">
+            <div style="width: var(--gap); height: 24px; background: #f97316; min-width: 20px;"></div>
+            <div style="width: 24px; height: var(--gap); background: #f97316; min-height: 20px;"></div>
+          </div>
+          <div style="font-size: 9px; font-family: 'SF Mono', Monaco, monospace; color: #6b7280;">
+            clamp(<span style="color: #10b981; font-weight: 600;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #6366f1; font-weight: 600;" x-text="editValues['gapScale_' + (currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint)] || gapScaleOptions[currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint].value"></span>, <span style="color: #10b981; font-weight: 600;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
+          </div>
+        </div>
+        <!-- Breakout Padding -->
+        <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 12px; margin-top: 12px; border-top: 1px solid #e5e5e5;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Breakout</span>
+            <span style="font-size: 9px; color: #9ca3af;">p-breakout / m-breakout</span>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: 8px;">
+            <div style="width: var(--breakout-padding); height: 24px; background: #8b5cf6; min-width: 20px;"></div>
+            <div style="width: 24px; height: var(--breakout-padding); background: #8b5cf6; min-height: 20px;"></div>
+          </div>
+          <div style="font-size: 9px; font-family: 'SF Mono', Monaco, monospace; color: #6b7280;">
+            clamp(<span style="color: #8b5cf6; font-weight: 600;" x-text="editValues.breakout_min || breakoutOptions.min.value"></span>, <span style="color: #8b5cf6; font-weight: 600;" x-text="editValues.breakout_scale || breakoutOptions.scale.value"></span>, <span style="color: #10b981; font-weight: 600;" x-text="editValues.popoutWidth || configOptions.popoutWidth.value"></span>)
+          </div>
+          <!-- Editable breakout values -->
+          <div style="display: flex; gap: 8px; margin-top: 4px;">
+            <div style="flex: 1;">
+              <div style="font-size: 8px; color: #9ca3af; margin-bottom: 2px;">min</div>
+              <div style="display: flex; align-items: center; gap: 2px;">
+                <input type="number" :value="getBreakoutNumeric('min')" @input="updateBreakoutNumeric('min', $event.target.value)" step="0.5"
+                       style="width: 100%; padding: 4px 6px; font-size: 10px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 3px; background: white; text-align: right;">
+                <span style="font-size: 9px; color: #9ca3af;" x-text="getBreakoutUnit('min')"></span>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-size: 8px; color: #9ca3af; margin-bottom: 2px;">scale</div>
+              <div style="display: flex; align-items: center; gap: 2px;">
+                <input type="number" :value="getBreakoutNumeric('scale')" @input="updateBreakoutNumeric('scale', $event.target.value)" step="1"
+                       style="width: 100%; padding: 4px 6px; font-size: 10px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 3px; background: white; text-align: right;">
+                <span style="font-size: 9px; color: #9ca3af;" x-text="getBreakoutUnit('scale')"></span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 8px; color: #9ca3af; font-style: italic;">max = popout width</div>
+        </div>
       </div>
     </div>
 
@@ -1525,11 +1638,13 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         gridAreas: GRID_AREAS,
         configOptions: CONFIG_OPTIONS,
         gapScaleOptions: GAP_SCALE_OPTIONS,
-        breakoutPaddingOptions: BREAKOUT_PADDING_OPTIONS,
+        breakoutOptions: BREAKOUT_OPTIONS,
         // State
         ...createInitialState(),
         // Methods
         ...methods,
+        // CSS export generator
+        generateCSSExport,
         // Template
         template
       }));

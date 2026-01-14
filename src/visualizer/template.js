@@ -197,18 +197,84 @@ export const template = `
 
     </div>
 
-    <!-- Gap Size Indicator -->
-    <div x-show="!showAdvanced" x-init="updateCurrentBreakpoint()" style="position: absolute; top: 16px; left: 16px; z-index: 30; pointer-events: auto; display: flex; flex-direction: column; gap: 8px; background: rgba(255, 255, 255, 0.97); padding: 12px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 11px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px;">Gap</span>
-        <span style="font-size: 10px; font-weight: 600; color: #6366f1; background: transparent; border: 2px solid #6366f1; padding: 2px 8px; border-radius: 4px;" x-text="'@' + currentBreakpoint"></span>
+    <!-- Spacing Panel -->
+    <div x-show="!showAdvanced"
+         x-init="updateCurrentBreakpoint()"
+         @mousemove.window="onDragSpacing($event)"
+         @mouseup.window="stopDragSpacing()"
+         :style="{
+           position: 'fixed',
+           left: spacingPanelPos.x + 'px',
+           top: spacingPanelPos.y + 'px',
+           zIndex: 30,
+           pointerEvents: 'auto',
+           background: '#f7f7f7',
+           borderRadius: '8px',
+           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
+           width: '220px',
+           fontFamily: 'system-ui, -apple-system, sans-serif',
+           overflow: 'hidden'
+         }">
+      <!-- Header -->
+      <div @mousedown="startDragSpacing($event)"
+           @dblclick="spacingPanelCollapsed = !spacingPanelCollapsed; localStorage.setItem('breakoutGridSpacingCollapsed', spacingPanelCollapsed)"
+           style="padding: 8px 12px; background: #1a1a2e; color: white; display: flex; justify-content: space-between; align-items: center; cursor: move; user-select: none;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-weight: 600; font-size: 12px;">Spacing</span>
+          <span style="font-size: 10px; font-weight: 600; color: white; background: transparent; border: 1.5px solid rgba(255,255,255,0.5); padding: 1px 6px; border-radius: 3px;" x-text="'@' + currentBreakpoint"></span>
+        </div>
+        <button @click.stop="spacingPanelCollapsed = !spacingPanelCollapsed; localStorage.setItem('breakoutGridSpacingCollapsed', spacingPanelCollapsed)" style="background: transparent; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 14px; line-height: 1; padding: 0;" x-text="spacingPanelCollapsed ? '+' : '−'"></button>
       </div>
-      <div style="display: flex; align-items: flex-end; gap: 8px;">
-        <div style="width: var(--gap); height: 24px; background: #f97316; min-width: 20px;"></div>
-        <div style="width: 24px; height: var(--gap); background: #f97316; min-height: 20px;"></div>
-      </div>
-      <div style="font-size: 11px; font-family: 'SF Mono', Monaco, monospace; color: #6b7280; padding-top: 4px; border-top: 1px solid #e5e5e5;">
-        clamp(<span style="color: #10b981; font-weight: 600;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #6366f1; font-weight: 600;" x-text="editValues['gapScale_' + (currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint)] || gapScaleOptions[currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint].value"></span>, <span style="color: #10b981; font-weight: 600;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
+      <!-- Content -->
+      <div x-show="!spacingPanelCollapsed" style="padding: 12px;">
+        <!-- Gap -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Gap</span>
+            <span style="font-size: 9px; color: #9ca3af;">outer margins</span>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: 8px;">
+            <div style="width: var(--gap); height: 24px; background: #f97316; min-width: 20px;"></div>
+            <div style="width: 24px; height: var(--gap); background: #f97316; min-height: 20px;"></div>
+          </div>
+          <div style="font-size: 9px; font-family: 'SF Mono', Monaco, monospace; color: #6b7280;">
+            clamp(<span style="color: #10b981; font-weight: 600;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #6366f1; font-weight: 600;" x-text="editValues['gapScale_' + (currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint)] || gapScaleOptions[currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint].value"></span>, <span style="color: #10b981; font-weight: 600;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
+          </div>
+        </div>
+        <!-- Breakout Padding -->
+        <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 12px; margin-top: 12px; border-top: 1px solid #e5e5e5;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Breakout</span>
+            <span style="font-size: 9px; color: #9ca3af;">p-breakout / m-breakout</span>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: 8px;">
+            <div style="width: var(--breakout-padding); height: 24px; background: #8b5cf6; min-width: 20px;"></div>
+            <div style="width: 24px; height: var(--breakout-padding); background: #8b5cf6; min-height: 20px;"></div>
+          </div>
+          <div style="font-size: 9px; font-family: 'SF Mono', Monaco, monospace; color: #6b7280;">
+            clamp(<span style="color: #8b5cf6; font-weight: 600;" x-text="editValues.breakout_min || breakoutOptions.min.value"></span>, <span style="color: #8b5cf6; font-weight: 600;" x-text="editValues.breakout_scale || breakoutOptions.scale.value"></span>, <span style="color: #10b981; font-weight: 600;" x-text="editValues.popoutWidth || configOptions.popoutWidth.value"></span>)
+          </div>
+          <!-- Editable breakout values -->
+          <div style="display: flex; gap: 8px; margin-top: 4px;">
+            <div style="flex: 1;">
+              <div style="font-size: 8px; color: #9ca3af; margin-bottom: 2px;">min</div>
+              <div style="display: flex; align-items: center; gap: 2px;">
+                <input type="number" :value="getBreakoutNumeric('min')" @input="updateBreakoutNumeric('min', $event.target.value)" step="0.5"
+                       style="width: 100%; padding: 4px 6px; font-size: 10px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 3px; background: white; text-align: right;">
+                <span style="font-size: 9px; color: #9ca3af;" x-text="getBreakoutUnit('min')"></span>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-size: 8px; color: #9ca3af; margin-bottom: 2px;">scale</div>
+              <div style="display: flex; align-items: center; gap: 2px;">
+                <input type="number" :value="getBreakoutNumeric('scale')" @input="updateBreakoutNumeric('scale', $event.target.value)" step="1"
+                       style="width: 100%; padding: 4px 6px; font-size: 10px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 3px; background: white; text-align: right;">
+                <span style="font-size: 9px; color: #9ca3af;" x-text="getBreakoutUnit('scale')"></span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 8px; color: #9ca3af; font-style: italic;">max = popout width</div>
+        </div>
       </div>
     </div>
 

@@ -155,11 +155,12 @@ const defaultConfig = {
     lg: '5vw',         // Large screens
     xl: '6vw'          // Extra large screens
   },
-  // Responsive edge padding that aligns with the breakout grid system.
-  // By default, uses var(--gap) to stay perfectly aligned with the grid.
-  // Only override if you need fixed values for legacy integration.
-  // Creates p-breakout, px-breakout, etc. utilities.
-  breakoutPadding: null  // null = use var(--gap), or provide { base, md, lg } for fixed values
+  // Breakout padding: clamp(breakoutMin, breakoutScale, popoutWidth)
+  // Used by p-breakout, px-breakout, m-breakout utilities
+  breakoutMin: '1rem',   // Minimum breakout padding (floor)
+  breakoutScale: '5vw',  // Fluid breakout padding scaling
+  // Legacy responsive breakout padding (overrides clamp if provided)
+  breakoutPadding: null  // null = use clamp, or provide { base, md, lg } for fixed values
 }
 
 /**
@@ -213,8 +214,11 @@ const createRootCSS = (pluginConfig) => {
       '--config-gap-scale-default': pluginConfig.gapScale.default,
       '--config-gap-scale-lg': pluginConfig.gapScale.lg || pluginConfig.gapScale.default,
       '--config-gap-scale-xl': pluginConfig.gapScale.xl || pluginConfig.gapScale.lg || pluginConfig.gapScale.default,
-      // Padding to align content with inner columns (scales down, 1rem floor)
-      '--popout-to-content': `clamp(1rem, 5vw, ${pluginConfig.popoutWidth})`,
+      // Breakout padding config values (for visualizer)
+      '--config-breakout-min': pluginConfig.breakoutMin,
+      '--config-breakout-scale': pluginConfig.breakoutScale,
+      // Padding to align content with inner columns
+      '--popout-to-content': `clamp(${pluginConfig.breakoutMin}, ${pluginConfig.breakoutScale}, ${pluginConfig.popoutWidth})`,
       '--feature-to-content': `calc(${pluginConfig.featureWidth} + ${pluginConfig.popoutWidth})`,
       // Computed values
       '--base-gap': pluginConfig.baseGap,
@@ -231,8 +235,8 @@ const createRootCSS = (pluginConfig) => {
       '--popout': `minmax(0, ${pluginConfig.popoutWidth})`,
       '--content': 'min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2)',
       '--content-half': 'calc(var(--content) / 2)',
-      // Breakout padding - scales with viewport, 1rem floor, popoutWidth ceiling
-      '--breakout-padding': pluginConfig.breakoutPadding?.base || `clamp(1rem, 5vw, ${pluginConfig.popoutWidth})`,
+      // Breakout padding - scales with viewport, breakoutMin floor, popoutWidth ceiling
+      '--breakout-padding': pluginConfig.breakoutPadding?.base || `clamp(${pluginConfig.breakoutMin}, ${pluginConfig.breakoutScale}, ${pluginConfig.popoutWidth})`,
     }
   } catch (error) {
     console.warn(`Tailwind Breakout Grid Plugin - Error creating CSS custom properties: ${error.message}. This may be due to invalid or malformed configuration values (e.g., invalid CSS units or property names). Please check your plugin configuration for errors. Using fallback values.`)
