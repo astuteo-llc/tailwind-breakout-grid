@@ -198,13 +198,14 @@ export const template = `
     </div>
 
     <!-- Gap Size Indicator -->
-    <div x-show="!showAdvanced" style="position: absolute; top: 12px; left: 12px; z-index: 30; pointer-events: auto; display: flex; flex-direction: column; gap: 4px; background: rgba(255, 255, 255, 0.95); padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);">
+    <div x-show="!showAdvanced" x-init="updateCurrentBreakpoint()" style="position: absolute; top: 12px; left: 12px; z-index: 30; pointer-events: auto; display: flex; flex-direction: column; gap: 4px; background: rgba(255, 255, 255, 0.95); padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);">
       <div style="display: flex; align-items: center; gap: 8px;">
         <span style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Gap</span>
+        <span style="font-size: 9px; font-weight: 600; color: white; background: #f97316; padding: 2px 6px; border-radius: 3px;" x-text="'@' + currentBreakpoint"></span>
         <div style="width: var(--gap); height: 20px; background: rgb(249, 115, 22); border-radius: 3px;"></div>
       </div>
       <div style="font-size: 10px; font-family: 'SF Mono', Monaco, monospace; color: #9a3412;">
-        clamp(<span style="color: #10b981;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #6b7280;" x-text="editValues.gapScale_default || gapScaleOptions.default.value"></span>, <span style="color: #10b981;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
+        clamp(<span style="color: #10b981;" x-text="editValues.baseGap || configOptions.baseGap.value"></span>, <span style="color: #f97316; font-weight: 600;" x-text="editValues['gapScale_' + (currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint)] || gapScaleOptions[currentBreakpoint === 'mobile' ? 'default' : currentBreakpoint].value"></span>, <span style="color: #10b981;" x-text="editValues.maxGap || configOptions.maxGap.value"></span>)
       </div>
     </div>
 
@@ -684,11 +685,25 @@ export const template = `
             </div>
           </div>
 
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 10px 0 2px;">Responsive Scale <span style="font-size: 8px; color: #ef4444; font-weight: 400; text-transform: none;">(config only)</span></div>
-          <div style="font-size: 9px; color: #9ca3af; margin-bottom: 6px; line-height: 1.4;">Fluid value (vw) that grows with viewport. Requires rebuild.</div>
+          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin: 10px 0 2px;">Responsive Scale <span style="font-size: 8px; color: #10b981; font-weight: 500; text-transform: none;">live preview</span></div>
+          <div style="font-size: 9px; color: #9ca3af; margin-bottom: 6px; line-height: 1.4;">Fluid value (vw) that grows with viewport. Active breakpoint previews live.</div>
           <template x-for="key in Object.keys(gapScaleOptions)" :key="'ed_gs_'+key">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-              <span style="font-size: 11px; color: #374151;" x-text="key === 'default' ? 'mobile' : key"></span>
+            <div :style="{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '4px 6px',
+              margin: '0 -6px',
+              borderBottom: '1px solid #f3f4f6',
+              borderRadius: '4px',
+              background: (key === 'default' && currentBreakpoint === 'mobile') || key === currentBreakpoint ? 'rgba(249, 115, 22, 0.1)' : 'transparent',
+              border: (key === 'default' && currentBreakpoint === 'mobile') || key === currentBreakpoint ? '1px solid rgba(249, 115, 22, 0.3)' : '1px solid transparent'
+            }">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 11px; color: #374151;" x-text="key === 'default' ? 'mobile' : key"></span>
+                <span x-show="(key === 'default' && currentBreakpoint === 'mobile') || key === currentBreakpoint"
+                      style="font-size: 8px; font-weight: 600; color: #f97316;">ACTIVE</span>
+              </div>
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getGapScaleNumeric(key)" @input="updateGapScaleNumeric(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">

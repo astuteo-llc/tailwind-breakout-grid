@@ -85,5 +85,7 @@ export function createInitialState() {
       content: 0,
       center: 0
     },
+    // Current breakpoint for gap scale (mobile, lg, xl)
+    currentBreakpoint: 'mobile',
   };
 }

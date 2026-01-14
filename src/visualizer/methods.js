@@ -36,11 +36,18 @@ export const methods = {
       }
     });
 
-    // Update viewport width and column widths on resize
+    // Update viewport width, column widths, and breakpoint on resize
     window.addEventListener('resize', () => {
       this.viewportWidth = window.innerWidth;
       this.updateColumnWidths();
+      this.updateCurrentBreakpoint();
+      if (this.editMode) {
+        this.updateGapLive();
+      }
     });
+
+    // Initialize breakpoint
+    this.updateCurrentBreakpoint();
 
     console.log('Breakout Grid Visualizer loaded. Press Ctrl/Cmd + G to toggle.');
   },
@@ -61,6 +68,29 @@ export const methods = {
         }
       });
     });
+  },
+
+  // Detect current breakpoint based on viewport width
+  updateCurrentBreakpoint() {
+    const width = window.innerWidth;
+    if (width >= 1280) {
+      this.currentBreakpoint = 'xl';
+    } else if (width >= 1024) {
+      this.currentBreakpoint = 'lg';
+    } else {
+      this.currentBreakpoint = 'mobile';
+    }
+  },
+
+  // Update --gap live based on current breakpoint and edit values
+  updateGapLive() {
+    const scaleKey = this.currentBreakpoint === 'mobile' ? 'default' : this.currentBreakpoint;
+    const base = this.editValues.baseGap || this.configOptions.baseGap.value;
+    const max = this.editValues.maxGap || this.configOptions.maxGap.value;
+    const scale = this.editValues[`gapScale_${scaleKey}`] || this.gapScaleOptions[scaleKey].value;
+
+    document.documentElement.style.setProperty('--gap', `clamp(${base}, ${scale}, ${max})`);
+    this.updateColumnWidths();
   },
 
   // Check if configured track widths would exceed viewport
@@ -501,6 +531,7 @@ export const methods = {
     const unit = this.getGapScaleUnit(key);
     this.editValues[`gapScale_${key}`] = num + unit;
     this.configCopied = false; // Mark as unsaved
+    this.updateGapLive(); // Live preview
   },
 
   // Update a config value (and live CSS var if applicable)
@@ -522,6 +553,10 @@ export const methods = {
     }
     if (key === 'content') {
       document.documentElement.style.setProperty('--content', `minmax(0, ${value})`);
+    }
+    // Update gap live when min/max change
+    if (key === 'baseGap' || key === 'maxGap') {
+      this.updateGapLive();
     }
   },
 
