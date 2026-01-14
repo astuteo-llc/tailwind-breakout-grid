@@ -121,6 +121,22 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           this.isVisible = saved === 'true';
         }
 
+        // Load config editor state
+        const editorOpen = localStorage.getItem('breakoutGridEditorOpen');
+        if (editorOpen === 'true') {
+          this.showEditor = true;
+          this.editMode = true;
+          this.$nextTick(() => this.loadCurrentValues());
+        }
+
+        // Load config editor position
+        const editorPos = localStorage.getItem('breakoutGridEditorPos');
+        if (editorPos) {
+          try {
+            this.editorPos = JSON.parse(editorPos);
+          } catch (e) {}
+        }
+
         // Keyboard shortcut: Ctrl/Cmd + G
         window.addEventListener('keydown', (e) => {
           if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
@@ -659,6 +675,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         this.showEditor = true;
         this.editMode = true;
         this.loadCurrentValues();
+        localStorage.setItem('breakoutGridEditorOpen', 'true');
       },
 
       // Close floating editor
@@ -671,6 +688,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         this.showEditor = false;
         this.editMode = false;
         this.restoreCSSVariables();
+        localStorage.setItem('breakoutGridEditorOpen', 'false');
       },
 
       // Drag handling for editor window
@@ -692,6 +710,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       },
 
       stopDrag() {
+        if (this.isDragging) {
+          localStorage.setItem('breakoutGridEditorPos', JSON.stringify(this.editorPos));
+        }
         this.isDragging = false;
       },
 
