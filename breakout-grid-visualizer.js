@@ -92,7 +92,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       sectionCopied: null
     };
   }
-  const VERSION = "3.1.2";
+  const VERSION = "3.1.3";
   function generateCSSExport(c) {
     var _a, _b, _c, _d, _e, _f, _g, _h;
     const breakoutMin = c.breakoutMin || "1rem";
