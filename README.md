@@ -656,6 +656,13 @@ The plugin generates these CSS variables that you can use in custom CSS:
 
 An Alpine.js-powered visual debugging tool that helps designers see and understand the grid structure while building layouts. Press `Ctrl/Cmd + G` to toggle the overlay.
 
+**Two versions available:**
+
+| Version | File | Size | Use Case |
+|---------|------|------|----------|
+| Full | `breakout-grid-visualizer.js` | ~124 KB | Tailwind plugin users (config editing, CSS export) |
+| Lite | `breakout-grid-visualizer-lite.js` | ~31 KB | Standalone CSS users (read-only visualization) |
+
 **Quick Start (Vite):**
 
 ```javascript
@@ -676,6 +683,8 @@ if (import.meta.env.DEV) {
 ```
 
 See the [Visualizer Documentation](docs/visualizer.md) for full setup instructions, controls, and customization options.
+
+**Using standalone CSS?** See [Visualizer Lite](docs/visualizer-lite.md) for the lightweight read-only version.
 
 ## Debugging
 
@@ -808,6 +817,7 @@ Open http://localhost:5173 to see the grid in action. Press `Cmd+G` to toggle th
 
 - [CraftCMS Integration](docs/craftcms-integration.md) - Complete guide for CraftCMS projects with Vite
 - [Grid Visualizer](docs/visualizer.md) - Full documentation for the development visualizer tool
+- [Grid Visualizer Lite](docs/visualizer-lite.md) - Lightweight visualizer for standalone CSS users
 - [Migration Guide](docs/migration-guide.md) - Strategies for integrating with existing projects
 - [Layout Examples](docs/layout-examples.md) - Real-world layout patterns and code samples
 - [Nested Grid Modifiers](docs/nested-grids.md) - Using `breakout-to-*` utilities for nested grids

@@ -17,7 +17,12 @@ export function generateCSSExport(c) {
  * Breakout Grid - Standalone CSS
  * Version: ${VERSION}
  * Generated from Tailwind Breakout Grid Plugin
- * https://github.com/astuteo-llc/tailwind-breakout-grid
+ *
+ * Documentation: https://github.com/astuteo-llc/tailwind-breakout-grid
+ * Lite Visualizer: https://github.com/astuteo-llc/tailwind-breakout-grid/blob/master/docs/visualizer-lite.md
+ *
+ * For development debugging with this standalone CSS, use the lite visualizer:
+ * https://github.com/astuteo-llc/tailwind-breakout-grid/blob/master/breakout-grid-visualizer-lite.js
  *
  * Configuration (for tailwind.config.js):
  * ----------------------------------------

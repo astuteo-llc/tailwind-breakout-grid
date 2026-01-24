@@ -2,7 +2,9 @@
 
 An Alpine.js-powered visual debugging tool that helps designers see and understand the grid structure while building layouts. The visualizer provides real-time feedback about grid behavior and measurements.
 
-> **⚠️ DEVELOPMENT ONLY**: This tool is intended for local development only. Never include it in production builds. It adds ~100KB of JavaScript and exposes configuration internals.
+> **⚠️ DEVELOPMENT ONLY**: This tool is intended for local development only. Never include it in production builds. It adds ~124KB of JavaScript and exposes configuration internals.
+
+> **Using standalone CSS?** See [Visualizer Lite](visualizer-lite.md) for a lightweight (~31KB) read-only version without config editing features.
 
 ## Features
 
@@ -199,6 +201,13 @@ Open `demo.html` in your browser to see the visualizer in action. Press `Ctrl/Cm
 
 ## Files
 
-- `breakout-grid-visualizer.js` - The Alpine.js component
+- `breakout-grid-visualizer.js` - The full Alpine.js component (~124KB)
+- `breakout-grid-visualizer-lite.js` - Lightweight read-only version (~31KB) - see [Visualizer Lite](visualizer-lite.md)
 - `craft-integration.twig` - Complete CraftCMS integration example
-- `demo.html` - Interactive demonstration
+- `demo/index.html` - Interactive demonstration (full version)
+- `demo/lite.html` - Standalone CSS demonstration (lite version)
+
+## See Also
+
+- [Visualizer Lite](visualizer-lite.md) - Lightweight version for standalone CSS users
+- [Main README](../README.md) - Complete plugin documentation
