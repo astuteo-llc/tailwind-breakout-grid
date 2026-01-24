@@ -1580,12 +1580,27 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           </template>
         </div>
 
+        <!-- Feature Section -->
+        <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
+          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Feature (Track Width)</div>
+          <template x-for="key in ['featureMin', 'featureScale', 'featureMax']" :key="'ed_'+key">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
+              <span style="font-size: 11px; color: #374151;" x-text="key.replace('feature', '').toLowerCase()"></span>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
+                       style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
+                <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit(key)"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+
         <!-- Track Widths Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
           <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Track Widths</div>
-          <template x-for="key in ['popoutWidth', 'featureMin', 'featureScale', 'featureMax', 'fullLimit']" :key="'ed_'+key">
+          <template x-for="key in ['popoutWidth', 'fullLimit']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-              <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '').replace('feature', 'feature ')"></span>
+              <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '')"></span>
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
