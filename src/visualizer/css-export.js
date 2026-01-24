@@ -19,6 +19,33 @@ export function generateCSSExport(c) {
  * Generated from Tailwind Breakout Grid Plugin
  * https://github.com/astuteo-llc/tailwind-breakout-grid
  *
+ * Configuration (for tailwind.config.js):
+ * ----------------------------------------
+ * import breakoutGrid from 'tailwind-breakout-grid'
+ *
+ * export default {
+ *   plugins: [
+ *     breakoutGrid({
+ *       baseGap: '${c.baseGap}',
+ *       maxGap: '${c.maxGap}',
+ *       contentMin: '${c.contentMin}',
+ *       contentMax: '${c.contentMax}',
+ *       contentBase: '${c.contentBase}',
+ *       popoutWidth: '${c.popoutWidth}',
+ *       featureMin: '${c.featureMin}',
+ *       featureScale: '${c.featureScale}',
+ *       featureMax: '${c.featureMax}',
+ *       fullLimit: '${c.fullLimit}',
+ *       defaultCol: '${c.defaultCol || 'content'}',
+ *       gapScale: {
+ *         default: '${c.gapScale?.default || '4vw'}',
+ *         lg: '${c.gapScale?.lg || '5vw'}',
+ *         xl: '${c.gapScale?.xl || '6vw'}'
+ *       }
+ *     })
+ *   ]
+ * }
+ *
  * Grid Structure:
  *
  *   full         feature      popout    content    popout      feature         full
