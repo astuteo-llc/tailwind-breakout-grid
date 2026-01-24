@@ -787,6 +787,45 @@ export const template = `
               </div>
             </div>
           </template>
+          <!-- Readability warning -->
+          <div x-show="getContentReadabilityWarning()"
+               x-data="{ expanded: false }"
+               style="margin-top: 6px; padding: 6px 8px; background: #fef3c7; border-radius: 4px; border: 1px solid #fcd34d;">
+            <div @click="expanded = !expanded" style="display: flex; align-items: flex-start; gap: 6px; cursor: pointer;">
+              <svg style="width: 14px; height: 14px; color: #b45309; flex-shrink: 0; margin-top: 1px;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+              </svg>
+              <div style="flex: 1;">
+                <div style="font-size: 10px; font-weight: 600; color: #92400e;">Wide for reading</div>
+                <div x-show="!expanded" style="font-size: 9px; color: #b45309; margin-top: 2px;">Ideal: 45–55rem for prose. Click for details.</div>
+                <div x-show="expanded" x-transition style="font-size: 9px; color: #78350f; margin-top: 4px; line-height: 1.4;">
+                  At 16px base, 55rem+ can hit 100+ characters/line—too wide for comfortable reading.<br><br>
+                  <strong>Guidelines (at 1rem/16px):</strong><br>
+                  • 45ch ≈ 35–40rem (min)<br>
+                  • 66ch ≈ 45–50rem (ideal)<br>
+                  • 75ch ≈ 50–55rem (max)<br><br>
+                  Fine for mixed layouts; consider tightening for prose-heavy pages.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Default Column Section -->
+        <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Default Column</div>
+              <div style="font-size: 9px; color: #9ca3af; margin-top: 2px;">For children without col-* class</div>
+            </div>
+            <select @change="editValues.defaultCol = $event.target.value; configCopied = false"
+                    :value="editValues.defaultCol || configOptions.defaultCol.value"
+                    style="padding: 6px 8px; font-size: 11px; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; cursor: pointer;">
+              <template x-for="opt in configOptions.defaultCol.options" :key="opt">
+                <option :value="opt" :selected="(editValues.defaultCol || configOptions.defaultCol.value) === opt" x-text="opt"></option>
+              </template>
+            </select>
+          </div>
         </div>
 
         <!-- Track Widths Section -->
@@ -890,9 +929,51 @@ export const template = `
           <button @click="copyConfig()" :style="{ flex: 1, padding: '8px', fontSize: '11px', fontWeight: '600', border: 'none', borderRadius: '4px', cursor: 'pointer', background: copySuccess ? '#10b981' : '#1a1a2e', color: 'white', transition: 'background 0.2s' }">
             <span x-text="copySuccess ? '✓ Copied' : 'Copy Config'"></span>
           </button>
-          <button @click="downloadCSS()" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;">
-            Export CSS
+          <button @click="openRestoreModal()" style="padding: 8px 12px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;" title="Paste a config to restore">
+            Restore
           </button>
+          <button @click="downloadCSS()" style="padding: 8px 12px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;">
+            CSS
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Restore Config Modal -->
+    <div x-show="showRestoreModal"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10002; pointer-events: auto;">
+      <div @click.stop style="background: white; border-radius: 8px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 400px; max-width: 90vw; font-family: system-ui, -apple-system, sans-serif;">
+        <!-- Modal Header -->
+        <div style="padding: 12px 16px; background: #1a1a2e; color: white; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 13px;">Restore Config</span>
+          <button @click="closeRestoreModal()" style="background: transparent; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 18px; line-height: 1;">&times;</button>
+        </div>
+        <!-- Modal Body -->
+        <div style="padding: 16px;">
+          <p style="font-size: 12px; color: #6b7280; margin: 0 0 12px 0; line-height: 1.5;">Paste a config from "Copy Config" to restore values:</p>
+          <textarea x-model="restoreInput"
+                    @keydown.meta.enter="restoreConfig()"
+                    @keydown.ctrl.enter="restoreConfig()"
+                    placeholder="breakoutGrid({
+  contentMin: '53rem',
+  contentBase: '75vw',
+  ...
+})"
+                    style="width: 100%; height: 200px; padding: 12px; font-family: 'SF Mono', Monaco, monospace; font-size: 11px; border: 1px solid #e5e5e5; border-radius: 4px; resize: vertical; box-sizing: border-box;"></textarea>
+          <!-- Error message -->
+          <div x-show="restoreError" x-text="restoreError" style="margin-top: 8px; padding: 8px 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; color: #dc2626; font-size: 11px;"></div>
+          <p style="font-size: 10px; color: #9ca3af; margin: 8px 0 0 0;">Press ⌘/Ctrl + Enter to apply</p>
+        </div>
+        <!-- Modal Footer -->
+        <div style="padding: 12px 16px; background: #f7f7f7; border-radius: 0 0 8px 8px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button @click="closeRestoreModal()" style="padding: 8px 16px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;">Cancel</button>
+          <button @click="restoreConfig()" style="padding: 8px 16px; font-size: 11px; font-weight: 600; border: none; border-radius: 4px; cursor: pointer; background: #1a1a2e; color: white;">Apply</button>
         </div>
       </div>
     </div>

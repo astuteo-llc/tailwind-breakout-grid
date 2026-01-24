@@ -41,6 +41,29 @@ export function generateCSSExport(c) {
  * (popout → feature → full) wraps around it. Configure content first, then
  * build outward. The inner tracks affect all outer track positioning.
  *
+ * ----------------------------------------
+ * A Note on Content Width & Readability
+ * ----------------------------------------
+ * The classic guideline is 45–75 characters per line, with ~66 often cited
+ * as the sweet spot (from Bringhurst's Elements of Typographic Style).
+ *
+ * At 16px base font, 61rem = 976px—that could hit 100+ characters per line,
+ * which is too wide for comfortable reading.
+ *
+ * Rough guide for body text at 1rem/16px:
+ *   45ch ≈ 35–40rem (comfortable minimum)
+ *   66ch ≈ 45–50rem (ideal for reading)
+ *   75ch ≈ 50–55rem (comfortable maximum)
+ *
+ * Context matters:
+ *   - Long-form articles/docs: 45–50rem is more comfortable
+ *   - Marketing pages with mixed content: wider works (less continuous reading)
+ *   - Larger body font (18–20px): you can go a bit wider
+ *
+ * If your content column is primarily for prose, consider tightening to
+ * 45–55rem. The default 53–61rem range works well for mixed layouts with
+ * cards, images, and text—but may be wide for pure reading.
+ *
  * NOTE: This CSS export feature is in beta and not fully tested.
  * Please verify output before using in production.
  */

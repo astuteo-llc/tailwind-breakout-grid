@@ -96,5 +96,9 @@ export function createInitialState() {
     spacingPanelPos: { x: 16, y: 16 },
     isDraggingSpacing: false,
     dragOffsetSpacing: { x: 0, y: 0 },
+    // Restore config modal
+    showRestoreModal: false,
+    restoreInput: '',
+    restoreError: null,
   };
 }

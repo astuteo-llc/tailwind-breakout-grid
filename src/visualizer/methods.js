@@ -105,6 +105,15 @@ export const methods = {
     this.updateColumnWidths();
   },
 
+  // Check if content width exceeds comfortable reading width (55rem)
+  getContentReadabilityWarning() {
+    const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value);
+    if (contentMax > 55) {
+      return `Content max (${contentMax}rem) exceeds 55rem—may be wide for reading. Ideal for prose: 45–55rem.`;
+    }
+    return null;
+  },
+
   // Check if configured track widths would exceed viewport
   getTrackOverflowWarning() {
     const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value) * 16;
@@ -165,10 +174,27 @@ export const methods = {
     return config;
   },
 
+  // Format config object with single quotes for values, no quotes for keys
+  formatConfig(obj, indent = 2) {
+    const pad = ' '.repeat(indent);
+    const lines = ['{'];
+    const entries = Object.entries(obj);
+    entries.forEach(([key, value], i) => {
+      const comma = i < entries.length - 1 ? ',' : '';
+      if (typeof value === 'object' && value !== null) {
+        lines.push(`${pad}${key}: ${this.formatConfig(value, indent + 2).replace(/\n/g, '\n' + pad)}${comma}`);
+      } else {
+        lines.push(`${pad}${key}: '${value}'${comma}`);
+      }
+    });
+    lines.push('}');
+    return lines.join('\n');
+  },
+
   // Copy config to clipboard
   copyConfig() {
     const config = this.generateConfigExport();
-    const configStr = `breakoutGrid(${JSON.stringify(config, null, 2)})`;
+    const configStr = `breakoutGrid(${this.formatConfig(config)})`;
     navigator.clipboard.writeText(configStr).then(() => {
       this.copySuccess = true;
       this.configCopied = true;
@@ -442,5 +468,94 @@ export const methods = {
       // feature has its own integrated handles for min/scale/max
     };
     return map[colName] || null;
+  },
+
+  // Parse a config string (from copyConfig output) into an object
+  parseConfigString(input) {
+    // Strip breakoutGrid( wrapper and trailing )
+    let str = input.trim();
+    const match = str.match(/^breakoutGrid\s*\(([\s\S]*)\)\s*,?\s*$/);
+    if (match) {
+      str = match[1];
+    }
+
+    // Convert to valid JSON:
+    str = str
+      // Strip single-line comments (// ...)
+      .replace(/\/\/.*$/gm, '')
+      // Strip multi-line comments (/* ... */)
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      // Handle keys without quotes: "  key:" -> "  "key":"
+      .replace(/^\s*(\w+)\s*:/gm, '"$1":')
+      // Convert single quotes to double quotes for values
+      .replace(/'/g, '"')
+      // Remove trailing commas before } or ]
+      .replace(/,(\s*[}\]])/g, '$1');
+
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      throw new Error('Invalid config format. Paste the output from "Copy Config".');
+    }
+  },
+
+  // Open restore modal
+  openRestoreModal() {
+    this.showRestoreModal = true;
+    this.restoreInput = '';
+    this.restoreError = null;
+  },
+
+  // Close restore modal
+  closeRestoreModal() {
+    this.showRestoreModal = false;
+    this.restoreInput = '';
+    this.restoreError = null;
+  },
+
+  // Apply a parsed config to the editor
+  restoreConfig() {
+    this.restoreError = null;
+
+    try {
+      const config = this.parseConfigString(this.restoreInput);
+
+      // Apply main config values
+      Object.keys(this.configOptions).forEach(key => {
+        if (config[key] !== undefined) {
+          this.editValues[key] = config[key];
+          this.updateConfigValue(key, config[key]);
+        }
+      });
+
+      // Apply gapScale values
+      if (config.gapScale) {
+        Object.keys(this.gapScaleOptions).forEach(key => {
+          if (config.gapScale[key] !== undefined) {
+            this.editValues[`gapScale_${key}`] = config.gapScale[key];
+          }
+        });
+        this.updateGapLive();
+      }
+
+      // Apply breakout values
+      if (config.breakoutMin !== undefined) {
+        this.editValues.breakout_min = config.breakoutMin;
+      }
+      if (config.breakoutScale !== undefined) {
+        this.editValues.breakout_scale = config.breakoutScale;
+      }
+      this.updateBreakoutLive();
+
+      // Update column widths display
+      this.updateColumnWidths();
+
+      // Close modal on success
+      this.closeRestoreModal();
+      this.configCopied = false;
+
+    } catch (e) {
+      this.restoreError = e.message;
+    }
   },
 };

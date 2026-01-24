@@ -83,10 +83,14 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       spacingPanelCollapsed: false,
       spacingPanelPos: { x: 16, y: 16 },
       isDraggingSpacing: false,
-      dragOffsetSpacing: { x: 0, y: 0 }
+      dragOffsetSpacing: { x: 0, y: 0 },
+      // Restore config modal
+      showRestoreModal: false,
+      restoreInput: "",
+      restoreError: null
     };
   }
-  const VERSION = "3.1.0";
+  const VERSION = "3.1.1";
   function generateCSSExport(c) {
     var _a, _b, _c, _d, _e, _f, _g, _h;
     const breakoutMin = c.breakoutMin || "1rem";
@@ -118,6 +122,29 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
  * Think of the grid like an onion: content is the core, and each outer layer
  * (popout → feature → full) wraps around it. Configure content first, then
  * build outward. The inner tracks affect all outer track positioning.
+ *
+ * ----------------------------------------
+ * A Note on Content Width & Readability
+ * ----------------------------------------
+ * The classic guideline is 45–75 characters per line, with ~66 often cited
+ * as the sweet spot (from Bringhurst's Elements of Typographic Style).
+ *
+ * At 16px base font, 61rem = 976px—that could hit 100+ characters per line,
+ * which is too wide for comfortable reading.
+ *
+ * Rough guide for body text at 1rem/16px:
+ *   45ch ≈ 35–40rem (comfortable minimum)
+ *   66ch ≈ 45–50rem (ideal for reading)
+ *   75ch ≈ 50–55rem (comfortable maximum)
+ *
+ * Context matters:
+ *   - Long-form articles/docs: 45–50rem is more comfortable
+ *   - Marketing pages with mixed content: wider works (less continuous reading)
+ *   - Larger body font (18–20px): you can go a bit wider
+ *
+ * If your content column is primarily for prose, consider tightening to
+ * 45–55rem. The default 53–61rem range works well for mixed layouts with
+ * cards, images, and text—but may be wide for pure reading.
  *
  * NOTE: This CSS export feature is in beta and not fully tested.
  * Please verify output before using in production.
@@ -746,6 +773,14 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       document.documentElement.style.setProperty("--gap", `clamp(${base}, ${scale}, ${max})`);
       this.updateColumnWidths();
     },
+    // Check if content width exceeds comfortable reading width (55rem)
+    getContentReadabilityWarning() {
+      const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value);
+      if (contentMax > 55) {
+        return `Content max (${contentMax}rem) exceeds 55rem—may be wide for reading. Ideal for prose: 45–55rem.`;
+      }
+      return null;
+    },
     // Check if configured track widths would exceed viewport
     getTrackOverflowWarning() {
       const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value) * 16;
@@ -797,10 +832,26 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       config.breakoutScale = this.editValues.breakout_scale || this.breakoutOptions.scale.value;
       return config;
     },
+    // Format config object with single quotes for values, no quotes for keys
+    formatConfig(obj, indent = 2) {
+      const pad = " ".repeat(indent);
+      const lines = ["{"];
+      const entries = Object.entries(obj);
+      entries.forEach(([key, value], i) => {
+        const comma = i < entries.length - 1 ? "," : "";
+        if (typeof value === "object" && value !== null) {
+          lines.push(`${pad}${key}: ${this.formatConfig(value, indent + 2).replace(/\n/g, "\n" + pad)}${comma}`);
+        } else {
+          lines.push(`${pad}${key}: '${value}'${comma}`);
+        }
+      });
+      lines.push("}");
+      return lines.join("\n");
+    },
     // Copy config to clipboard
     copyConfig() {
       const config = this.generateConfigExport();
-      const configStr = `breakoutGrid(${JSON.stringify(config, null, 2)})`;
+      const configStr = `breakoutGrid(${this.formatConfig(config)})`;
       navigator.clipboard.writeText(configStr).then(() => {
         this.copySuccess = true;
         this.configCopied = true;
@@ -1051,6 +1102,65 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         // feature has its own integrated handles for min/scale/max
       };
       return map[colName] || null;
+    },
+    // Parse a config string (from copyConfig output) into an object
+    parseConfigString(input) {
+      let str = input.trim();
+      const match = str.match(/^breakoutGrid\s*\(([\s\S]*)\)\s*,?\s*$/);
+      if (match) {
+        str = match[1];
+      }
+      str = str.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*(\w+)\s*:/gm, '"$1":').replace(/'/g, '"').replace(/,(\s*[}\]])/g, "$1");
+      try {
+        return JSON.parse(str);
+      } catch (e) {
+        throw new Error('Invalid config format. Paste the output from "Copy Config".');
+      }
+    },
+    // Open restore modal
+    openRestoreModal() {
+      this.showRestoreModal = true;
+      this.restoreInput = "";
+      this.restoreError = null;
+    },
+    // Close restore modal
+    closeRestoreModal() {
+      this.showRestoreModal = false;
+      this.restoreInput = "";
+      this.restoreError = null;
+    },
+    // Apply a parsed config to the editor
+    restoreConfig() {
+      this.restoreError = null;
+      try {
+        const config = this.parseConfigString(this.restoreInput);
+        Object.keys(this.configOptions).forEach((key) => {
+          if (config[key] !== void 0) {
+            this.editValues[key] = config[key];
+            this.updateConfigValue(key, config[key]);
+          }
+        });
+        if (config.gapScale) {
+          Object.keys(this.gapScaleOptions).forEach((key) => {
+            if (config.gapScale[key] !== void 0) {
+              this.editValues[`gapScale_${key}`] = config.gapScale[key];
+            }
+          });
+          this.updateGapLive();
+        }
+        if (config.breakoutMin !== void 0) {
+          this.editValues.breakout_min = config.breakoutMin;
+        }
+        if (config.breakoutScale !== void 0) {
+          this.editValues.breakout_scale = config.breakoutScale;
+        }
+        this.updateBreakoutLive();
+        this.updateColumnWidths();
+        this.closeRestoreModal();
+        this.configCopied = false;
+      } catch (e) {
+        this.restoreError = e.message;
+      }
     }
   };
   const template = `
@@ -1837,6 +1947,45 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               </div>
             </div>
           </template>
+          <!-- Readability warning -->
+          <div x-show="getContentReadabilityWarning()"
+               x-data="{ expanded: false }"
+               style="margin-top: 6px; padding: 6px 8px; background: #fef3c7; border-radius: 4px; border: 1px solid #fcd34d;">
+            <div @click="expanded = !expanded" style="display: flex; align-items: flex-start; gap: 6px; cursor: pointer;">
+              <svg style="width: 14px; height: 14px; color: #b45309; flex-shrink: 0; margin-top: 1px;" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+              </svg>
+              <div style="flex: 1;">
+                <div style="font-size: 10px; font-weight: 600; color: #92400e;">Wide for reading</div>
+                <div x-show="!expanded" style="font-size: 9px; color: #b45309; margin-top: 2px;">Ideal: 45–55rem for prose. Click for details.</div>
+                <div x-show="expanded" x-transition style="font-size: 9px; color: #78350f; margin-top: 4px; line-height: 1.4;">
+                  At 16px base, 55rem+ can hit 100+ characters/line—too wide for comfortable reading.<br><br>
+                  <strong>Guidelines (at 1rem/16px):</strong><br>
+                  • 45ch ≈ 35–40rem (min)<br>
+                  • 66ch ≈ 45–50rem (ideal)<br>
+                  • 75ch ≈ 50–55rem (max)<br><br>
+                  Fine for mixed layouts; consider tightening for prose-heavy pages.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Default Column Section -->
+        <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Default Column</div>
+              <div style="font-size: 9px; color: #9ca3af; margin-top: 2px;">For children without col-* class</div>
+            </div>
+            <select @change="editValues.defaultCol = $event.target.value; configCopied = false"
+                    :value="editValues.defaultCol || configOptions.defaultCol.value"
+                    style="padding: 6px 8px; font-size: 11px; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; cursor: pointer;">
+              <template x-for="opt in configOptions.defaultCol.options" :key="opt">
+                <option :value="opt" :selected="(editValues.defaultCol || configOptions.defaultCol.value) === opt" x-text="opt"></option>
+              </template>
+            </select>
+          </div>
         </div>
 
         <!-- Track Widths Section -->
@@ -1940,9 +2089,51 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           <button @click="copyConfig()" :style="{ flex: 1, padding: '8px', fontSize: '11px', fontWeight: '600', border: 'none', borderRadius: '4px', cursor: 'pointer', background: copySuccess ? '#10b981' : '#1a1a2e', color: 'white', transition: 'background 0.2s' }">
             <span x-text="copySuccess ? '✓ Copied' : 'Copy Config'"></span>
           </button>
-          <button @click="downloadCSS()" style="flex: 1; padding: 8px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;">
-            Export CSS
+          <button @click="openRestoreModal()" style="padding: 8px 12px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;" title="Paste a config to restore">
+            Restore
           </button>
+          <button @click="downloadCSS()" style="padding: 8px 12px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;">
+            CSS
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Restore Config Modal -->
+    <div x-show="showRestoreModal"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10002; pointer-events: auto;">
+      <div @click.stop style="background: white; border-radius: 8px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 400px; max-width: 90vw; font-family: system-ui, -apple-system, sans-serif;">
+        <!-- Modal Header -->
+        <div style="padding: 12px 16px; background: #1a1a2e; color: white; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 13px;">Restore Config</span>
+          <button @click="closeRestoreModal()" style="background: transparent; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 18px; line-height: 1;">&times;</button>
+        </div>
+        <!-- Modal Body -->
+        <div style="padding: 16px;">
+          <p style="font-size: 12px; color: #6b7280; margin: 0 0 12px 0; line-height: 1.5;">Paste a config from "Copy Config" to restore values:</p>
+          <textarea x-model="restoreInput"
+                    @keydown.meta.enter="restoreConfig()"
+                    @keydown.ctrl.enter="restoreConfig()"
+                    placeholder="breakoutGrid({
+  contentMin: '53rem',
+  contentBase: '75vw',
+  ...
+})"
+                    style="width: 100%; height: 200px; padding: 12px; font-family: 'SF Mono', Monaco, monospace; font-size: 11px; border: 1px solid #e5e5e5; border-radius: 4px; resize: vertical; box-sizing: border-box;"></textarea>
+          <!-- Error message -->
+          <div x-show="restoreError" x-text="restoreError" style="margin-top: 8px; padding: 8px 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; color: #dc2626; font-size: 11px;"></div>
+          <p style="font-size: 10px; color: #9ca3af; margin: 8px 0 0 0;">Press ⌘/Ctrl + Enter to apply</p>
+        </div>
+        <!-- Modal Footer -->
+        <div style="padding: 12px 16px; background: #f7f7f7; border-radius: 0 0 8px 8px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button @click="closeRestoreModal()" style="padding: 8px 16px; font-size: 11px; font-weight: 600; border: 1px solid #e5e5e5; border-radius: 4px; cursor: pointer; background: white; color: #374151;">Cancel</button>
+          <button @click="restoreConfig()" style="padding: 8px 16px; font-size: 11px; font-weight: 600; border: none; border-radius: 4px; cursor: pointer; background: #1a1a2e; color: white;">Apply</button>
         </div>
       </div>
     </div>
