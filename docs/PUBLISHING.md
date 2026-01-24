@@ -2,6 +2,26 @@
 
 This guide explains how to publish the `@astuteo/tailwind-breakout-grid` plugin to npm.
 
+## Quick Release (TL;DR)
+
+```bash
+# 1. Commit all changes first
+git add .
+git commit -m "Your changes"
+
+# 2. Build, bump version, and push (pick one)
+npm run release:patch   # 3.1.1 → 3.1.2 (bug fixes)
+npm run release:minor   # 3.1.1 → 3.2.0 (new features)
+npm run release:major   # 3.1.1 → 4.0.0 (breaking changes)
+
+# 3. Publish to npm
+npm publish
+```
+
+That's it. The `release:*` scripts handle: build → version bump → git push → push tags.
+
+---
+
 ## Prerequisites
 
 1. **npm account**: Create one at [npmjs.com](https://www.npmjs.com/signup) if you don't have one
