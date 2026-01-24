@@ -88,7 +88,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   }
   const VERSION = "3.1.0";
   function generateCSSExport(c) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const breakoutMin = c.breakoutMin || "1rem";
     const breakoutScale = c.breakoutScale || "5vw";
     return `/**
@@ -96,6 +96,28 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
  * Version: ${VERSION}
  * Generated from Tailwind Breakout Grid Plugin
  * https://github.com/astuteo-llc/tailwind-breakout-grid
+ *
+ * Grid Structure:
+ *
+ *   full         feature      popout    content    popout      feature         full
+ *   (1fr)     (${c.featureMin}-${c.featureMax})   (${c.popoutWidth})                  (${c.popoutWidth})   (${c.featureMin}-${c.featureMax})       (1fr)
+ *    ├────────────┼────────────┼─────────┼──────────┼─────────┼────────────┼────────────┤
+ *    │            │            │         │          │         │            │            │
+ *    │            │            │         │          │         │            │            │
+ *    │            │            │         │          │         │            │            │
+ *    ├────────────┼────────────┼─────────┼──────────┼─────────┼────────────┼────────────┤
+ *  full-start  feature-start popout  content    content  popout      feature-end   full-end
+ *                             -start  -start      -end    -end
+ *
+ * Track Formulas:
+ *   Content: clamp(${c.contentMin}, ${c.contentBase}, ${c.contentMax})
+ *   Feature: clamp(${c.featureMin}, ${c.featureScale}, ${c.featureMax})
+ *   Popout:  ${c.popoutWidth}
+ *   Gap:     clamp(${c.baseGap}, ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"}/${((_b = c.gapScale) == null ? void 0 : _b.lg) || "5vw"}/${((_c = c.gapScale) == null ? void 0 : _c.xl) || "6vw"}, ${c.maxGap})
+ *
+ * Think of the grid like an onion: content is the core, and each outer layer
+ * (popout → feature → full) wraps around it. Configure content first, then
+ * build outward. The inner tracks affect all outer track positioning.
  *
  * NOTE: This CSS export feature is in beta and not fully tested.
  * Please verify output before using in production.
@@ -113,7 +135,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   --content-base: ${c.contentBase};
 
   /* Computed values */
-  --gap: clamp(var(--base-gap), ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"}, var(--max-gap));
+  --gap: clamp(var(--base-gap), ${((_d = c.gapScale) == null ? void 0 : _d.default) || "4vw"}, var(--max-gap));
   --computed-gap: max(var(--gap), calc((100vw - var(--content)) / 10));
   --content: min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2);
   --content-inset: min(clamp(var(--content-min), var(--content-base), var(--content-max)), calc(100% - var(--gap)));
@@ -134,13 +156,13 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 /* Responsive gap scaling */
 @media (min-width: 1024px) {
   :root {
-    --gap: clamp(var(--base-gap), ${((_b = c.gapScale) == null ? void 0 : _b.lg) || ((_c = c.gapScale) == null ? void 0 : _c.default) || "5vw"}, var(--max-gap));
+    --gap: clamp(var(--base-gap), ${((_e = c.gapScale) == null ? void 0 : _e.lg) || ((_f = c.gapScale) == null ? void 0 : _f.default) || "5vw"}, var(--max-gap));
   }
 }
 
 @media (min-width: 1280px) {
   :root {
-    --gap: clamp(var(--base-gap), ${((_d = c.gapScale) == null ? void 0 : _d.xl) || ((_e = c.gapScale) == null ? void 0 : _e.lg) || "6vw"}, var(--max-gap));
+    --gap: clamp(var(--base-gap), ${((_g = c.gapScale) == null ? void 0 : _g.xl) || ((_h = c.gapScale) == null ? void 0 : _h.lg) || "6vw"}, var(--max-gap));
   }
 }
 

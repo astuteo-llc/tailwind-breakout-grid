@@ -19,6 +19,28 @@ export function generateCSSExport(c) {
  * Generated from Tailwind Breakout Grid Plugin
  * https://github.com/astuteo-llc/tailwind-breakout-grid
  *
+ * Grid Structure:
+ *
+ *   full         feature      popout    content    popout      feature         full
+ *   (1fr)     (${c.featureMin}-${c.featureMax})   (${c.popoutWidth})                  (${c.popoutWidth})   (${c.featureMin}-${c.featureMax})       (1fr)
+ *    ├────────────┼────────────┼─────────┼──────────┼─────────┼────────────┼────────────┤
+ *    │            │            │         │          │         │            │            │
+ *    │            │            │         │          │         │            │            │
+ *    │            │            │         │          │         │            │            │
+ *    ├────────────┼────────────┼─────────┼──────────┼─────────┼────────────┼────────────┤
+ *  full-start  feature-start popout  content    content  popout      feature-end   full-end
+ *                             -start  -start      -end    -end
+ *
+ * Track Formulas:
+ *   Content: clamp(${c.contentMin}, ${c.contentBase}, ${c.contentMax})
+ *   Feature: clamp(${c.featureMin}, ${c.featureScale}, ${c.featureMax})
+ *   Popout:  ${c.popoutWidth}
+ *   Gap:     clamp(${c.baseGap}, ${c.gapScale?.default || '4vw'}/${c.gapScale?.lg || '5vw'}/${c.gapScale?.xl || '6vw'}, ${c.maxGap})
+ *
+ * Think of the grid like an onion: content is the core, and each outer layer
+ * (popout → feature → full) wraps around it. Configure content first, then
+ * build outward. The inner tracks affect all outer track positioning.
+ *
  * NOTE: This CSS export feature is in beta and not fully tested.
  * Please verify output before using in production.
  */
