@@ -138,8 +138,13 @@ export function generateCSSExport(c) {
     var(--full) [full-end];
 }
 
-/* Default column for direct children */
-.grid-cols-breakout > * { grid-column: ${c.defaultCol || 'content'}; }
+/* Default column for direct children without explicit col-* class */
+[class*='grid-cols-breakout'] > *:not([class*='col-']),
+[class*='grid-cols-feature'] > *:not([class*='col-']),
+[class*='grid-cols-popout'] > *:not([class*='col-']),
+[class*='grid-cols-content'] > *:not([class*='col-']) {
+  grid-column: ${c.defaultCol || 'content'};
+}
 
 /* ----------------------------------------
    Subgrid - Nested Alignment
