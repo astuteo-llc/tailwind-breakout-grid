@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breakout Grid Lite Demo (Standalone CSS)</title>
+
+  <!-- Tailwind for utility classes -->
+  <script type="module" src="/src/main-lite.js"></script>
+
+  <!-- Breakout Grid CSS (standalone - not from plugin) -->
+  <style>
+    /* ========================================
+       Breakout Grid - Standalone CSS
+       Generated from tailwind-breakout-grid plugin
+
+       This demonstrates using the pre-generated CSS
+       without the Tailwind plugin. In production,
+       export CSS from the full visualizer or generate
+       it programmatically.
+       ======================================== */
+
+    :root {
+      /* Base measurements */
+      --base-gap: 1rem;
+      --max-gap: 15rem;
+      --content-min: 53rem;
+      --content-max: 61rem;
+      --content-base: 75vw;
+
+      /* Computed values */
+      --gap: clamp(var(--base-gap), 4vw, var(--max-gap));
+      --computed-gap: max(var(--gap), calc((100vw - var(--content)) / 10));
+      --content: min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2);
+      --content-inset: min(clamp(var(--content-min), var(--content-base), var(--content-max)), calc(100% - var(--gap)));
+      --content-half: calc(var(--content) / 2);
+
+      /* Track widths */
+      --full: minmax(var(--gap), 1fr);
+      --feature: minmax(0, clamp(0rem, 12vw, 12rem));
+      --popout: minmax(0, 5rem);
+      --full-limit: 115rem;
+
+      /* Breakout padding */
+      --breakout-padding: clamp(1rem, 5vw, 5rem);
+      --popout-to-content: clamp(1rem, 5vw, 5rem);
+      --feature-to-content: calc(clamp(0rem, 12vw, 12rem) + 5rem);
+    }
+
+    @media (min-width: 1024px) {
+      :root {
+        --gap: clamp(var(--base-gap), 5vw, var(--max-gap));
+      }
+    }
+
+    @media (min-width: 1280px) {
+      :root {
+        --gap: clamp(var(--base-gap), 6vw, var(--max-gap));
+      }
+    }
+
+    /* Grid Container */
+    .grid-cols-breakout {
+      display: grid;
+      grid-template-columns:
+        [full-start] var(--full)
+        [feature-start] var(--feature)
+        [popout-start] var(--popout)
+        [content-start] var(--content-half) [center-start center-end] var(--content-half) [content-end]
+        var(--popout) [popout-end]
+        var(--feature) [feature-end]
+        var(--full) [full-end];
+    }
+
+    /* Default column for children without col-* class */
+    [class*='grid-cols-breakout'] > *:not([class*='col-']) {
+      grid-column: content;
+    }
+
+    /* Subgrid */
+    .grid-cols-breakout-subgrid {
+      display: grid;
+      grid-template-columns: subgrid;
+    }
+
+    /* Breakout modifiers */
+    .grid-cols-breakout.breakout-to-content {
+      grid-template-columns: [full-start feature-start popout-start content-start center-start] minmax(0, 1fr) [center-end content-end popout-end feature-end full-end];
+    }
+
+    .grid-cols-breakout.breakout-to-popout {
+      grid-template-columns: [full-start feature-start popout-start] var(--popout) [content-start center-start] minmax(0, 1fr) [center-end content-end] var(--popout) [popout-end feature-end full-end];
+    }
+
+    .grid-cols-breakout.breakout-to-feature {
+      grid-template-columns: [full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start center-start] minmax(0, 1fr) [center-end content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end];
+    }
+
+    /* Column utilities */
+    .col-full { grid-column: full; }
+    .col-feature { grid-column: feature; }
+    .col-popout { grid-column: popout; }
+    .col-content { grid-column: content; }
+    .col-center { grid-column: center; }
+
+    .col-full-limit {
+      grid-column: full;
+      width: 100%;
+      max-width: var(--full-limit);
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+    }
+
+    /* Left/right spans */
+    .col-feature-left { grid-column: full-start / feature-end; }
+    .col-feature-right { grid-column: feature-start / full-end; }
+    .col-popout-left { grid-column: full-start / popout-end; }
+    .col-popout-right { grid-column: popout-start / full-end; }
+    .col-content-left { grid-column: full-start / content-end; }
+    .col-content-right { grid-column: content-start / full-end; }
+
+    /* Padding utilities */
+    .p-breakout { padding: var(--breakout-padding); }
+    .px-breakout { padding-left: var(--breakout-padding); padding-right: var(--breakout-padding); }
+    .py-breakout { padding-top: var(--breakout-padding); padding-bottom: var(--breakout-padding); }
+
+    .p-gap { padding: var(--gap); }
+    .px-gap { padding-left: var(--gap); padding-right: var(--gap); }
+    .py-gap { padding-top: var(--gap); padding-bottom: var(--gap); }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- ============================================
+       MASTHEAD
+       ============================================ -->
+  <header class="grid-cols-breakout bg-slate-900 text-white">
+    <div class="col-full-limit px-gap py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center font-bold text-lg">BG</div>
+        <span class="font-semibold text-lg">Breakout Grid <span class="text-slate-400 text-sm">Lite</span></span>
+      </div>
+      <nav class="flex gap-6 text-sm">
+        <a href="index.html" class="text-slate-300 hover:text-white transition-colors">Full Demo</a>
+        <a href="https://github.com/astuteo-llc/tailwind-breakout-grid" class="text-slate-300 hover:text-white transition-colors">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================
+       HERO
+       ============================================ -->
+  <section class="grid-cols-breakout bg-gradient-to-br from-emerald-600 to-teal-700 text-white py-16">
+    <div class="col-content text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">Standalone CSS Demo</h1>
+      <p class="text-xl text-emerald-100 max-w-2xl mx-auto mb-6">
+        This demo uses the standalone CSS export—no Tailwind plugin required for the grid!
+        Press <kbd class="bg-white/20 px-2 py-0.5 rounded text-sm font-mono">Cmd+G</kbd> to toggle the lite visualizer.
+      </p>
+      <p class="text-emerald-200 text-sm">
+        The lite visualizer shows grid overlay and measurements without config editing.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       HOW IT WORKS
+       ============================================ -->
+  <section class="grid-cols-breakout py-12">
+    <h2 class="col-content text-2xl font-bold mb-2">How It Works</h2>
+    <p class="col-content text-gray-600 mb-8">The standalone CSS provides all breakout grid utilities without the Tailwind plugin.</p>
+
+    <div class="col-content bg-slate-800 rounded-lg overflow-hidden">
+      <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
+        <span class="text-slate-300 text-sm font-medium">Standalone CSS (inline or external file)</span>
+      </div>
+      <pre class="p-4 text-sm text-slate-300 overflow-x-auto"><code>&lt;!-- Option 1: Link to exported CSS file --&gt;
+&lt;link rel="stylesheet" href="breakout-grid.css"&gt;
+
+&lt;!-- Option 2: Inline the CSS (see this page's source) --&gt;
+&lt;style&gt;
+  :root {
+    --base-gap: 1rem;
+    --content-min: 53rem;
+    /* ... full CSS from visualizer export */
+  }
+  .grid-cols-breakout { ... }
+  .col-content { grid-column: content; }
+  /* etc. */
+&lt;/style&gt;
+
+&lt;!-- Use the grid exactly like the Tailwind version --&gt;
+&lt;div class="grid-cols-breakout"&gt;
+  &lt;p class="col-content"&gt;Reading width&lt;/p&gt;
+  &lt;img class="col-feature" src="wide.jpg"&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+  </section>
+
+  <!-- ============================================
+       BASIC EXAMPLES
+       ============================================ -->
+  <section class="grid-cols-breakout py-12 bg-gray-100">
+    <h2 class="col-content text-2xl font-bold mb-2">Column Widths</h2>
+    <p class="col-content text-gray-600 mb-8">These work identically to the Tailwind plugin version.</p>
+
+    <!-- Full Width -->
+    <div class="col-full bg-red-100 border-2 border-red-300 py-4 text-center">
+      <code class="text-red-700 font-mono text-sm">.col-full</code>
+      <span class="text-red-600 ml-2">Edge to edge</span>
+    </div>
+
+    <!-- Full Limit -->
+    <div class="col-full-limit bg-red-50 border-2 border-red-200 py-4 px-gap text-center mt-2">
+      <code class="text-red-600 font-mono text-sm">.col-full-limit</code>
+      <span class="text-red-500 ml-2">Full width with max-width constraint</span>
+    </div>
+
+    <!-- Feature -->
+    <div class="col-feature bg-amber-100 border-2 border-amber-300 py-4 text-center mt-2">
+      <code class="text-amber-700 font-mono text-sm">.col-feature</code>
+      <span class="text-amber-600 ml-2">Extra wide for heroes & images</span>
+    </div>
+
+    <!-- Popout -->
+    <div class="col-popout bg-green-100 border-2 border-green-300 py-4 text-center mt-2">
+      <code class="text-green-700 font-mono text-sm">.col-popout</code>
+      <span class="text-green-600 ml-2">Slightly wider than content</span>
+    </div>
+
+    <!-- Content -->
+    <div class="col-content bg-purple-100 border-2 border-purple-300 py-4 text-center mt-2">
+      <code class="text-purple-700 font-mono text-sm">.col-content</code>
+      <span class="text-purple-600 ml-2">Optimal reading width</span>
+    </div>
+  </section>
+
+  <!-- ============================================
+       ARTICLE EXAMPLE
+       ============================================ -->
+  <article class="grid-cols-breakout py-12">
+    <h2 class="col-content text-2xl font-bold mb-2">Real World Example</h2>
+    <p class="col-content text-gray-600 mb-8">An editorial layout using the breakout grid.</p>
+
+    <header class="col-content mb-8">
+      <p class="text-teal-600 font-semibold text-sm uppercase tracking-wide mb-2">Tutorial</p>
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Using CSS Grid Without a Build Step</h1>
+      <p class="text-gray-500">The standalone CSS export works anywhere.</p>
+    </header>
+
+    <p class="col-content text-lg text-gray-700 leading-relaxed mb-6">
+      Modern CSS is powerful enough to create complex layouts without build tools. This standalone CSS file gives you the full breakout grid system with a simple stylesheet include.
+    </p>
+
+    <figure class="col-feature mb-8">
+      <div class="bg-gradient-to-br from-teal-400 to-emerald-500 rounded-xl h-64 flex items-center justify-center">
+        <span class="text-white/80 text-lg">Feature Image Placeholder</span>
+      </div>
+      <figcaption class="text-center text-gray-500 text-sm mt-3">A wide feature image that extends beyond the content width</figcaption>
+    </figure>
+
+    <p class="col-content text-gray-700 leading-relaxed mb-6">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+
+    <blockquote class="col-popout bg-teal-50 border-l-4 border-teal-500 p-6 my-8 rounded-r-lg">
+      <p class="text-teal-900 text-lg italic">"No build step, no npm, no configuration. Just include the CSS and start building."</p>
+    </blockquote>
+
+    <div class="col-full bg-slate-900 text-white">
+      <div class="px-breakout py-12 text-center">
+        <h3 class="text-2xl font-bold mb-3">Try the Lite Visualizer</h3>
+        <p class="text-slate-300 mb-6">Press <kbd class="bg-slate-800 px-2 py-1 rounded text-sm">Cmd+G</kbd> to see the grid overlay</p>
+        <p class="text-slate-400 text-sm">The lite version shows measurements without config editing—perfect for standalone CSS users.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================
+       LITE VS FULL
+       ============================================ -->
+  <section class="grid-cols-breakout py-12 bg-gray-100">
+    <h2 class="col-content text-2xl font-bold mb-2">Lite vs Full Visualizer</h2>
+    <p class="col-content text-gray-600 mb-8">Choose the right tool for your workflow.</p>
+
+    <div class="col-content grid md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 class="font-bold text-lg mb-3 text-emerald-600">Lite Visualizer</h3>
+        <p class="text-gray-600 text-sm mb-4">For standalone CSS users</p>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li class="flex items-start gap-2">
+            <span class="text-emerald-500">✓</span> Grid overlay with measurements
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-emerald-500">✓</span> Column labels and pixel widths
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-emerald-500">✓</span> Lorem ipsum content toggle
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-emerald-500">✓</span> Advanced spans demo
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-gray-400">×</span> <span class="text-gray-500">No config editing</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-gray-400">×</span> <span class="text-gray-500">No CSS export</span>
+          </li>
+        </ul>
+        <p class="mt-4 text-xs text-gray-500">~31 KB (6 KB gzipped)</p>
+      </div>
+
+      <div class="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 class="font-bold text-lg mb-3 text-blue-600">Full Visualizer</h3>
+        <p class="text-gray-600 text-sm mb-4">For Tailwind plugin users</p>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li class="flex items-start gap-2">
+            <span class="text-blue-500">✓</span> Everything in Lite, plus...
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-500">✓</span> Live config editing
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-500">✓</span> Copy config to clipboard
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-500">✓</span> Export standalone CSS
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-500">✓</span> Restore config from clipboard
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-500">✓</span> Grid diagram
+          </li>
+        </ul>
+        <p class="mt-4 text-xs text-gray-500">~124 KB (23 KB gzipped)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="grid-cols-breakout bg-slate-900 text-white py-8">
+    <div class="col-content flex items-center justify-between text-sm text-slate-400">
+      <span>Tailwind Breakout Grid - Lite Demo</span>
+      <a href="https://github.com/astuteo-llc/tailwind-breakout-grid" class="hover:text-white transition-colors">GitHub</a>
+    </div>
+  </footer>
+
+</body>
+</html>

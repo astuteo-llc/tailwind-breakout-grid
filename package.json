@@ -9,6 +9,7 @@
     "index.js",
     "index.d.ts",
     "breakout-grid-visualizer.js",
+    "breakout-grid-visualizer-lite.js",
     "craft-integration.twig",
     "README.md",
     "LICENSE"
@@ -50,7 +51,9 @@
   },
   "scripts": {
     "demo": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --mode lite",
+    "build:full": "vite build",
+    "build:lite": "vite build --mode lite",
     "prepublishOnly": "npm run build && npm run check-files",
     "check-files": "npm pack --dry-run",
     "release": "npm run build && npm run check-files",

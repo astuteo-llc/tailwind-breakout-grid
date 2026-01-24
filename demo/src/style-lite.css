@@ -1,0 +1,4 @@
+@import 'tailwindcss';
+
+/* No @config - uses default Tailwind without breakout grid plugin */
+/* The breakout grid CSS is inline in lite.html for standalone demo */
