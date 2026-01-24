@@ -1846,10 +1846,22 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         template
       }));
     });
-    if (window.Alpine) {
-      console.log("Alpine.js detected - Breakout Grid Visualizer ready");
+    function injectVisualizer() {
+      if (document.getElementById("breakout-grid-visualizer-root")) return;
+      const container = document.createElement("div");
+      container.id = "breakout-grid-visualizer-root";
+      container.setAttribute("x-data", "breakoutGridVisualizer");
+      container.setAttribute("x-html", "template");
+      document.body.appendChild(container);
+      console.log("Breakout Grid Visualizer injected. Press Ctrl/Cmd + G to toggle.");
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(injectVisualizer, 10);
+      });
     } else {
-      console.warn("Alpine.js not detected - Breakout Grid Visualizer requires Alpine.js v3.x");
+      document.addEventListener("alpine:initialized", injectVisualizer);
+      setTimeout(injectVisualizer, 100);
     }
   })();
 })();

@@ -2,6 +2,8 @@
 
 An Alpine.js-powered visual debugging tool that helps designers see and understand the grid structure while building layouts. The visualizer provides real-time feedback about grid behavior and measurements.
 
+> **⚠️ DEVELOPMENT ONLY**: This tool is intended for local development only. Never include it in production builds. It adds ~100KB of JavaScript and exposes configuration internals.
+
 ## Features
 
 - **Visual overlay** showing all grid columns with color-coded boundaries
@@ -24,11 +26,10 @@ An Alpine.js-powered visual debugging tool that helps designers see and understa
 The visualizer uses a consistent color scheme to identify different grid areas:
 
 - **Full** (Red) - Edge-to-edge viewport width
-- **Feature Popout** (Orange) - Maximum content width
-- **Feature** (Yellow) - Extra wide content areas
+- **Full Limit** (Dark Red) - Maximum container width
+- **Feature** (Cyan) - Extra wide content areas with min/scale/max clamp
 - **Popout** (Green) - Slightly wider than standard content
-- **Content** (Blue) - Standard content width (default)
-- **Narrow** (Purple) - Optimal reading width (40-50rem)
+- **Content** (Purple) - Standard content width with min/base/max clamp
 
 ## Interactive Controls
 
@@ -42,46 +43,72 @@ The visualizer uses a consistent color scheme to identify different grid areas:
 
 ## Installation
 
-The visualizer should only be loaded in development environments. The recommended approach is to dynamically import it and wait for Alpine.js to start.
+> **⚠️ CRITICAL**: The visualizer must ONLY be loaded in development environments. Use environment checks to prevent it from ever reaching production.
 
-### Vite/Modern Build Setup
+The visualizer auto-injects into the DOM when loaded—no manual HTML markup required. Just include the scripts conditionally based on your environment.
 
-```javascript
-// In your main app.js or Alpine initialization file
-import Alpine from 'alpinejs'
+### Craft CMS
 
-// Conditionally load visualizer in development
-if (import.meta.env.DEV) {
-  import('@astuteo/tailwind-breakout-grid/breakout-grid-visualizer.js').then(() => {
-    Alpine.start()
-  })
-} else {
-  Alpine.start()
-}
-
-window.Alpine = Alpine
+```twig
+{# Only load in Craft's devMode #}
+{% if craft.app.config.general.devMode %}
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="/path/to/breakout-grid-visualizer.js"></script>
+{% endif %}
 ```
 
-Then add the component to your page (this can be in production HTML, it won't render unless the visualizer loads):
+### Laravel / Blade
+
+```blade
+{{-- Only load in local environment --}}
+@if(app()->environment('local'))
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="{{ asset('js/breakout-grid-visualizer.js') }}"></script>
+@endif
+```
+
+### Vite / Modern Build
+
+```javascript
+import Alpine from 'alpinejs'
+
+async function initAlpine() {
+  // Prevent double initialization during HMR
+  if (window.__alpineStarted) return;
+
+  // Load visualizer only in development (before Alpine.start)
+  if (import.meta.env.DEV) {
+    try {
+      await import('@astuteo/tailwind-breakout-grid/breakout-grid-visualizer.js');
+    } catch (e) {
+      console.warn('[Alpine] Failed to load breakout-grid-visualizer:', e.message);
+    }
+  }
+
+  Alpine.start();
+  window.__alpineStarted = true;
+}
+
+window.Alpine = Alpine;
+initAlpine();
+```
+
+### Static HTML (with manual check)
 
 ```html
-<div x-data="breakoutGridVisualizer" x-html="template"></div>
+<script>
+  // Only load in development (check your domain or flag)
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    document.write('<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"><\/script>');
+    document.write('<script defer src="/breakout-grid-visualizer.js"><\/script>');
+  }
+</script>
 ```
 
 **Key points:**
-- The dynamic import ensures the visualizer only loads in development
-- Waiting for the import to complete before calling `Alpine.start()` ensures the component is registered
-- The HTML can remain in production builds (it won't render if the component isn't loaded)
-
-### Alternative: Inline Script (Legacy)
-
-If you're not using a build tool:
-
-```html
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<script src="/path/to/breakout-grid-visualizer.js"></script>
-<div x-data="breakoutGridVisualizer" x-html="template"></div>
-```
+- The visualizer auto-injects—no `<div x-data="...">` needed in your HTML
+- Always wrap in environment/devMode checks
+- Press `Ctrl/Cmd + G` to toggle once loaded
 
 ## Usage
 
@@ -125,18 +152,15 @@ When active, the visualizer displays a control panel with:
 The visualizer includes a floating config editor that allows real-time adjustment of grid values:
 
 **Live-editable values:**
+- `contentMin` / `contentBase` / `contentMax` - Content column clamp values
+- `featureMin` / `featureScale` / `featureMax` - Feature track clamp values
 - `popoutWidth` - Popout extension distance
-- `featureWidth` - Feature rail extension
-- `content` - Standard content rail width (wrapped in minmax automatically)
-
-**Requires rebuild:**
-- `gapScale` - Responsive gap scaling values
-- `defaultCol` - Default column for items without col-* class
-
-The editor displays number inputs with unit suffixes (rem, vw, etc.) that support arrow key increment/decrement. Changes are reflected immediately in the visualizer overlay.
+- `baseGap` / `maxGap` - Gap floor and ceiling
+- `gapScale` (per breakpoint) - Responsive gap scaling
 
 To open the editor, click the "Config" button in the control panel. The editor window is draggable and includes:
 - Copy button to export the modified config
+- Export CSS button for standalone use
 - Unsaved changes warning when closing with uncommitted edits
 
 ### Visual Drag Handles
@@ -145,7 +169,8 @@ When the config editor is open, column boundaries become interactive:
 
 - **Hover over columns** to reveal drag handles on the edges
 - **Drag left/right** to adjust track widths visually
-- **Narrow column** shows three nested boundaries (min/base/max) with individual drag handles
+- **Content column** shows three nested boundaries (min/base/max) with individual drag handles
+- **Feature column** shows three nested boundaries (min/scale/max) with individual drag handles
 
 This provides an intuitive way to experiment with grid proportions before copying the config.
 

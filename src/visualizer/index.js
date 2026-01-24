@@ -1,30 +1,32 @@
 /**
  * Breakout Grid Visualizer - Alpine.js Component
  *
- * A development tool for visualizing the breakout grid system.
- * Provides an overlay showing grid columns, labels, and measurements.
+ * ⚠️  DEVELOPMENT ONLY - Never include in production builds!
  *
- * Features:
- * - Toggle with keyboard shortcut (Ctrl/Cmd + G)
- * - Visual grid overlay with column labels
- * - Viewport width display
- * - Gap measurements
- * - Persistent state (localStorage)
- * - Click-to-identify grid areas
+ * A development tool for visualizing the breakout grid system.
+ * Auto-injects into the DOM when loaded - no manual markup needed.
+ * Press Ctrl/Cmd + G to toggle.
  *
  * @requires Alpine.js v3.x
  * @requires Tailwind breakout-grid plugin
  *
- * Usage:
- * 1. Include Alpine.js and this file in your page
- * 2. Add the component to your page: <div x-data="breakoutGridVisualizer"></div>
- * 3. Press Ctrl/Cmd + G to toggle the visualizer
+ * Craft CMS:
+ *   {% if craft.app.config.general.devMode %}
+ *     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+ *     <script defer src="/path/to/breakout-grid-visualizer.js"></script>
+ *   {% endif %}
  *
- * CraftCMS Usage:
- * {% if craft.app.config.general.devMode %}
- *   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
- *   <script src="/path/to/breakout-grid-visualizer.js"></script>
- * {% endif %}
+ * Laravel:
+ *   @if(app()->environment('local'))
+ *     <script defer src="...alpine..."></script>
+ *     <script defer src="...visualizer..."></script>
+ *   @endif
+ *
+ * Vite:
+ *   if (import.meta.env.DEV) {
+ *     await import('@astuteo/tailwind-breakout-grid/breakout-grid-visualizer.js')
+ *   }
+ *   Alpine.start()
  */
 
 import {
@@ -72,11 +74,33 @@ import { template } from './template.js';
     }));
   });
 
-  // Auto-inject component if Alpine is loaded
-  if (window.Alpine) {
-    console.log('Alpine.js detected - Breakout Grid Visualizer ready');
+  // Auto-inject visualizer into DOM
+  function injectVisualizer() {
+    // Check if already injected
+    if (document.getElementById('breakout-grid-visualizer-root')) return;
+
+    // Create container with Alpine directives
+    const container = document.createElement('div');
+    container.id = 'breakout-grid-visualizer-root';
+    container.setAttribute('x-data', 'breakoutGridVisualizer');
+    container.setAttribute('x-html', 'template');
+
+    // Append to body
+    document.body.appendChild(container);
+    console.log('Breakout Grid Visualizer injected. Press Ctrl/Cmd + G to toggle.');
+  }
+
+  // Wait for Alpine and DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      // Give Alpine a moment to initialize
+      setTimeout(injectVisualizer, 10);
+    });
   } else {
-    console.warn('Alpine.js not detected - Breakout Grid Visualizer requires Alpine.js v3.x');
+    // DOM already loaded, inject after Alpine initializes
+    document.addEventListener('alpine:initialized', injectVisualizer);
+    // Fallback if alpine:initialized already fired
+    setTimeout(injectVisualizer, 100);
   }
 
 })();
