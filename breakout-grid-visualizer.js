@@ -874,6 +874,16 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
        @mouseup.window="stopColumnResize()"
        style="position: fixed; inset: 0; pointer-events: none; z-index: 9999;">
 
+    <!-- Edit Mode Backdrop - fades page content -->
+    <div x-show="editMode"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.85); z-index: 1;"></div>
+
     <!-- Advanced Span Examples Overlay -->
     <div x-show="showAdvanced"
          class="grid-cols-breakout"
@@ -1142,7 +1152,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     </div>
 
     <!-- Grid Overlay (hidden in Advanced mode) -->
-    <div x-show="!showAdvanced" x-init="$watch('isVisible', v => v && setTimeout(() => updateColumnWidths(), 50)); setTimeout(() => updateColumnWidths(), 100)" class="grid-cols-breakout breakout-visualizer-grid" style="height: 100%; position: relative;">
+    <div x-show="!showAdvanced" x-init="$watch('isVisible', v => v && setTimeout(() => updateColumnWidths(), 50)); setTimeout(() => updateColumnWidths(), 100)" class="grid-cols-breakout breakout-visualizer-grid" style="height: 100%; position: relative; z-index: 2;">
       <template x-for="area in gridAreas" :key="area.name">
         <div :class="'col-' + area.name"
              @click="selectArea(area.name)"
