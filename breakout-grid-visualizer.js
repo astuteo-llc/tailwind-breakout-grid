@@ -86,7 +86,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       dragOffsetSpacing: { x: 0, y: 0 }
     };
   }
-  const VERSION = "3.1.1";
+  const VERSION = "3.1.0";
   function generateCSSExport(c) {
     var _a, _b, _c, _d, _e, _f, _g, _h;
     const breakoutMin = c.breakoutMin || "1rem";
