@@ -191,6 +191,85 @@ export const methods = {
     return lines.join('\n');
   },
 
+  // Section definitions for partial copying
+  configSections: {
+    content: {
+      keys: ['contentMin', 'contentBase', 'contentMax'],
+      label: 'Content'
+    },
+    defaultCol: {
+      keys: ['defaultCol'],
+      label: 'Default Column'
+    },
+    tracks: {
+      keys: ['popoutWidth', 'fullLimit'],
+      label: 'Track Widths'
+    },
+    feature: {
+      keys: ['featureMin', 'featureScale', 'featureMax'],
+      label: 'Feature'
+    },
+    gap: {
+      keys: ['baseGap', 'maxGap'],
+      nested: { gapScale: ['default', 'lg', 'xl'] },
+      label: 'Gap'
+    },
+    breakout: {
+      keys: ['breakoutMin', 'breakoutScale'],
+      label: 'Breakout'
+    }
+  },
+
+  // Copy a specific section to clipboard
+  copySection(sectionName) {
+    const section = this.configSections[sectionName];
+    if (!section) return;
+
+    const config = {};
+
+    // Add direct keys
+    section.keys.forEach(key => {
+      if (this.configOptions[key]) {
+        config[key] = this.editValues[key] || this.configOptions[key].value;
+      } else if (key === 'breakoutMin') {
+        config[key] = this.editValues.breakout_min || this.breakoutOptions.min.value;
+      } else if (key === 'breakoutScale') {
+        config[key] = this.editValues.breakout_scale || this.breakoutOptions.scale.value;
+      }
+    });
+
+    // Add nested keys (like gapScale)
+    if (section.nested) {
+      Object.keys(section.nested).forEach(nestedKey => {
+        config[nestedKey] = {};
+        section.nested[nestedKey].forEach(subKey => {
+          config[nestedKey][subKey] = this.editValues[`gapScale_${subKey}`] || this.gapScaleOptions[subKey].value;
+        });
+      });
+    }
+
+    const configStr = this.formatConfigFlat(config);
+    navigator.clipboard.writeText(configStr).then(() => {
+      this.sectionCopied = sectionName;
+      setTimeout(() => this.sectionCopied = null, 1500);
+    });
+  },
+
+  // Format config as flat key-value pairs (no wrapping braces)
+  formatConfigFlat(obj) {
+    const lines = [];
+    const entries = Object.entries(obj);
+    entries.forEach(([key, value], i) => {
+      const comma = i < entries.length - 1 ? ',' : ',';
+      if (typeof value === 'object' && value !== null) {
+        lines.push(`${key}: ${this.formatConfig(value)}${comma}`);
+      } else {
+        lines.push(`${key}: '${value}'${comma}`);
+      }
+    });
+    return lines.join('\n');
+  },
+
   // Copy config to clipboard
   copyConfig() {
     const config = this.generateConfigExport();

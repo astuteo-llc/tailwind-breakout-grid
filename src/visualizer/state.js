@@ -100,5 +100,7 @@ export function createInitialState() {
     showRestoreModal: false,
     restoreInput: '',
     restoreError: null,
+    // Section copy feedback
+    sectionCopied: null,
   };
 }

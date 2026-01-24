@@ -87,10 +87,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       // Restore config modal
       showRestoreModal: false,
       restoreInput: "",
-      restoreError: null
+      restoreError: null,
+      // Section copy feedback
+      sectionCopied: null
     };
   }
-  const VERSION = "3.1.1";
+  const VERSION = "3.1.2";
   function generateCSSExport(c) {
     var _a, _b, _c, _d, _e, _f, _g, _h;
     const breakoutMin = c.breakoutMin || "1rem";
@@ -846,6 +848,76 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         }
       });
       lines.push("}");
+      return lines.join("\n");
+    },
+    // Section definitions for partial copying
+    configSections: {
+      content: {
+        keys: ["contentMin", "contentBase", "contentMax"],
+        label: "Content"
+      },
+      defaultCol: {
+        keys: ["defaultCol"],
+        label: "Default Column"
+      },
+      tracks: {
+        keys: ["popoutWidth", "fullLimit"],
+        label: "Track Widths"
+      },
+      feature: {
+        keys: ["featureMin", "featureScale", "featureMax"],
+        label: "Feature"
+      },
+      gap: {
+        keys: ["baseGap", "maxGap"],
+        nested: { gapScale: ["default", "lg", "xl"] },
+        label: "Gap"
+      },
+      breakout: {
+        keys: ["breakoutMin", "breakoutScale"],
+        label: "Breakout"
+      }
+    },
+    // Copy a specific section to clipboard
+    copySection(sectionName) {
+      const section = this.configSections[sectionName];
+      if (!section) return;
+      const config = {};
+      section.keys.forEach((key) => {
+        if (this.configOptions[key]) {
+          config[key] = this.editValues[key] || this.configOptions[key].value;
+        } else if (key === "breakoutMin") {
+          config[key] = this.editValues.breakout_min || this.breakoutOptions.min.value;
+        } else if (key === "breakoutScale") {
+          config[key] = this.editValues.breakout_scale || this.breakoutOptions.scale.value;
+        }
+      });
+      if (section.nested) {
+        Object.keys(section.nested).forEach((nestedKey) => {
+          config[nestedKey] = {};
+          section.nested[nestedKey].forEach((subKey) => {
+            config[nestedKey][subKey] = this.editValues[`gapScale_${subKey}`] || this.gapScaleOptions[subKey].value;
+          });
+        });
+      }
+      const configStr = this.formatConfigFlat(config);
+      navigator.clipboard.writeText(configStr).then(() => {
+        this.sectionCopied = sectionName;
+        setTimeout(() => this.sectionCopied = null, 1500);
+      });
+    },
+    // Format config as flat key-value pairs (no wrapping braces)
+    formatConfigFlat(obj) {
+      const lines = [];
+      const entries = Object.entries(obj);
+      entries.forEach(([key, value], i) => {
+        const comma = i < entries.length - 1 ? "," : ",";
+        if (typeof value === "object" && value !== null) {
+          lines.push(`${key}: ${this.formatConfig(value)}${comma}`);
+        } else {
+          lines.push(`${key}: '${value}'${comma}`);
+        }
+      });
       return lines.join("\n");
     },
     // Copy config to clipboard
@@ -1936,7 +2008,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
         <!-- Content Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Content (Text Width)</div>
+          <div @click="copySection('content')" style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;" :style="{ color: sectionCopied === 'content' ? '#10b981' : '#6b7280' }">
+            <span x-text="sectionCopied === 'content' ? '✓ Copied' : 'Content (Text Width)'"></span>
+          </div>
           <template x-for="key in ['contentMin', 'contentBase', 'contentMax']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
               <span style="font-size: 11px; color: #374151;" x-text="key.replace('content', '').toLowerCase()"></span>
@@ -1974,8 +2048,8 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         <!-- Default Column Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
           <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div>
-              <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Default Column</div>
+            <div @click="copySection('defaultCol')" style="cursor: pointer;">
+              <div style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;" :style="{ color: sectionCopied === 'defaultCol' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'defaultCol' ? '✓ Copied' : 'Default Column'"></div>
               <div style="font-size: 9px; color: #9ca3af; margin-top: 2px;">For children without col-* class</div>
             </div>
             <select @change="editValues.defaultCol = $event.target.value; configCopied = false"
@@ -1990,7 +2064,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
         <!-- Track Widths Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Track Widths</div>
+          <div @click="copySection('tracks')" style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; cursor: pointer;" :style="{ color: sectionCopied === 'tracks' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'tracks' ? '✓ Copied' : 'Track Widths'"></div>
           <template x-for="key in ['popoutWidth', 'fullLimit']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
               <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '')"></span>
@@ -2005,7 +2079,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
         <!-- Feature Section (Track Width) -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Feature (Track Width)</div>
+          <div @click="copySection('feature')" style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; cursor: pointer;" :style="{ color: sectionCopied === 'feature' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'feature' ? '✓ Copied' : 'Feature (Track Width)'"></div>
           <template x-for="key in ['featureMin', 'featureScale', 'featureMax']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
               <span style="font-size: 11px; color: #374151;" x-text="key.replace('feature', '').toLowerCase()"></span>
@@ -2020,7 +2094,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
         <!-- Gap Section (Outer Margins) -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Outer Margins</div>
+          <div @click="copySection('gap')" style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; cursor: pointer;" :style="{ color: sectionCopied === 'gap' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'gap' ? '✓ Copied' : 'Outer Margins'"></div>
           <div style="font-size: 9px; color: #9ca3af; margin-bottom: 8px; line-height: 1.4;">Space between viewport edge and content. Auto-centers your layout.</div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">

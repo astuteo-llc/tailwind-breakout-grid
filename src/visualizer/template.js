@@ -776,7 +776,9 @@ export const template = `
 
         <!-- Content Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Content (Text Width)</div>
+          <div @click="copySection('content')" style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;" :style="{ color: sectionCopied === 'content' ? '#10b981' : '#6b7280' }">
+            <span x-text="sectionCopied === 'content' ? '✓ Copied' : 'Content (Text Width)'"></span>
+          </div>
           <template x-for="key in ['contentMin', 'contentBase', 'contentMax']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
               <span style="font-size: 11px; color: #374151;" x-text="key.replace('content', '').toLowerCase()"></span>
@@ -814,8 +816,8 @@ export const template = `
         <!-- Default Column Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
           <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div>
-              <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Default Column</div>
+            <div @click="copySection('defaultCol')" style="cursor: pointer;">
+              <div style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;" :style="{ color: sectionCopied === 'defaultCol' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'defaultCol' ? '✓ Copied' : 'Default Column'"></div>
               <div style="font-size: 9px; color: #9ca3af; margin-top: 2px;">For children without col-* class</div>
             </div>
             <select @change="editValues.defaultCol = $event.target.value; configCopied = false"
@@ -830,7 +832,7 @@ export const template = `
 
         <!-- Track Widths Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Track Widths</div>
+          <div @click="copySection('tracks')" style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; cursor: pointer;" :style="{ color: sectionCopied === 'tracks' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'tracks' ? '✓ Copied' : 'Track Widths'"></div>
           <template x-for="key in ['popoutWidth', 'fullLimit']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
               <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '')"></span>
@@ -845,7 +847,7 @@ export const template = `
 
         <!-- Feature Section (Track Width) -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Feature (Track Width)</div>
+          <div @click="copySection('feature')" style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; cursor: pointer;" :style="{ color: sectionCopied === 'feature' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'feature' ? '✓ Copied' : 'Feature (Track Width)'"></div>
           <template x-for="key in ['featureMin', 'featureScale', 'featureMax']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
               <span style="font-size: 11px; color: #374151;" x-text="key.replace('feature', '').toLowerCase()"></span>
@@ -860,7 +862,7 @@ export const template = `
 
         <!-- Gap Section (Outer Margins) -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Outer Margins</div>
+          <div @click="copySection('gap')" style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; cursor: pointer;" :style="{ color: sectionCopied === 'gap' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'gap' ? '✓ Copied' : 'Outer Margins'"></div>
           <div style="font-size: 9px; color: #9ca3af; margin-bottom: 8px; line-height: 1.4;">Space between viewport edge and content. Auto-centers your layout.</div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
