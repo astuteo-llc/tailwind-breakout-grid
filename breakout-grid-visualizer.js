@@ -108,6 +108,55 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
  * For development debugging with this standalone CSS, use the lite visualizer:
  * https://github.com/astuteo-llc/tailwind-breakout-grid/blob/master/breakout-grid-visualizer-lite.js
  *
+ * ========================================
+ * Usage Instructions
+ * ========================================
+ *
+ * Option 1: CSS Layers with @import (Recommended for Vite/PostCSS)
+ * ----------------------------------------------------------------
+ * Save this file as _breakout-grid.css in your CSS directory, then
+ * import it inside an @layer block in your main stylesheet:
+ *
+ *   @layer base {
+ *     @import './_breakout-grid.css';
+ *   }
+ *
+ * Or place it in your components layer alongside other objects:
+ *
+ *   @layer components {
+ *     @import './_breakout-grid.css';
+ *     @import './_objects.buttons.css';
+ *     @import './_objects.forms.css';
+ *   }
+ *
+ * This keeps the breakout grid scoped within your layer system and
+ * prevents specificity conflicts with utilities that come later.
+ *
+ * Option 2: Scoped to a Container
+ * -------------------------------
+ * If you need to isolate the CSS variables from :root, move the
+ * custom properties to a container class:
+ *
+ *   .breakout-scope {
+ *     --base-gap: ${c.baseGap};
+ *     --max-gap: ${c.maxGap};
+ *     ... (rest of custom properties)
+ *   }
+ *
+ * Then wrap your grid in that container:
+ *
+ *   <div class="breakout-scope">
+ *     <main class="grid-cols-breakout">...</main>
+ *   </div>
+ *
+ * Option 3: Direct Link (Simple Projects)
+ * ---------------------------------------
+ * For simple projects without a build step:
+ *
+ *   <link rel="stylesheet" href="breakout-grid.css">
+ *
+ * ========================================
+ *
  * Configuration (for tailwind.config.js):
  * ----------------------------------------
  * import breakoutGrid from 'tailwind-breakout-grid'
