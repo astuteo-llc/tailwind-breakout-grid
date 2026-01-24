@@ -9,16 +9,21 @@ This guide explains how to publish the `@astuteo/tailwind-breakout-grid` plugin 
 git add .
 git commit -m "Your changes"
 
-# 2. Build, bump version, and push (pick one)
+# 2. Remove private flag (if present)
+# Check package.json - if "private": true exists, remove it before publishing
+
+# 3. Build, bump version, and push (pick one)
 npm run release:patch   # 3.1.1 → 3.1.2 (bug fixes)
 npm run release:minor   # 3.1.1 → 3.2.0 (new features)
 npm run release:major   # 3.1.1 → 4.0.0 (breaking changes)
 
-# 3. Publish to npm
+# 4. Publish to npm
 npm publish
 ```
 
 That's it. The `release:*` scripts handle: build → version bump → git push → push tags.
+
+**Note:** The package may have `"private": true` in package.json during development. Remove this line before publishing to npm.
 
 ---
 
