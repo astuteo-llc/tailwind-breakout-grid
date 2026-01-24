@@ -168,7 +168,19 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
 /* ========================================
    Grid Container - Main
-   ======================================== */
+   ========================================
+
+   The primary grid container. Apply to any element that should use
+   the breakout grid system. All direct children default to the
+   content column unless given a col-* class.
+
+   Basic usage:
+   <main class="grid-cols-breakout">
+     <article>Default content width</article>
+     <figure class="col-feature">Wider for images</figure>
+     <div class="col-full">Edge to edge</div>
+   </main>
+*/
 .grid-cols-breakout {
   display: grid;
   grid-template-columns:
@@ -184,15 +196,49 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 /* Default column for direct children */
 .grid-cols-breakout > * { grid-column: ${c.defaultCol || "content"}; }
 
-/* Subgrid for nested alignment */
+/* ----------------------------------------
+   Subgrid - Nested Alignment
+   ----------------------------------------
+
+   Use subgrid when you need children of a spanning element to align
+   with the parent grid's tracks. The child inherits the parent's
+   column lines.
+
+   Example - Card grid inside a feature-width container:
+   <div class="col-feature grid-cols-breakout-subgrid">
+     <h2 class="col-content">Title aligns with content</h2>
+     <div class="col-feature">Full width of parent</div>
+   </div>
+
+   Browser support: ~93% (check caniuse.com/css-subgrid)
+*/
 .grid-cols-breakout-subgrid {
   display: grid;
   grid-template-columns: subgrid;
 }
 
 /* ========================================
-   Grid Container - Left Aligned Variants
-   ======================================== */
+   Grid Container - Left/Right Aligned Variants
+   ========================================
+
+   Use these when content should anchor to one side instead of centering.
+   Common for asymmetric layouts, sidebars, or split-screen designs.
+
+   Left variants: Content anchors to left edge, right side has outer tracks
+   Right variants: Content anchors to right edge, left side has outer tracks
+
+   Example - Image left, text right:
+   <section class="grid-cols-feature-left">
+     <figure class="col-feature">Image anchored left</figure>
+     <div class="col-content">Text in content area</div>
+   </section>
+
+   Example - Sidebar layout:
+   <div class="grid-cols-content-right">
+     <aside class="col-full">Sidebar fills left</aside>
+     <main class="col-content">Main content right-aligned</main>
+   </div>
+*/
 .grid-cols-feature-left {
   display: grid;
   grid-template-columns:
@@ -258,7 +304,32 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
 /* ========================================
    Breakout Modifiers (for nested grids)
-   ======================================== */
+   ========================================
+
+   When you nest a grid inside another element (like inside col-feature),
+   the nested grid doesn't know about the parent's constraints. Use these
+   modifiers to "reset" the grid to fit its container.
+
+   breakout-to-content: Collapses all tracks - nested grid fills container
+   breakout-to-popout:  Keeps popout tracks, collapses feature/full
+   breakout-to-feature: Keeps feature+popout tracks, collapses full
+
+   Example - Full-width hero with nested content grid:
+   <div class="col-full bg-blue-500">
+     <div class="grid-cols-breakout breakout-to-content">
+       <h1>This h1 fills the blue container</h1>
+       <p class="col-content">But content still works!</p>
+     </div>
+   </div>
+
+   Example - Feature-width card with internal grid:
+   <article class="col-feature">
+     <div class="grid-cols-breakout breakout-to-feature">
+       <img class="col-feature">Full width of card</img>
+       <p class="col-content">Padded text inside</p>
+     </div>
+   </article>
+*/
 .grid-cols-breakout.breakout-to-content {
   grid-template-columns: [full-start feature-start popout-start content-start center-start] minmax(0, 1fr) [center-end content-end popout-end feature-end full-end];
 }
@@ -271,14 +342,38 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   grid-template-columns: [full-start feature-start] var(--feature) [popout-start] var(--popout) [content-start center-start] minmax(0, 1fr) [center-end content-end] var(--popout) [popout-end] var(--feature) [feature-end full-end];
 }
 
-/* None - disables grid for sidebar layouts; nested content blocks/components with col-* classes are ignored */
+/* ----------------------------------------
+   Breakout None - Disable Grid
+   ----------------------------------------
+
+   Use when you need to escape the grid entirely. Useful for:
+   - Sidebar layouts where one column shouldn't use grid
+   - Components that manage their own layout
+   - CMS blocks that shouldn't inherit grid behavior
+
+   Example - Two-column layout with sidebar:
+   <div class="grid grid-cols-[300px_1fr]">
+     <aside class="breakout-none">Sidebar - no grid here</aside>
+     <main class="grid-cols-breakout">Main content uses grid</main>
+   </div>
+*/
 .breakout-none { display: block; }
 .breakout-none-flex { display: flex; }
 .breakout-none-grid { display: grid; }
 
 /* ========================================
    Column Utilities - Basic
-   ======================================== */
+   ========================================
+
+   Place elements in specific grid tracks. These are the core utilities
+   you'll use most often.
+
+   col-full:    Edge to edge (viewport width minus gap)
+   col-feature: Wide content (images, videos, heroes)
+   col-popout:  Slightly wider than content (pull quotes, callouts)
+   col-content: Standard reading width (articles, text)
+   col-center:  Centered within content (rare, for precise centering)
+*/
 .col-full { grid-column: full; }
 .col-feature { grid-column: feature; }
 .col-popout { grid-column: popout; }
@@ -290,7 +385,16 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
 /* ========================================
    Column Utilities - Start/End
-   ======================================== */
+   ========================================
+
+   Fine-grained control for custom spans. Combine start and end
+   utilities to create any span you need.
+
+   Example - Span from popout to feature on right:
+   <div class="col-start-popout col-end-feature">
+     Custom span
+   </div>
+*/
 .col-start-full { grid-column-start: full-start; }
 .col-start-feature { grid-column-start: feature-start; }
 .col-start-popout { grid-column-start: popout-start; }
@@ -311,7 +415,26 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
 /* ========================================
    Column Utilities - Left/Right Spans
-   ======================================== */
+   ========================================
+
+   Asymmetric spans that anchor to one edge. Perfect for:
+   - Split layouts (image left, text right)
+   - Overlapping elements
+   - Pull quotes that bleed to one edge
+
+   Pattern: col-{track}-left  = full-start → {track}-end
+            col-{track}-right = {track}-start → full-end
+
+   Example - Image bleeds left, caption stays in content:
+   <figure class="col-content-left">
+     <img class="w-full">Spans from left edge to content</img>
+   </figure>
+
+   Example - Quote pulls right:
+   <blockquote class="col-popout-right">
+     Spans from popout through to right edge
+   </blockquote>
+*/
 .col-feature-left { grid-column: full-start / feature-end; }
 .col-feature-right { grid-column: feature-start / full-end; }
 .col-popout-left { grid-column: full-start / popout-end; }
@@ -327,7 +450,17 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 
 /* ========================================
    Column Utilities - Advanced Spans
-   ======================================== */
+   ========================================
+
+   Partial spans between non-adjacent tracks. Use when you need
+   elements that span from an inner track outward but not all
+   the way to the edge.
+
+   Example - Card that spans feature to content (not to edge):
+   <div class="col-feature-to-content">
+     Wide but doesn't bleed to viewport edge
+   </div>
+*/
 /* Feature to other columns */
 .col-feature-to-popout { grid-column: feature-start / popout-end; }
 .col-feature-to-content { grid-column: feature-start / content-end; }
@@ -343,7 +476,19 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .col-content-to-popout { grid-column: content-start / popout-end; }
 .col-content-to-feature { grid-column: content-start / feature-end; }
 
-/* Full limit */
+/* ----------------------------------------
+   Full Limit - Capped Full Width
+   ----------------------------------------
+
+   Goes edge-to-edge like col-full, but caps at --full-limit on
+   ultra-wide screens. Prevents content from becoming too wide
+   on large monitors while still being full-width on normal screens.
+
+   Example - Hero that doesn't get absurdly wide:
+   <section class="col-full-limit">
+     Full width up to ${c.fullLimit}, then centered
+   </section>
+*/
 .col-full-limit {
   grid-column: full;
   width: 100%;
@@ -354,8 +499,28 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 }
 
 /* ========================================
-   Padding Utilities - Breakout
-   ======================================== */
+   Padding Utilities
+   ========================================
+
+   Match padding to grid measurements for alignment. These utilities
+   help content inside non-grid elements align with the grid.
+
+   --breakout-padding: Fluid padding that matches popout track behavior
+   --gap:              Matches the outer grid gap
+   --computed-gap:     Larger gap for full-width elements
+   --popout-to-content: Align edges with content track from popout
+   --feature-to-content: Align edges with content track from feature
+
+   Example - Full-width section with content-aligned padding:
+   <section class="col-full bg-gray-100 px-feature-to-content">
+     <p>This text aligns with content column above/below</p>
+   </section>
+
+   Example - Card with consistent internal spacing:
+   <div class="col-popout p-breakout">
+     Padding scales with the grid
+   </div>
+*/
 .p-breakout { padding: var(--breakout-padding); }
 .px-breakout { padding-left: var(--breakout-padding); padding-right: var(--breakout-padding); }
 .py-breakout { padding-top: var(--breakout-padding); padding-bottom: var(--breakout-padding); }
@@ -364,9 +529,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .pt-breakout { padding-top: var(--breakout-padding); }
 .pb-breakout { padding-bottom: var(--breakout-padding); }
 
-/* ========================================
-   Padding Utilities - Gap
-   ======================================== */
+/* Gap-based padding */
 .p-gap { padding: var(--gap); }
 .px-gap { padding-left: var(--gap); padding-right: var(--gap); }
 .py-gap { padding-top: var(--gap); padding-bottom: var(--gap); }
@@ -375,9 +538,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .pt-gap { padding-top: var(--gap); }
 .pb-gap { padding-bottom: var(--gap); }
 
-/* ========================================
-   Padding Utilities - Full Gap (computed)
-   ======================================== */
+/* Full-gap padding (computed, for full-width elements) */
 .p-full-gap { padding: var(--computed-gap); }
 .px-full-gap { padding-left: var(--computed-gap); padding-right: var(--computed-gap); }
 .py-full-gap { padding-top: var(--computed-gap); padding-bottom: var(--computed-gap); }
@@ -386,9 +547,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .pt-full-gap { padding-top: var(--computed-gap); }
 .pb-full-gap { padding-bottom: var(--computed-gap); }
 
-/* ========================================
-   Padding Utilities - Popout
-   ======================================== */
+/* Popout-width padding */
 .p-popout { padding: var(--popout); }
 .px-popout { padding-left: var(--popout); padding-right: var(--popout); }
 .py-popout { padding-top: var(--popout); padding-bottom: var(--popout); }
@@ -397,9 +556,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .pt-popout { padding-top: var(--popout); }
 .pb-popout { padding-bottom: var(--popout); }
 
-/* ========================================
-   Padding Utilities - Alignment
-   ======================================== */
+/* Alignment padding - align content inside wider columns */
 .p-popout-to-content { padding: var(--popout-to-content); }
 .px-popout-to-content { padding-left: var(--popout-to-content); padding-right: var(--popout-to-content); }
 .py-popout-to-content { padding-top: var(--popout-to-content); padding-bottom: var(--popout-to-content); }
@@ -417,8 +574,22 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .pl-feature-to-content { padding-left: var(--feature-to-content); }
 
 /* ========================================
-   Margin Utilities - Breakout
-   ======================================== */
+   Margin Utilities
+   ========================================
+
+   Same values as padding utilities, but for margins. Includes
+   negative variants for pulling elements outside their container.
+
+   Example - Pull image outside its container:
+   <div class="col-content">
+     <img class="-mx-breakout">Bleeds into popout area</img>
+   </div>
+
+   Example - Overlap previous section:
+   <section class="-mt-gap">
+     Pulls up into the section above
+   </section>
+*/
 .m-breakout { margin: var(--breakout-padding); }
 .mx-breakout { margin-left: var(--breakout-padding); margin-right: var(--breakout-padding); }
 .my-breakout { margin-top: var(--breakout-padding); margin-bottom: var(--breakout-padding); }
@@ -436,9 +607,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .-mt-breakout { margin-top: calc(var(--breakout-padding) * -1); }
 .-mb-breakout { margin-bottom: calc(var(--breakout-padding) * -1); }
 
-/* ========================================
-   Margin Utilities - Gap
-   ======================================== */
+/* Gap-based margins */
 .m-gap { margin: var(--gap); }
 .mx-gap { margin-left: var(--gap); margin-right: var(--gap); }
 .my-gap { margin-top: var(--gap); margin-bottom: var(--gap); }
@@ -456,9 +625,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .-mt-gap { margin-top: calc(var(--gap) * -1); }
 .-mb-gap { margin-bottom: calc(var(--gap) * -1); }
 
-/* ========================================
-   Margin Utilities - Full Gap (computed)
-   ======================================== */
+/* Full-gap margins */
 .m-full-gap { margin: var(--computed-gap); }
 .mx-full-gap { margin-left: var(--computed-gap); margin-right: var(--computed-gap); }
 .my-full-gap { margin-top: var(--computed-gap); margin-bottom: var(--computed-gap); }
@@ -476,9 +643,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 .-mt-full-gap { margin-top: calc(var(--computed-gap) * -1); }
 .-mb-full-gap { margin-bottom: calc(var(--computed-gap) * -1); }
 
-/* ========================================
-   Margin Utilities - Popout
-   ======================================== */
+/* Popout-width margins */
 .m-popout { margin: var(--popout); }
 .mx-popout { margin-left: var(--popout); margin-right: var(--popout); }
 .my-popout { margin-top: var(--popout); margin-bottom: var(--popout); }
