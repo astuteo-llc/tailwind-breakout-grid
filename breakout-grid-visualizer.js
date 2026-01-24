@@ -959,6 +959,18 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       const val = this.editValues[key] || this.configOptions[key].value;
       return this.parseValue(val).unit;
     },
+    // Check if a field should have unit selection (rem-based fields only)
+    hasUnitSelector(key) {
+      const unit = this.getUnit(key);
+      return unit === "rem" || unit === "ch" || unit === "px";
+    },
+    // Available units for selection
+    unitOptions: ["rem", "ch", "px"],
+    // Update just the unit, keeping the numeric value
+    updateUnit(key, newUnit) {
+      const num = this.getNumericValue(key);
+      this.updateConfigValue(key, num + newUnit);
+    },
     // Update just the numeric part, keeping the unit
     updateNumericValue(key, num) {
       if (key === "content" && num < 1) num = 1;
@@ -2017,7 +2029,13 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
-                <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit(key)"></span>
+                <select x-show="hasUnitSelector(key)" @change="updateUnit(key, $event.target.value)" :value="getUnit(key)"
+                        style="padding: 6px 4px; font-size: 10px; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; color: #6b7280; cursor: pointer; width: 50px; text-align: center;">
+                  <template x-for="u in unitOptions" :key="u">
+                    <option :value="u" :selected="getUnit(key) === u" x-text="u"></option>
+                  </template>
+                </select>
+                <span x-show="!hasUnitSelector(key)" style="font-size: 10px; color: #9ca3af; width: 50px; text-align: center; display: inline-block;" x-text="getUnit(key)"></span>
               </div>
             </div>
           </template>
@@ -2071,7 +2089,13 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
-                <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit(key)"></span>
+                <select x-show="hasUnitSelector(key)" @change="updateUnit(key, $event.target.value)" :value="getUnit(key)"
+                        style="padding: 6px 4px; font-size: 10px; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; color: #6b7280; cursor: pointer; width: 50px; text-align: center;">
+                  <template x-for="u in unitOptions" :key="u">
+                    <option :value="u" :selected="getUnit(key) === u" x-text="u"></option>
+                  </template>
+                </select>
+                <span x-show="!hasUnitSelector(key)" style="font-size: 10px; color: #9ca3af; width: 50px; text-align: center; display: inline-block;" x-text="getUnit(key)"></span>
               </div>
             </div>
           </template>
@@ -2080,13 +2104,31 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         <!-- Feature Section (Track Width) -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
           <div @click="copySection('feature')" style="font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; cursor: pointer;" :style="{ color: sectionCopied === 'feature' ? '#10b981' : '#6b7280' }" x-text="sectionCopied === 'feature' ? '✓ Copied' : 'Feature (Track Width)'"></div>
-          <template x-for="key in ['featureMin', 'featureScale', 'featureMax']" :key="'ed_'+key">
+          <!-- featureMin (locked) -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
+            <span style="font-size: 11px; color: #9ca3af;">min <span style="font-size: 8px;" title="Must be 0 for track to collapse">(locked)</span></span>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <input type="number" :value="getNumericValue('featureMin')" disabled
+                     style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f3f4f6; color: #9ca3af; text-align: right; cursor: not-allowed;">
+              <select disabled style="padding: 6px 4px; font-size: 10px; border: 1px solid #e5e5e5; border-radius: 4px; background: #f3f4f6; color: #9ca3af; width: 50px; text-align: center; cursor: not-allowed;">
+                <option selected>rem</option>
+              </select>
+            </div>
+          </div>
+          <!-- featureScale and featureMax -->
+          <template x-for="key in ['featureScale', 'featureMax']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
               <span style="font-size: 11px; color: #374151;" x-text="key.replace('feature', '').toLowerCase()"></span>
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
-                <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit(key)"></span>
+                <select x-show="hasUnitSelector(key)" @change="updateUnit(key, $event.target.value)" :value="getUnit(key)"
+                        style="padding: 6px 4px; font-size: 10px; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; color: #6b7280; cursor: pointer; width: 50px; text-align: center;">
+                  <template x-for="u in unitOptions" :key="u">
+                    <option :value="u" :selected="getUnit(key) === u" x-text="u"></option>
+                  </template>
+                </select>
+                <span x-show="!hasUnitSelector(key)" style="font-size: 10px; color: #9ca3af; width: 50px; text-align: center; display: inline-block;" x-text="getUnit(key)"></span>
               </div>
             </div>
           </template>
@@ -2106,7 +2148,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             <div style="display: flex; align-items: center; gap: 4px;">
               <input type="number" :value="getNumericValue('baseGap')" @input="updateNumericValue('baseGap', $event.target.value)" step="0.5"
                      style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
-              <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit('baseGap')"></span>
+              <select @change="updateUnit('baseGap', $event.target.value)" :value="getUnit('baseGap')"
+                      style="padding: 6px 4px; font-size: 10px; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; color: #6b7280; cursor: pointer; width: 50px; text-align: center;">
+                <template x-for="u in unitOptions" :key="u">
+                  <option :value="u" :selected="getUnit('baseGap') === u" x-text="u"></option>
+                </template>
+              </select>
             </div>
           </div>
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
@@ -2118,7 +2165,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             <div style="display: flex; align-items: center; gap: 4px;">
               <input type="number" :value="getNumericValue('maxGap')" @input="updateNumericValue('maxGap', $event.target.value)" step="1"
                      style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
-              <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getUnit('maxGap')"></span>
+              <select @change="updateUnit('maxGap', $event.target.value)" :value="getUnit('maxGap')"
+                      style="padding: 6px 4px; font-size: 10px; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; color: #6b7280; cursor: pointer; width: 50px; text-align: center;">
+                <template x-for="u in unitOptions" :key="u">
+                  <option :value="u" :selected="getUnit('maxGap') === u" x-text="u"></option>
+                </template>
+              </select>
             </div>
           </div>
 
@@ -2144,7 +2196,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getGapScaleNumeric(key)" @input="updateGapScaleNumeric(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
-                <span style="font-size: 10px; color: #9ca3af; width: 24px;" x-text="getGapScaleUnit(key)"></span>
+                <span style="font-size: 10px; color: #9ca3af; width: 50px; text-align: center; display: inline-block;" x-text="getGapScaleUnit(key)"></span>
               </div>
             </div>
           </template>

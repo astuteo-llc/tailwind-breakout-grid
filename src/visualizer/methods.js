@@ -314,6 +314,21 @@ export const methods = {
     return this.parseValue(val).unit;
   },
 
+  // Check if a field should have unit selection (rem-based fields only)
+  hasUnitSelector(key) {
+    const unit = this.getUnit(key);
+    return unit === 'rem' || unit === 'ch' || unit === 'px';
+  },
+
+  // Available units for selection
+  unitOptions: ['rem', 'ch', 'px'],
+
+  // Update just the unit, keeping the numeric value
+  updateUnit(key, newUnit) {
+    const num = this.getNumericValue(key);
+    this.updateConfigValue(key, num + newUnit);
+  },
+
   // Update just the numeric part, keeping the unit
   updateNumericValue(key, num) {
     // Enforce minimums for certain fields
