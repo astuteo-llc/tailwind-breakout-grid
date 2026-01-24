@@ -13,7 +13,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
 export const GRID_AREAS = [
   { name: 'full', label: 'Full', className: '.col-full', color: 'rgba(239, 68, 68, 0.25)', borderColor: 'rgb(239, 68, 68)' },
   { name: 'full-limit', label: 'Full Limit', className: '.col-full-limit', color: 'rgba(220, 38, 38, 0.25)', borderColor: 'rgb(220, 38, 38)' },
-  { name: 'feature', label: 'Feature', className: '.col-feature', color: 'rgba(234, 179, 8, 0.25)', borderColor: 'rgb(234, 179, 8)' },
+  { name: 'feature', label: 'Feature', className: '.col-feature', color: 'rgba(6, 182, 212, 0.25)', borderColor: 'rgb(6, 182, 212)' },
   { name: 'popout', label: 'Popout', className: '.col-popout', color: 'rgba(34, 197, 94, 0.25)', borderColor: 'rgb(34, 197, 94)' },
   { name: 'content', label: 'Content', className: '.col-content', color: 'rgba(168, 85, 247, 0.25)', borderColor: 'rgb(168, 85, 247)' },
 ];
@@ -28,7 +28,9 @@ export const CONFIG_OPTIONS = {
   contentBase: { value: '75vw', desc: 'Preferred width for content (fluid). Use vw.', cssVar: '--config-content-base', liveVar: '--content-base' },
   // Track widths
   popoutWidth: { value: '5rem', desc: 'Popout extends beyond content. Use rem.', cssVar: '--config-popout', liveVar: null },
-  featureWidth: { value: '12vw', desc: 'Feature extends for images/heroes. Use vw.', cssVar: '--config-feature', liveVar: null },
+  featureMin: { value: '0rem', desc: 'Minimum feature track width (floor)', cssVar: '--config-feature-min', liveVar: null },
+  featureScale: { value: '12vw', desc: 'Fluid feature track scaling', cssVar: '--config-feature-scale', liveVar: null },
+  featureMax: { value: '12rem', desc: 'Maximum feature track width (ceiling)', cssVar: '--config-feature-max', liveVar: null },
   fullLimit: { value: '115rem', desc: 'Max width for col-full-limit. Use rem.', cssVar: '--config-full-limit', liveVar: '--full-limit' },
   // Default column
   defaultCol: { value: 'content', desc: 'Default column when no col-* class', type: 'select', options: ['content', 'popout', 'feature', 'full'], cssVar: '--config-default-col' },

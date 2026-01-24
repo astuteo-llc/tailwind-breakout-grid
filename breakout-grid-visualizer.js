@@ -7,7 +7,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   const GRID_AREAS = [
     { name: "full", label: "Full", className: ".col-full", color: "rgba(239, 68, 68, 0.25)", borderColor: "rgb(239, 68, 68)" },
     { name: "full-limit", label: "Full Limit", className: ".col-full-limit", color: "rgba(220, 38, 38, 0.25)", borderColor: "rgb(220, 38, 38)" },
-    { name: "feature", label: "Feature", className: ".col-feature", color: "rgba(234, 179, 8, 0.25)", borderColor: "rgb(234, 179, 8)" },
+    { name: "feature", label: "Feature", className: ".col-feature", color: "rgba(6, 182, 212, 0.25)", borderColor: "rgb(6, 182, 212)" },
     { name: "popout", label: "Popout", className: ".col-popout", color: "rgba(34, 197, 94, 0.25)", borderColor: "rgb(34, 197, 94)" },
     { name: "content", label: "Content", className: ".col-content", color: "rgba(168, 85, 247, 0.25)", borderColor: "rgb(168, 85, 247)" }
   ];
@@ -86,7 +86,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       dragOffsetSpacing: { x: 0, y: 0 }
     };
   }
-  const VERSION = "3.0.1";
+  const VERSION = "3.1.0";
   function generateCSSExport(c) {
     var _a, _b, _c, _d, _e;
     const breakoutMin = c.breakoutMin || "1rem";
@@ -105,37 +105,28 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
    CSS Custom Properties
    ======================================== */
 :root {
-  /* Base measurements - configure these values */
-  --base-gap: ${c.baseGap};    /* minimum gap (mobile) */
-  --max-gap: ${c.maxGap};      /* maximum gap cap */
-  --content-min: ${c.contentMin}; /* min reading width */
-  --content-max: ${c.contentMax}; /* max reading width */
-  --content-base: ${c.contentBase}; /* preferred width (fluid) */
+  /* Base measurements */
+  --base-gap: ${c.baseGap};
+  --max-gap: ${c.maxGap};
+  --content-min: ${c.contentMin};
+  --content-max: ${c.contentMax};
+  --content-base: ${c.contentBase};
 
-  /* Computed values - derived from base measurements
-     --gap: fluid gap using clamp(min, scale, max)
-     --content: reading column width, respects gap on both sides
-     --content-inset: for left/right grids, accounts for single gap */
-  --gap: clamp(var(--base-gap), ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"}, var(--max-gap)); /* scales: ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"} */
+  /* Computed values */
+  --gap: clamp(var(--base-gap), ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"}, var(--max-gap));
   --computed-gap: max(var(--gap), calc((100vw - var(--content)) / 10));
   --content: min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2);
   --content-inset: min(clamp(var(--content-min), var(--content-base), var(--content-max)), calc(100% - var(--gap)));
   --content-half: calc(var(--content) / 2);
 
-  /* Track widths
-     --full: outer margins, at least gap width, expands to fill remaining space
-     --feature: clamp(min, scale, max) - fluid track that scales with viewport
-     --popout: fixed width extension beyond content */
+  /* Track widths */
   --full: minmax(var(--gap), 1fr);
   --feature: minmax(0, clamp(${c.featureMin}, ${c.featureScale}, ${c.featureMax})); /* min: ${c.featureMin}, scale: ${c.featureScale}, max: ${c.featureMax} */
   --popout: minmax(0, ${c.popoutWidth});
   --full-limit: ${c.fullLimit};
 
-  /* Padding/margin utilities
-     --breakout-padding: fluid padding for full-width sections, clamped to popout
-     --popout-to-content: padding to align popout content with content column
-     --feature-to-content: padding to align feature content with content column */
-  --breakout-padding: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth}); /* min: ${breakoutMin}, scale: ${breakoutScale}, max: ${c.popoutWidth} */
+  /* Padding/margin utilities */
+  --breakout-padding: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth});
   --popout-to-content: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth});
   --feature-to-content: calc(clamp(${c.featureMin}, ${c.featureScale}, ${c.featureMax}) + ${c.popoutWidth}); /* feature + popout widths */
 }
@@ -870,6 +861,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         "feature": "featureScale",
         "popout": "popoutWidth"
         // content has its own integrated handles for min/max/base
+        // feature has its own integrated handles for min/scale/max
       };
       return map[colName] || null;
     }
@@ -1390,6 +1382,76 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
               </div>
             </div>
           </template>
+
+          <!-- Feature Min/Scale/Max Visual Guides with integrated handles (edit mode only) -->
+          <template x-if="editMode && area.name === 'feature'">
+            <div style="position: absolute; inset: 0; pointer-events: none; z-index: 50; overflow: visible;">
+              <!-- Max boundary (outer, dotted) - anchored from right edge (content side) -->
+              <div :style="{
+                position: 'absolute',
+                top: '0',
+                bottom: '0',
+                right: '0',
+                width: editValues.featureMax || configOptions.featureMax.value,
+                border: '3px dotted rgba(6, 182, 212, 0.9)',
+                boxSizing: 'border-box',
+                background: 'rgba(6, 182, 212, 0.05)'
+              }">
+                <div style="position: absolute; top: 8px; left: 8px; background: rgba(6, 182, 212, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">
+                  max: <span x-text="editValues.featureMax || configOptions.featureMax.value"></span>
+                </div>
+                <!-- Max drag handle on left edge -->
+                <div x-show="hoveredArea === 'feature' || selectedArea === 'feature'"
+                     @mousedown.stop="startColumnResize($event, 'featureMax')"
+                     style="position: absolute; left: -8px; top: 8px; width: 16px; height: 60px; cursor: ew-resize; pointer-events: auto; display: flex; align-items: center; justify-content: center;">
+                  <div style="width: 8px; height: 100%; background: rgb(6, 182, 212); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
+                </div>
+              </div>
+              <!-- Scale boundary (middle, solid) - half height, inset -->
+              <div :style="{
+                position: 'absolute',
+                top: '25%',
+                bottom: '25%',
+                right: '0',
+                width: editValues.featureScale || configOptions.featureScale.value,
+                border: '3px solid rgba(14, 165, 233, 1)',
+                background: 'rgba(14, 165, 233, 0.5)',
+                boxSizing: 'border-box',
+                borderRadius: '4px'
+              }">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(14, 165, 233, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap;">
+                  scale: <span x-text="editValues.featureScale || configOptions.featureScale.value"></span>
+                </div>
+                <!-- Scale drag handle on left edge -->
+                <div x-show="hoveredArea === 'feature' || selectedArea === 'feature'"
+                     @mousedown.stop="startColumnResize($event, 'featureScale')"
+                     style="position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 16px; height: 40px; cursor: ew-resize; pointer-events: auto; display: flex; align-items: center; justify-content: center;">
+                  <div style="width: 8px; height: 100%; background: rgb(14, 165, 233); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
+                </div>
+              </div>
+              <!-- Min boundary (inner, dashed) -->
+              <div :style="{
+                position: 'absolute',
+                top: '0',
+                bottom: '0',
+                right: '0',
+                width: editValues.featureMin || configOptions.featureMin.value,
+                border: '3px dashed rgba(56, 189, 248, 0.9)',
+                background: 'rgba(56, 189, 248, 0.15)',
+                boxSizing: 'border-box'
+              }">
+                <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(56, 189, 248, 0.95); color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700;">
+                  min: <span x-text="editValues.featureMin || configOptions.featureMin.value"></span>
+                </div>
+                <!-- Min drag handle on left edge, at bottom -->
+                <div x-show="hoveredArea === 'feature' || selectedArea === 'feature'"
+                     @mousedown.stop="startColumnResize($event, 'featureMin')"
+                     style="position: absolute; left: -8px; bottom: 8px; width: 16px; height: 60px; cursor: ew-resize; pointer-events: auto; display: flex; align-items: center; justify-content: center;">
+                  <div style="width: 8px; height: 100%; background: rgb(56, 189, 248); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid white;"></div>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
       </template>
     </div>
@@ -1580,12 +1642,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           </template>
         </div>
 
-        <!-- Feature Section -->
+        <!-- Track Widths Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Feature (Track Width)</div>
-          <template x-for="key in ['featureMin', 'featureScale', 'featureMax']" :key="'ed_'+key">
+          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Track Widths</div>
+          <template x-for="key in ['popoutWidth', 'fullLimit']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-              <span style="font-size: 11px; color: #374151;" x-text="key.replace('feature', '').toLowerCase()"></span>
+              <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '')"></span>
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
@@ -1595,12 +1657,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           </template>
         </div>
 
-        <!-- Track Widths Section -->
+        <!-- Feature Section (Track Width) -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
-          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Track Widths</div>
-          <template x-for="key in ['popoutWidth', 'fullLimit']" :key="'ed_'+key">
+          <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Feature (Track Width)</div>
+          <template x-for="key in ['featureMin', 'featureScale', 'featureMax']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-              <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '')"></span>
+              <span style="font-size: 11px; color: #374151;" x-text="key.replace('feature', '').toLowerCase()"></span>
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
@@ -1705,8 +1767,8 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             <div style="color: #9ca3af; font-size: 0.5rem;">1fr</div>
           </div>
           <!-- Feature left -->
-          <div style="background: rgba(234, 179, 8, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px dashed #e5e7eb; min-width: 50px;">
-            <div style="color: #b45309; font-weight: 600;">feature</div>
+          <div style="background: rgba(6, 182, 212, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px dashed #e5e7eb; min-width: 50px;">
+            <div style="color: #0891b2; font-weight: 600;">feature</div>
             <div style="color: #9ca3af; font-size: 0.5rem;" x-text="(editValues.featureMin || configOptions.featureMin.value) + ' - ' + (editValues.featureMax || configOptions.featureMax.value)"></div>
           </div>
           <!-- Popout left -->
@@ -1725,8 +1787,8 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
             <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.popoutWidth || configOptions.popoutWidth.value"></div>
           </div>
           <!-- Feature right -->
-          <div style="background: rgba(234, 179, 8, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed #e5e7eb; min-width: 50px;">
-            <div style="color: #b45309; font-weight: 600;">feature</div>
+          <div style="background: rgba(6, 182, 212, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed #e5e7eb; min-width: 50px;">
+            <div style="color: #0891b2; font-weight: 600;">feature</div>
             <div style="color: #9ca3af; font-size: 0.5rem;" x-text="(editValues.featureMin || configOptions.featureMin.value) + ' - ' + (editValues.featureMax || configOptions.featureMax.value)"></div>
           </div>
           <!-- Full right -->
@@ -1738,7 +1800,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         <!-- Legend -->
         <div style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.5625rem;">
           <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(239, 68, 68, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-full</div>
-          <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(234, 179, 8, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-feature</div>
+          <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(6, 182, 212, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-feature</div>
           <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(34, 197, 94, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-popout</div>
           <div><span style="display: inline-block; width: 12px; height: 12px; background: rgba(168, 85, 247, 0.3); border-radius: 2px; vertical-align: middle; margin-right: 0.25rem;"></span>.col-content</div>
         </div>

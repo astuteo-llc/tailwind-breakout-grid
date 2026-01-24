@@ -108,11 +108,11 @@ export const methods = {
   // Check if configured track widths would exceed viewport
   getTrackOverflowWarning() {
     const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value) * 16;
-    const featureWidth = parseFloat(this.editValues.featureWidth || this.configOptions.featureWidth.value);
+    const featureMax = parseFloat(this.editValues.featureMax || this.configOptions.featureMax.value) * 16;
     const popoutWidth = parseFloat(this.editValues.popoutWidth || this.configOptions.popoutWidth.value) * 16;
 
-    // Calculate feature in pixels (vw to px)
-    const featurePx = (featureWidth / 100) * this.viewportWidth * 2;
+    // Feature max is in rem, convert to px
+    const featurePx = featureMax * 2;
     const popoutPx = popoutWidth * 2;
     const totalFixed = contentMax + featurePx + popoutPx;
 
@@ -215,7 +215,7 @@ export const methods = {
     if (key === 'content' && num < 1) num = 1;
     if (key === 'baseGap' && num < 0) num = 0;
     if (key === 'popoutWidth' && num < 0) num = 0;
-    if (key === 'featureWidth' && num < 0) num = 0;
+    if ((key === 'featureMin' || key === 'featureScale' || key === 'featureMax') && num < 0) num = 0;
     const unit = this.getUnit(key);
     this.updateConfigValue(key, num + unit);
   },
@@ -270,8 +270,11 @@ export const methods = {
       document.documentElement.style.setProperty('--popout', `minmax(0, ${value})`);
       this.updateBreakoutLive(); // Update breakout padding with new popout ceiling
     }
-    if (key === 'featureWidth') {
-      document.documentElement.style.setProperty('--feature', `minmax(0, ${value})`);
+    if (key === 'featureMin' || key === 'featureScale' || key === 'featureMax') {
+      const featureMin = this.editValues.featureMin || this.configOptions.featureMin.value;
+      const featureScale = this.editValues.featureScale || this.configOptions.featureScale.value;
+      const featureMax = this.editValues.featureMax || this.configOptions.featureMax.value;
+      document.documentElement.style.setProperty('--feature', `minmax(0, clamp(${featureMin}, ${featureScale}, ${featureMax}))`);
     }
     if (key === 'content') {
       document.documentElement.style.setProperty('--content', `minmax(0, ${value})`);
@@ -433,9 +436,10 @@ export const methods = {
   getResizeConfig(colName) {
     const map = {
       'full-limit': 'fullLimit',
-      'feature': 'featureWidth',
+      'feature': 'featureScale',
       'popout': 'popoutWidth'
       // content has its own integrated handles for min/max/base
+      // feature has its own integrated handles for min/scale/max
     };
     return map[colName] || null;
   },

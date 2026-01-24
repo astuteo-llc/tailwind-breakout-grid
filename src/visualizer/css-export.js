@@ -43,14 +43,14 @@ export function generateCSSExport(c) {
 
   /* Track widths */
   --full: minmax(var(--gap), 1fr);
-  --feature: minmax(0, ${c.featureWidth});
+  --feature: minmax(0, clamp(${c.featureMin}, ${c.featureScale}, ${c.featureMax})); /* min: ${c.featureMin}, scale: ${c.featureScale}, max: ${c.featureMax} */
   --popout: minmax(0, ${c.popoutWidth});
   --full-limit: ${c.fullLimit};
 
   /* Padding/margin utilities */
   --breakout-padding: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth});
   --popout-to-content: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth});
-  --feature-to-content: calc(${c.featureWidth} + ${c.popoutWidth});
+  --feature-to-content: calc(clamp(${c.featureMin}, ${c.featureScale}, ${c.featureMax}) + ${c.popoutWidth}); /* feature + popout widths */
 }
 
 /* Responsive gap scaling */
