@@ -66,7 +66,7 @@ const validateConfig = (config) => {
   // Validate CSS unit properties
   const cssUnitProperties = [
     'baseGap', 'maxGap', 'contentMin', 'contentMax', 'contentBase',
-    'featureWidth', 'popoutWidth', 'fullLimit'
+    'featureMin', 'featureScale', 'featureMax', 'popoutWidth', 'fullLimit'
   ]
   
   cssUnitProperties.forEach(prop => {
@@ -121,7 +121,9 @@ const validateConfig = (config) => {
  *       contentMax: '50rem',    // Maximum width for content columns
  *       contentBase: '52vw',    // Default width for content columns
  *       defaultCol: 'content',  // Default column for elements without a col-* class
- *       featureWidth: '6vw',    // How far feature sections extend
+ *       featureMin: '0rem',     // Minimum feature track width
+ *       featureScale: '12vw',   // Fluid feature track scaling
+ *       featureMax: '12rem',    // Maximum feature track width
  *       popoutWidth: '2rem',    // How far popout sections extend
  *       fullLimit: '120rem',    // Maximum width for full sections
  *
@@ -145,7 +147,6 @@ const defaultConfig = {
   contentMin: '53rem', // Minimum width for content column (~848px)
   contentMax: '61rem', // Max width for content column (~976px)
   contentBase: '75vw', // Preferred width for content (fluid)
-  featureWidth: '12vw', // How far "feature" sections stick out
   defaultCol: 'content',  // Default column for elements without a col-* class
   fullLimit: '115rem',  // Maximum width for full-limit sections
   popoutWidth: '5rem', // How far "popout" sections stick out
@@ -155,6 +156,10 @@ const defaultConfig = {
     lg: '5vw',         // Large screens
     xl: '6vw'          // Extra large screens
   },
+  // Feature track: clamp(featureMin, featureScale, featureMax)
+  featureMin: '0rem',    // Minimum feature track width (floor)
+  featureScale: '12vw',  // Fluid feature track scaling
+  featureMax: '12rem',   // Maximum feature track width (ceiling)
   // Breakout padding: clamp(breakoutMin, breakoutScale, popoutWidth)
   // Used by p-breakout, px-breakout, m-breakout utilities
   breakoutMin: '1rem',   // Minimum breakout padding (floor)
@@ -207,19 +212,22 @@ const createRootCSS = (pluginConfig) => {
       '--config-content-max': pluginConfig.contentMax,
       '--config-content-base': pluginConfig.contentBase,
       '--config-popout': pluginConfig.popoutWidth,
-      '--config-feature': pluginConfig.featureWidth,
       '--config-full-limit': pluginConfig.fullLimit,
       '--config-default-col': pluginConfig.defaultCol,
       // Gap scale values (for visualizer)
       '--config-gap-scale-default': pluginConfig.gapScale.default,
       '--config-gap-scale-lg': pluginConfig.gapScale.lg || pluginConfig.gapScale.default,
       '--config-gap-scale-xl': pluginConfig.gapScale.xl || pluginConfig.gapScale.lg || pluginConfig.gapScale.default,
+      // Feature track config values (for visualizer)
+      '--config-feature-min': pluginConfig.featureMin,
+      '--config-feature-scale': pluginConfig.featureScale,
+      '--config-feature-max': pluginConfig.featureMax,
       // Breakout padding config values (for visualizer)
       '--config-breakout-min': pluginConfig.breakoutMin,
       '--config-breakout-scale': pluginConfig.breakoutScale,
       // Padding to align content with inner columns
       '--popout-to-content': `clamp(${pluginConfig.breakoutMin}, ${pluginConfig.breakoutScale}, ${pluginConfig.popoutWidth})`,
-      '--feature-to-content': `calc(${pluginConfig.featureWidth} + ${pluginConfig.popoutWidth})`,
+      '--feature-to-content': `calc(clamp(${pluginConfig.featureMin}, ${pluginConfig.featureScale}, ${pluginConfig.featureMax}) + ${pluginConfig.popoutWidth})`,
       // Computed values
       '--base-gap': pluginConfig.baseGap,
       '--max-gap': pluginConfig.maxGap,
@@ -231,7 +239,7 @@ const createRootCSS = (pluginConfig) => {
       '--full-limit': pluginConfig.fullLimit,
       '--content-inset': 'min(clamp(var(--content-min), var(--content-base), var(--content-max)), calc(100% - var(--gap)))',
       '--full': 'minmax(var(--gap), 1fr)',
-      '--feature': `minmax(0, ${pluginConfig.featureWidth})`,
+      '--feature': `minmax(0, clamp(${pluginConfig.featureMin}, ${pluginConfig.featureScale}, ${pluginConfig.featureMax}))`,
       '--popout': `minmax(0, ${pluginConfig.popoutWidth})`,
       '--content': 'min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2)',
       '--content-half': 'calc(var(--content) / 2)',
@@ -733,7 +741,9 @@ const createGridUtilities = (config, templates) => {
  * @param {string} [config.contentMax='50rem'] - Maximum width for content columns
  * @param {string} [config.contentBase='52vw'] - Preferred width (viewport-based)
  * @param {string} [config.popoutWidth='5rem'] - Popout extension distance
- * @param {string} [config.featureWidth='12vw'] - Feature rail extension
+ * @param {string} [config.featureMin='0rem'] - Minimum feature track width
+ * @param {string} [config.featureScale='12vw'] - Fluid feature track scaling
+ * @param {string} [config.featureMax='12rem'] - Maximum feature track width
  * @param {string} [config.defaultCol='content'] - Default column for items without col-* class
  * @param {string} [config.fullLimit='115rem'] - Maximum width for col-full-limit
  * @param {Object|string} [config.gapScale] - Responsive gap scaling

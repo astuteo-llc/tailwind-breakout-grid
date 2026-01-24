@@ -20,7 +20,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     contentBase: { value: "75vw", desc: "Preferred width for content (fluid). Use vw.", cssVar: "--config-content-base", liveVar: "--content-base" },
     // Track widths
     popoutWidth: { value: "5rem", desc: "Popout extends beyond content. Use rem.", cssVar: "--config-popout", liveVar: null },
-    featureWidth: { value: "12vw", desc: "Feature extends for images/heroes. Use vw.", cssVar: "--config-feature", liveVar: null },
+    featureMin: { value: "0rem", desc: "Minimum feature track width (floor)", cssVar: "--config-feature-min", liveVar: null },
+    featureScale: { value: "12vw", desc: "Fluid feature track scaling", cssVar: "--config-feature-scale", liveVar: null },
+    featureMax: { value: "12rem", desc: "Maximum feature track width (ceiling)", cssVar: "--config-feature-max", liveVar: null },
     fullLimit: { value: "115rem", desc: "Max width for col-full-limit. Use rem.", cssVar: "--config-full-limit", liveVar: "--full-limit" },
     // Default column
     defaultCol: { value: "content", desc: "Default column when no col-* class", type: "select", options: ["content", "popout", "feature", "full"], cssVar: "--config-default-col" }
@@ -103,30 +105,39 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
    CSS Custom Properties
    ======================================== */
 :root {
-  /* Base measurements */
-  --base-gap: ${c.baseGap};
-  --max-gap: ${c.maxGap};
-  --content-min: ${c.contentMin};
-  --content-max: ${c.contentMax};
-  --content-base: ${c.contentBase};
+  /* Base measurements - configure these values */
+  --base-gap: ${c.baseGap};    /* minimum gap (mobile) */
+  --max-gap: ${c.maxGap};      /* maximum gap cap */
+  --content-min: ${c.contentMin}; /* min reading width */
+  --content-max: ${c.contentMax}; /* max reading width */
+  --content-base: ${c.contentBase}; /* preferred width (fluid) */
 
-  /* Computed values */
-  --gap: clamp(var(--base-gap), ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"}, var(--max-gap));
+  /* Computed values - derived from base measurements
+     --gap: fluid gap using clamp(min, scale, max)
+     --content: reading column width, respects gap on both sides
+     --content-inset: for left/right grids, accounts for single gap */
+  --gap: clamp(var(--base-gap), ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"}, var(--max-gap)); /* scales: ${((_a = c.gapScale) == null ? void 0 : _a.default) || "4vw"} */
   --computed-gap: max(var(--gap), calc((100vw - var(--content)) / 10));
   --content: min(clamp(var(--content-min), var(--content-base), var(--content-max)), 100% - var(--gap) * 2);
   --content-inset: min(clamp(var(--content-min), var(--content-base), var(--content-max)), calc(100% - var(--gap)));
   --content-half: calc(var(--content) / 2);
 
-  /* Track widths */
+  /* Track widths
+     --full: outer margins, at least gap width, expands to fill remaining space
+     --feature: clamp(min, scale, max) - fluid track that scales with viewport
+     --popout: fixed width extension beyond content */
   --full: minmax(var(--gap), 1fr);
-  --feature: minmax(0, ${c.featureWidth});
+  --feature: minmax(0, clamp(${c.featureMin}, ${c.featureScale}, ${c.featureMax})); /* min: ${c.featureMin}, scale: ${c.featureScale}, max: ${c.featureMax} */
   --popout: minmax(0, ${c.popoutWidth});
   --full-limit: ${c.fullLimit};
 
-  /* Padding/margin utilities */
-  --breakout-padding: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth});
+  /* Padding/margin utilities
+     --breakout-padding: fluid padding for full-width sections, clamped to popout
+     --popout-to-content: padding to align popout content with content column
+     --feature-to-content: padding to align feature content with content column */
+  --breakout-padding: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth}); /* min: ${breakoutMin}, scale: ${breakoutScale}, max: ${c.popoutWidth} */
   --popout-to-content: clamp(${breakoutMin}, ${breakoutScale}, ${c.popoutWidth});
-  --feature-to-content: calc(${c.featureWidth} + ${c.popoutWidth});
+  --feature-to-content: calc(clamp(${c.featureMin}, ${c.featureScale}, ${c.featureMax}) + ${c.popoutWidth}); /* feature + popout widths */
 }
 
 /* Responsive gap scaling */
@@ -560,9 +571,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     // Check if configured track widths would exceed viewport
     getTrackOverflowWarning() {
       const contentMax = parseFloat(this.editValues.contentMax || this.configOptions.contentMax.value) * 16;
-      const featureWidth = parseFloat(this.editValues.featureWidth || this.configOptions.featureWidth.value);
+      const featureMax = parseFloat(this.editValues.featureMax || this.configOptions.featureMax.value) * 16;
       const popoutWidth = parseFloat(this.editValues.popoutWidth || this.configOptions.popoutWidth.value) * 16;
-      const featurePx = featureWidth / 100 * this.viewportWidth * 2;
+      const featurePx = featureMax * 2;
       const popoutPx = popoutWidth * 2;
       const totalFixed = contentMax + featurePx + popoutPx;
       if (totalFixed > this.viewportWidth) {
@@ -652,7 +663,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
       if (key === "content" && num < 1) num = 1;
       if (key === "baseGap" && num < 0) num = 0;
       if (key === "popoutWidth" && num < 0) num = 0;
-      if (key === "featureWidth" && num < 0) num = 0;
+      if ((key === "featureMin" || key === "featureScale" || key === "featureMax") && num < 0) num = 0;
       const unit = this.getUnit(key);
       this.updateConfigValue(key, num + unit);
     },
@@ -708,8 +719,11 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         document.documentElement.style.setProperty("--popout", `minmax(0, ${value})`);
         this.updateBreakoutLive();
       }
-      if (key === "featureWidth") {
-        document.documentElement.style.setProperty("--feature", `minmax(0, ${value})`);
+      if (key === "featureMin" || key === "featureScale" || key === "featureMax") {
+        const featureMin = this.editValues.featureMin || this.configOptions.featureMin.value;
+        const featureScale = this.editValues.featureScale || this.configOptions.featureScale.value;
+        const featureMax = this.editValues.featureMax || this.configOptions.featureMax.value;
+        document.documentElement.style.setProperty("--feature", `minmax(0, clamp(${featureMin}, ${featureScale}, ${featureMax}))`);
       }
       if (key === "content") {
         document.documentElement.style.setProperty("--content", `minmax(0, ${value})`);
@@ -853,7 +867,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
     getResizeConfig(colName) {
       const map = {
         "full-limit": "fullLimit",
-        "feature": "featureWidth",
+        "feature": "featureScale",
         "popout": "popoutWidth"
         // content has its own integrated handles for min/max/base
       };
@@ -1569,9 +1583,9 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
         <!-- Track Widths Section -->
         <div style="padding: 8px 12px; background: white; border-bottom: 1px solid #e5e5e5;">
           <div style="font-size: 9px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Track Widths</div>
-          <template x-for="key in ['popoutWidth', 'featureWidth', 'fullLimit']" :key="'ed_'+key">
+          <template x-for="key in ['popoutWidth', 'featureMin', 'featureScale', 'featureMax', 'fullLimit']" :key="'ed_'+key">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6;">
-              <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '')"></span>
+              <span style="font-size: 11px; color: #374151;" x-text="key.replace('Width', '').replace('feature', 'feature ')"></span>
               <div style="display: flex; align-items: center; gap: 4px;">
                 <input type="number" :value="getNumericValue(key)" @input="updateNumericValue(key, $event.target.value)" step="1"
                        style="width: 72px; padding: 6px 8px; font-size: 11px; font-family: 'SF Mono', Monaco, monospace; border: 1px solid #e5e5e5; border-radius: 4px; background: #f9fafb; text-align: right;">
@@ -1678,7 +1692,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           <!-- Feature left -->
           <div style="background: rgba(234, 179, 8, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px dashed #e5e7eb; min-width: 50px;">
             <div style="color: #b45309; font-weight: 600;">feature</div>
-            <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.featureWidth || configOptions.featureWidth.value"></div>
+            <div style="color: #9ca3af; font-size: 0.5rem;" x-text="(editValues.featureMin || configOptions.featureMin.value) + ' - ' + (editValues.featureMax || configOptions.featureMax.value)"></div>
           </div>
           <!-- Popout left -->
           <div style="background: rgba(34, 197, 94, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px dashed #e5e7eb; min-width: 40px;">
@@ -1698,7 +1712,7 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
           <!-- Feature right -->
           <div style="background: rgba(234, 179, 8, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed #e5e7eb; min-width: 50px;">
             <div style="color: #b45309; font-weight: 600;">feature</div>
-            <div style="color: #9ca3af; font-size: 0.5rem;" x-text="editValues.featureWidth || configOptions.featureWidth.value"></div>
+            <div style="color: #9ca3af; font-size: 0.5rem;" x-text="(editValues.featureMin || configOptions.featureMin.value) + ' - ' + (editValues.featureMax || configOptions.featureMax.value)"></div>
           </div>
           <!-- Full right -->
           <div style="background: rgba(239, 68, 68, 0.2); padding: 0.5rem 0.25rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed #e5e7eb; min-width: 40px;">
