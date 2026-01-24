@@ -28,3 +28,4 @@ pnpm-lock.yaml
 # AI Helpers 
 .claude
 .kiro
+/docs/plans
